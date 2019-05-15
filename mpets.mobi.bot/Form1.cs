@@ -128,6 +128,125 @@ namespace mpets.mobi.bot
             }
         }
 
+        public async Task Tasks()
+        {
+            string result = await httpClient.GetAsync("/task").Result.Content.ReadAsStringAsync();
+
+            MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
+
+            if (reg.Count > 0)
+            {
+                Log("-- Найдено выполненных заданий " + reg.Count + " шт.");
+
+                foreach (Match match in reg)
+                {
+                    string id = match.Groups[1].Value;
+
+                    if (id.Length > 0)
+                    {
+                        result = await httpClient.GetAsync("/task_reward?id=" + id).Result.Content.ReadAsStringAsync();
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+                }
+
+                Log("-- Награды за задания собраны.");
+            }
+        }
+
+        public async Task WakeUp()
+        {
+            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+
+            if (result.Contains("Дать витаминку за"))
+            {
+                await httpClient.GetAsync("/wakeup").Result.Content.ReadAsStringAsync();
+
+                Log("-- Питомец получил витаминку.");
+            }
+        }
+
+        public async Task Food()
+        {
+            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+
+            string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+            if (rand.Length > 0)
+            {
+                Log("-- Кормлю питомца...");
+
+                do
+                {
+                    result = await httpClient.GetAsync("/?action=food&rand=" + rand).Result.Content.ReadAsStringAsync();
+                    rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (rand.Length > 0);
+
+                Log("-- Закончил кормить питомца.");
+            }
+        }
+
+        public async Task Play()
+        {
+            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+
+            string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+            if (rand.Length > 0)
+            {
+                Log("-- Играю с питомцем...");
+
+                do
+                {
+                    result = await httpClient.GetAsync("/?action=play&rand=" + rand).Result.Content.ReadAsStringAsync();
+                    rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (rand.Length > 0);
+
+                Log("-- Закончил играть с питомцем.");
+            }
+        }
+
+        public new async Task Show()
+        {
+            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+
+            if (result.Contains("show?start=1"))
+            {
+                Log("-- Иду на выставку...");
+
+                bool status = false;
+                await httpClient.GetAsync("/show?start=1").Result.Content.ReadAsStringAsync();
+
+                do
+                {
+                    result = await httpClient.GetAsync("/show").Result.Content.ReadAsStringAsync();
+
+                    if (result.Contains("Участвовать за"))
+                        status = true;
+
+                    if (result.Contains("Соревноваться"))
+                        status = true;
+
+                    if (result.Contains("Забрать награду"))
+                        status = false;
+
+                    if (result.Contains("Завершить"))
+                        status = false;
+
+                    if (result.Contains("Снежки"))
+                        status = false;
+
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (status);
+
+                Log("-- Выставка закончена.");
+            }
+        }
+
         private void Start_Click(object sender, EventArgs e)
         {
             isStart = true;
@@ -141,6 +260,69 @@ namespace mpets.mobi.bot
 
                 if(isLogin)
                 {
+                    bool status = true;
+                    do
+                    {
+                        string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+                        bool sleep = false;
+
+                        if (result.Contains("Играть ещё"))
+                            status = false;
+
+                        if (result.Contains("Разбудить"))
+                            status = false;
+
+                        if (!checkBox1.Checked & !checkBox2.Checked & !checkBox3.Checked)
+                            status = false;
+
+                        if (result.Contains("Разбудить бесплатно"))
+                        {
+                            result = await httpClient.GetAsync("/wakeup_sleep").Result.Content.ReadAsStringAsync();
+                            Log("-- Разбудили питомца бесплатно.");
+                        }
+
+                        if(new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
+                        {
+                            sleep = true;
+                        }
+
+                        if (status)
+                        {
+                            if(!sleep)
+                            {
+                                if (checkBox1.Checked)
+                                {
+                                    StatusLog("Запуск метода = Food");
+
+                                    await Food();
+                                    await Task.Delay(random.Next(500, 1000));
+                                }
+
+                                if (checkBox2.Checked)
+                                {
+                                    StatusLog("Запуск метода = Play");
+
+                                    await Play();
+                                    await Task.Delay(random.Next(500, 1000));
+                                }
+
+                                if (checkBox2.Checked)
+                                {
+                                    StatusLog("Запуск метода = Show");
+
+                                    await Show();
+                                    await Task.Delay(random.Next(500, 1000));
+                                }
+
+                                StatusLog("Запуск метода = WakeUp");
+
+                                await WakeUp();
+                                await Task.Delay(random.Next(1000, 2000));
+                            }
+                        }
+                    }
+                    while (status);
+
                     if (checkBox4.Checked)
                     {
                         StatusLog("Запуск метода = Travel");
@@ -149,7 +331,7 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
-                    if(checkBox6.Checked)
+                    if (checkBox6.Checked)
                     {
                         StatusLog("Запуск метода = Glade");
 
@@ -157,11 +339,19 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
-                    if(checkBox5.Checked)
+                    if (checkBox5.Checked)
                     {
                         StatusLog("Запуск метода = Sell_all");
 
                         await Sell_all();
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+
+                    if (checkBox7.Checked)
+                    {
+                        StatusLog("Запуск метода = Tasks");
+
+                        await Tasks();
                         await Task.Delay(random.Next(500, 1000));
                     }
 
@@ -190,6 +380,7 @@ namespace mpets.mobi.bot
 
                     if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second)
                     {
+                        start.Enabled = true;
                         start.PerformClick();
                     }
 
