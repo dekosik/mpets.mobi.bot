@@ -63,9 +63,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap safari_60 {
+        internal static System.Drawing.Bitmap vk_icon {
             get {
-                object obj = ResourceManager.GetObject("safari_60", resourceCulture);
+                object obj = ResourceManager.GetObject("vk_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

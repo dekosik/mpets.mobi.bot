@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="avatar_icon.ico" />
-    <None Include="Resources\safari_60.png" />
+    <Content Include="Resources\vk_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

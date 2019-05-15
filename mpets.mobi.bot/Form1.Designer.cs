@@ -30,24 +30,24 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.login = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.password = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.start = new System.Windows.Forms.Button();
+            this.stop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -66,12 +66,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Имя питомца";
             // 
-            // textBox1
+            // login
             // 
-            this.textBox1.Location = new System.Drawing.Point(6, 26);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(194, 20);
-            this.textBox1.TabIndex = 1;
+            this.login.Location = new System.Drawing.Point(6, 26);
+            this.login.Name = "login";
+            this.login.Size = new System.Drawing.Size(194, 20);
+            this.login.TabIndex = 1;
+            this.login.TextChanged += new System.EventHandler(this.Login_TextChanged);
             // 
             // label2
             // 
@@ -82,20 +83,21 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Пароль";
             // 
-            // textBox2
+            // password
             // 
-            this.textBox2.Location = new System.Drawing.Point(7, 64);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(193, 20);
-            this.textBox2.TabIndex = 3;
+            this.password.Location = new System.Drawing.Point(7, 64);
+            this.password.Name = "password";
+            this.password.Size = new System.Drawing.Size(193, 20);
+            this.password.TabIndex = 3;
+            this.password.TextChanged += new System.EventHandler(this.Password_TextChanged);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.numericUpDown1);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.textBox2);
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.password);
+            this.groupBox1.Controls.Add(this.login);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Location = new System.Drawing.Point(8, 1);
             this.groupBox1.Name = "groupBox1";
@@ -106,9 +108,25 @@
             // numericUpDown1
             // 
             this.numericUpDown1.Location = new System.Drawing.Point(151, 89);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(49, 20);
             this.numericUpDown1.TabIndex = 5;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.NumericUpDown1_ValueChanged);
             // 
             // label3
             // 
@@ -119,24 +137,24 @@
             this.label3.TabIndex = 4;
             this.label3.Text = "Запускать каждые ( мин )";
             // 
-            // button1
+            // start
             // 
-            this.button1.Location = new System.Drawing.Point(8, 128);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Старт";
-            this.button1.UseVisualStyleBackColor = true;
+            this.start.Location = new System.Drawing.Point(8, 128);
+            this.start.Name = "start";
+            this.start.Size = new System.Drawing.Size(100, 30);
+            this.start.TabIndex = 5;
+            this.start.Text = "Старт";
+            this.start.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // stop
             // 
-            this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(114, 128);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 30);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Стоп";
-            this.button2.UseVisualStyleBackColor = true;
+            this.stop.Enabled = false;
+            this.stop.Location = new System.Drawing.Point(114, 128);
+            this.stop.Name = "stop";
+            this.stop.Size = new System.Drawing.Size(100, 30);
+            this.stop.TabIndex = 6;
+            this.stop.Text = "Стоп";
+            this.stop.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -153,6 +171,83 @@
             this.groupBox2.Size = new System.Drawing.Size(206, 168);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
+            // 
+            // checkBox8
+            // 
+            this.checkBox8.Location = new System.Drawing.Point(7, 141);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox8.Size = new System.Drawing.Size(193, 24);
+            this.checkBox8.TabIndex = 7;
+            this.checkBox8.Text = "Автозапуск и автостарт";
+            this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox8.UseVisualStyleBackColor = true;
+            // 
+            // checkBox7
+            // 
+            this.checkBox7.Location = new System.Drawing.Point(7, 122);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox7.Size = new System.Drawing.Size(193, 24);
+            this.checkBox7.TabIndex = 6;
+            this.checkBox7.Text = "Забирать задания";
+            this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox7.UseVisualStyleBackColor = true;
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.Location = new System.Drawing.Point(7, 103);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox6.Size = new System.Drawing.Size(193, 24);
+            this.checkBox6.TabIndex = 5;
+            this.checkBox6.Text = "Копать поляну";
+            this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.Location = new System.Drawing.Point(7, 84);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox5.Size = new System.Drawing.Size(193, 24);
+            this.checkBox5.TabIndex = 4;
+            this.checkBox5.Text = "Продавать ненужные вещи";
+            this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.Location = new System.Drawing.Point(7, 65);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox4.Size = new System.Drawing.Size(193, 24);
+            this.checkBox4.TabIndex = 3;
+            this.checkBox4.Text = "Выгуливать питомца";
+            this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.Location = new System.Drawing.Point(7, 46);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox3.Size = new System.Drawing.Size(193, 24);
+            this.checkBox3.TabIndex = 2;
+            this.checkBox3.Text = "Ходить на выставки";
+            this.checkBox3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.Location = new System.Drawing.Point(7, 27);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox2.Size = new System.Drawing.Size(193, 24);
+            this.checkBox2.TabIndex = 1;
+            this.checkBox2.Text = "Играть с питомцем";
+            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // checkBox1
             // 
@@ -176,83 +271,6 @@
             this.richTextBox1.TabIndex = 8;
             this.richTextBox1.Text = "";
             // 
-            // checkBox2
-            // 
-            this.checkBox2.Location = new System.Drawing.Point(7, 27);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox2.Size = new System.Drawing.Size(193, 24);
-            this.checkBox2.TabIndex = 1;
-            this.checkBox2.Text = "Играть с питомцем";
-            this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.Location = new System.Drawing.Point(7, 46);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox3.Size = new System.Drawing.Size(193, 24);
-            this.checkBox3.TabIndex = 2;
-            this.checkBox3.Text = "Ходить на выставки";
-            this.checkBox3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.Location = new System.Drawing.Point(7, 65);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox4.Size = new System.Drawing.Size(193, 24);
-            this.checkBox4.TabIndex = 3;
-            this.checkBox4.Text = "Выгуливать питомца";
-            this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.Location = new System.Drawing.Point(7, 84);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox5.Size = new System.Drawing.Size(193, 24);
-            this.checkBox5.TabIndex = 4;
-            this.checkBox5.Text = "Продавать ненужные вещи";
-            this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox5.UseVisualStyleBackColor = true;
-            // 
-            // checkBox6
-            // 
-            this.checkBox6.Location = new System.Drawing.Point(7, 103);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox6.Size = new System.Drawing.Size(193, 24);
-            this.checkBox6.TabIndex = 5;
-            this.checkBox6.Text = "Копать поляну";
-            this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox6.UseVisualStyleBackColor = true;
-            // 
-            // checkBox7
-            // 
-            this.checkBox7.Location = new System.Drawing.Point(7, 122);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox7.Size = new System.Drawing.Size(193, 24);
-            this.checkBox7.TabIndex = 6;
-            this.checkBox7.Text = "Забирать задания";
-            this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox7.UseVisualStyleBackColor = true;
-            // 
-            // checkBox8
-            // 
-            this.checkBox8.Location = new System.Drawing.Point(7, 141);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox8.Size = new System.Drawing.Size(193, 24);
-            this.checkBox8.TabIndex = 7;
-            this.checkBox8.Text = "Автозапуск и автостарт";
-            this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox8.UseVisualStyleBackColor = true;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -273,12 +291,13 @@
             // 
             // toolStripStatusLabel2
             // 
-            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.safari_60;
+            this.toolStripStatusLabel2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripStatusLabel2.Image")));
             this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolStripStatusLabel2.IsLink = true;
+            this.toolStripStatusLabel2.LinkColor = System.Drawing.Color.Black;
             this.toolStripStatusLabel2.Margin = new System.Windows.Forms.Padding(0, 3, -10, 2);
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(435, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(466, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.Text = "Группа ВКонтакте";
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -293,8 +312,8 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.stop);
+            this.Controls.Add(this.start);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -302,6 +321,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Удивительные питомца By DeKoSiK";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -316,14 +336,14 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox login;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox password;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button start;
+        private System.Windows.Forms.Button stop;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.RichTextBox richTextBox1;
