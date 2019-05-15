@@ -105,7 +105,7 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Копать"))
             {
-                Log("Копаю поляну...");
+                Log("-- Копаю поляну...");
 
                 do
                 {
@@ -114,7 +114,7 @@ namespace mpets.mobi.bot
                 }
                 while (result.Contains("Копать"));
 
-                Log("Закончил копать поляну.");
+                Log("-- Закончил копать поляну.");
             }
         }
 
@@ -159,6 +159,8 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Дать витаминку за"))
             {
+                await Task.Delay(random.Next(500, 1000));
+
                 await httpClient.GetAsync("/wakeup").Result.Content.ReadAsStringAsync();
 
                 Log("-- Питомец получил витаминку.");
@@ -174,6 +176,7 @@ namespace mpets.mobi.bot
             {
                 Log("-- Кормлю питомца...");
 
+                await Task.Delay(random.Next(500, 1000));
                 do
                 {
                     result = await httpClient.GetAsync("/?action=food&rand=" + rand).Result.Content.ReadAsStringAsync();
@@ -196,6 +199,7 @@ namespace mpets.mobi.bot
             {
                 Log("-- Играю с питомцем...");
 
+                await Task.Delay(random.Next(500, 1000));
                 do
                 {
                     result = await httpClient.GetAsync("/?action=play&rand=" + rand).Result.Content.ReadAsStringAsync();
@@ -220,6 +224,7 @@ namespace mpets.mobi.bot
                 bool status = false;
                 await httpClient.GetAsync("/show?start=1").Result.Content.ReadAsStringAsync();
 
+                await Task.Delay(random.Next(500, 1000));
                 do
                 {
                     result = await httpClient.GetAsync("/show").Result.Content.ReadAsStringAsync();
@@ -247,7 +252,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        private void Start_Click(object sender, EventArgs e)
+        public void StartBot()
         {
             isStart = true;
             isTimer = false;
@@ -258,7 +263,7 @@ namespace mpets.mobi.bot
 
                 isLogin = await Authorization(login.Text, password.Text);
 
-                if(isLogin)
+                if (isLogin)
                 {
                     bool status = true;
                     do
@@ -281,14 +286,16 @@ namespace mpets.mobi.bot
                             Log("-- Разбудили питомца бесплатно.");
                         }
 
-                        if(new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
+                        if (new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
                         {
                             sleep = true;
                         }
 
+                        await Task.Delay(random.Next(500, 1000));
+
                         if (status)
                         {
-                            if(!sleep)
+                            if (!sleep)
                             {
                                 if (checkBox1.Checked)
                                 {
@@ -365,6 +372,11 @@ namespace mpets.mobi.bot
             });
         }
 
+        private void Start_Click(object sender, EventArgs e)
+        {
+            StartBot();
+        }
+
         private void Stop_Click(object sender, EventArgs e)
         {
             isStart = false;
@@ -380,8 +392,7 @@ namespace mpets.mobi.bot
 
                     if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second)
                     {
-                        start.Enabled = true;
-                        start.PerformClick();
+                        StartBot();
                     }
 
                     StatusLog($"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек");
