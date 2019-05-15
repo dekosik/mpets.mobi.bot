@@ -122,7 +122,13 @@ namespace mpets.mobi.bot
 
         public async Task Travel()
         {
-            string result = await httpClient.GetAsync("/travel?clear=1").Result.Content.ReadAsStringAsync();
+            string result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
+            await Task.Delay(random.Next(500, 1000));
+
+            if (result.Contains("Гулять дальше"))
+            {
+                result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
+            }
 
             if (!result.Contains("Ваш питомец гуляет"))
             {
