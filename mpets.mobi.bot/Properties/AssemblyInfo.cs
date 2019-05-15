@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанных со сборкой.
-[assembly: AssemblyTitle("mpets.mobi.bot")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Удивительные питомца By DeKoSiK")]
+[assembly: AssemblyDescription("Бот для мобильной браузерной игры 'Удивительные питомцы'.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("DeKoSiK")]
 [assembly: AssemblyProduct("mpets.mobi.bot")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Все права защищены © 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

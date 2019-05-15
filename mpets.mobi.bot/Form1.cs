@@ -17,14 +17,31 @@ namespace mpets.mobi.bot
         private static INIManager settings = new INIManager(AppDomain.CurrentDomain.BaseDirectory + "settings.ini");
         private static HttpClient client = new HttpClient();
         private static Random random = new Random();
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        public void log(string text, bool show_times, Color color = new Color())
+        public void Log(string text, bool show_times = true, Color color = new Color())
         {
+            if(show_times)
+            {
+                Invoke(new Action(() => richTextBox1.SelectionColor = color));
+                Invoke(new Action(() => richTextBox1.AppendText($"[ {DateTime.Now} ] {text} {Environment.NewLine}")));
+                Invoke(new Action(() => richTextBox1.ScrollToCaret()));
+            }
+            else
+            {
+                Invoke(new Action(() => richTextBox1.SelectionColor = color));
+                Invoke(new Action(() => richTextBox1.AppendText($"{text} {Environment.NewLine}")));
+                Invoke(new Action(() => richTextBox1.ScrollToCaret()));
+            }
+        }
 
+        private void ToolStripStatusLabel2_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
         }
     }
 }
