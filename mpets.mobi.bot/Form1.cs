@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using mpets.bot.Libs;
 
 namespace mpets.mobi.bot
@@ -16,7 +18,7 @@ namespace mpets.mobi.bot
     public partial class Form1 : Form
     {
         private static readonly INIManager settings = new INIManager(AppDomain.CurrentDomain.BaseDirectory + "settings.ini");
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static HttpClient httpClient;
         private static readonly Random random = new Random();
 
         private DateTime taskStop;
@@ -24,13 +26,18 @@ namespace mpets.mobi.bot
         private bool isStart;
         private bool isLogin;
         private bool isTimer;
+        private bool isHide;
 
         public Form1()
         {
+            InitializeComponent();
+        }
+
+        private void CreateHttpClient()
+        {
+            httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://mpets.mobi");
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
-
-            InitializeComponent();
         }
 
         public void Log(string text, bool show_times = true, Color color = new Color())
@@ -52,6 +59,54 @@ namespace mpets.mobi.bot
         public void StatusLog(string text)
         {
             Invoke(new Action(() => statusStrip1.Items[0].Text = text));
+        }
+
+        public static void AutoRun(bool flag)
+        {
+            string ExePath = System.Windows.Forms.Application.ExecutablePath;
+            string name = "";
+            FileInfo fi = new FileInfo(ExePath);
+            int k = fi.Name.IndexOf('.');
+            name = fi.Name.Substring(0, k);
+
+            RegistryKey reg;
+            reg = Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
+            try
+            {
+                if (flag)
+                    reg.SetValue(name, ExePath);
+                else
+                    reg.DeleteValue(name);
+
+                reg.Close();
+            }
+            catch
+            {
+                MessageBox.Show("Автозапуск не возможен");
+            }
+        }
+
+        public void HideForm(bool flag)
+        {
+            if (flag)
+            {
+                Show();
+                ShowInTaskbar = true;
+                WindowState = FormWindowState.Normal;
+
+                isHide = false;
+            }
+            else
+            {
+                notifyIcon1.BalloonTipText = "Нажмите на иконку приложения 1 раз чтобы скрыть или показать форму.";
+                notifyIcon1.ShowBalloonTip(1000);
+
+                ShowInTaskbar = false;
+                WindowState = FormWindowState.Minimized;
+                Hide();
+
+                isHide = true;
+            }
         }
 
         public async Task<bool> Authorization(string name, string password)
@@ -213,7 +268,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        public new async Task Show()
+        public async Task Showing()
         {
             string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
 
@@ -254,6 +309,8 @@ namespace mpets.mobi.bot
 
         public void StartBot()
         {
+            CreateHttpClient();
+
             isStart = true;
             isTimer = false;
 
@@ -315,9 +372,9 @@ namespace mpets.mobi.bot
 
                                 if (checkBox2.Checked)
                                 {
-                                    StatusLog("Show();");
+                                    StatusLog("Showing();");
 
-                                    await Show();
+                                    await Showing();
                                     await Task.Delay(random.Next(500, 1000));
                                 }
 
@@ -429,6 +486,7 @@ namespace mpets.mobi.bot
             login.Text = settings.get("Authorization", "Login");
             password.Text = settings.get("Authorization", "Password");
 
+            if (settings.get("BotSettings", "IntervalTimer").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.get("BotSettings", "IntervalTimer"));
             if (settings.get("BotSettings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.get("BotSettings", "Food"));
             if (settings.get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.get("BotSettings", "Play"));
             if (settings.get("BotSettings", "Show").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.get("BotSettings", "Show"));
@@ -436,6 +494,22 @@ namespace mpets.mobi.bot
             if (settings.get("BotSettings", "Sell_All").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.get("BotSettings", "Sell_All"));
             if (settings.get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.get("BotSettings", "Glade"));
             if (settings.get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.get("BotSettings", "Tasks"));
+
+            if (settings.get("BotSettings", "AutoLoad_and_AutoStart").Length > 0)
+            {
+                checkBox8.Checked = Convert.ToBoolean(settings.get("BotSettings", "AutoLoad_and_AutoStart"));
+
+                if(Convert.ToBoolean(settings.get("BotSettings", "AutoLoad_and_AutoStart")))
+                {
+                    HideForm(isHide);
+                    StartBot();
+                }
+            }
+        }
+
+        private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            HideForm(isHide);
         }
 
         private void Login_TextChanged(object sender, EventArgs e)
@@ -486,6 +560,12 @@ namespace mpets.mobi.bot
         private void CheckBox7_CheckedChanged(object sender, EventArgs e)
         {
             settings.write("BotSettings", "Tasks", checkBox7.Checked.ToString().ToLower());
+        }
+
+        private void CheckBox8_CheckedChanged(object sender, EventArgs e)
+        {
+            AutoRun(checkBox8.Checked);
+            settings.write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
         }
 
         private void ToolStripStatusLabel2_Click(object sender, EventArgs e)
