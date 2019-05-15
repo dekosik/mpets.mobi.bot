@@ -179,10 +179,10 @@
             // 
             // checkBox8
             // 
-            this.checkBox8.Location = new System.Drawing.Point(7, 141);
+            this.checkBox8.Location = new System.Drawing.Point(6, 142);
             this.checkBox8.Name = "checkBox8";
             this.checkBox8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox8.Size = new System.Drawing.Size(193, 24);
+            this.checkBox8.Size = new System.Drawing.Size(192, 24);
             this.checkBox8.TabIndex = 7;
             this.checkBox8.Text = "Автозапуск и автостарт";
             this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -192,92 +192,99 @@
             // 
             this.checkBox7.Checked = true;
             this.checkBox7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox7.Location = new System.Drawing.Point(7, 122);
+            this.checkBox7.Location = new System.Drawing.Point(6, 123);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox7.Size = new System.Drawing.Size(193, 24);
+            this.checkBox7.Size = new System.Drawing.Size(192, 24);
             this.checkBox7.TabIndex = 6;
             this.checkBox7.Text = "Забирать задания";
             this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox7.UseVisualStyleBackColor = true;
+            this.checkBox7.CheckedChanged += new System.EventHandler(this.CheckBox7_CheckedChanged);
             // 
             // checkBox6
             // 
             this.checkBox6.Checked = true;
             this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox6.Location = new System.Drawing.Point(7, 103);
+            this.checkBox6.Location = new System.Drawing.Point(6, 104);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox6.Size = new System.Drawing.Size(193, 24);
+            this.checkBox6.Size = new System.Drawing.Size(192, 24);
             this.checkBox6.TabIndex = 5;
             this.checkBox6.Text = "Копать поляну";
             this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkBox6.CheckedChanged += new System.EventHandler(this.CheckBox6_CheckedChanged);
             // 
             // checkBox5
             // 
             this.checkBox5.Checked = true;
             this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox5.Location = new System.Drawing.Point(7, 84);
+            this.checkBox5.Location = new System.Drawing.Point(6, 85);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox5.Size = new System.Drawing.Size(193, 24);
+            this.checkBox5.Size = new System.Drawing.Size(192, 24);
             this.checkBox5.TabIndex = 4;
             this.checkBox5.Text = "Продавать ненужные вещи";
             this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.CheckBox5_CheckedChanged);
             // 
             // checkBox4
             // 
             this.checkBox4.Checked = true;
             this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox4.Location = new System.Drawing.Point(7, 65);
+            this.checkBox4.Location = new System.Drawing.Point(6, 66);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox4.Size = new System.Drawing.Size(193, 24);
+            this.checkBox4.Size = new System.Drawing.Size(192, 24);
             this.checkBox4.TabIndex = 3;
             this.checkBox4.Text = "Выгуливать питомца";
             this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.CheckBox4_CheckedChanged);
             // 
             // checkBox3
             // 
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Location = new System.Drawing.Point(7, 46);
+            this.checkBox3.Location = new System.Drawing.Point(6, 47);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox3.Size = new System.Drawing.Size(193, 24);
+            this.checkBox3.Size = new System.Drawing.Size(192, 24);
             this.checkBox3.TabIndex = 2;
             this.checkBox3.Text = "Ходить на выставки";
             this.checkBox3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.CheckBox3_CheckedChanged);
             // 
             // checkBox2
             // 
             this.checkBox2.Checked = true;
             this.checkBox2.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox2.Location = new System.Drawing.Point(7, 27);
+            this.checkBox2.Location = new System.Drawing.Point(6, 28);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox2.Size = new System.Drawing.Size(193, 24);
+            this.checkBox2.Size = new System.Drawing.Size(192, 24);
             this.checkBox2.TabIndex = 1;
             this.checkBox2.Text = "Играть с питомцем";
             this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBox2_CheckedChanged);
             // 
             // checkBox1
             // 
             this.checkBox1.Checked = true;
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(6, 8);
+            this.checkBox1.Location = new System.Drawing.Point(6, 9);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox1.Size = new System.Drawing.Size(193, 24);
+            this.checkBox1.Size = new System.Drawing.Size(192, 24);
             this.checkBox1.TabIndex = 0;
             this.checkBox1.Text = "Кормить питомца";
             this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
             // richTextBox1
             // 
