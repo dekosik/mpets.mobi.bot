@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using mpets.bot.Libs;
+using mpets.mobi.bot.Libs;
 
 namespace mpets.mobi.bot
 {
@@ -123,10 +123,10 @@ namespace mpets.mobi.bot
         public async Task Travel()
         {
             string result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
-            await Task.Delay(random.Next(500, 1000));
 
             if (result.Contains("Гулять дальше"))
             {
+                await Task.Delay(random.Next(500, 1000));
                 result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
             }
 

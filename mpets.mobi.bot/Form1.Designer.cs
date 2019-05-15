@@ -77,6 +77,7 @@
             this.login.Name = "login";
             this.login.Size = new System.Drawing.Size(194, 20);
             this.login.TabIndex = 1;
+            this.login.TabStop = false;
             this.login.TextChanged += new System.EventHandler(this.Login_TextChanged);
             // 
             // label2
@@ -95,6 +96,7 @@
             this.password.PasswordChar = '*';
             this.password.Size = new System.Drawing.Size(193, 20);
             this.password.TabIndex = 3;
+            this.password.TabStop = false;
             this.password.TextChanged += new System.EventHandler(this.Password_TextChanged);
             // 
             // groupBox1
@@ -127,6 +129,7 @@
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(49, 20);
             this.numericUpDown1.TabIndex = 5;
+            this.numericUpDown1.TabStop = false;
             this.numericUpDown1.Value = new decimal(new int[] {
             10,
             0,
@@ -149,6 +152,7 @@
             this.start.Name = "start";
             this.start.Size = new System.Drawing.Size(100, 30);
             this.start.TabIndex = 5;
+            this.start.TabStop = false;
             this.start.Text = "Старт";
             this.start.UseVisualStyleBackColor = true;
             this.start.Click += new System.EventHandler(this.Start_Click);
@@ -160,6 +164,7 @@
             this.stop.Name = "stop";
             this.stop.Size = new System.Drawing.Size(100, 30);
             this.stop.TabIndex = 6;
+            this.stop.TabStop = false;
             this.stop.Text = "Стоп";
             this.stop.UseVisualStyleBackColor = true;
             this.stop.Click += new System.EventHandler(this.Stop_Click);
@@ -187,6 +192,7 @@
             this.checkBox8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox8.Size = new System.Drawing.Size(192, 24);
             this.checkBox8.TabIndex = 7;
+            this.checkBox8.TabStop = false;
             this.checkBox8.Text = "Автозапуск и автостарт";
             this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox8.UseVisualStyleBackColor = true;
@@ -201,6 +207,7 @@
             this.checkBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox7.Size = new System.Drawing.Size(192, 24);
             this.checkBox7.TabIndex = 6;
+            this.checkBox7.TabStop = false;
             this.checkBox7.Text = "Забирать задания";
             this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox7.UseVisualStyleBackColor = true;
@@ -215,6 +222,7 @@
             this.checkBox6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox6.Size = new System.Drawing.Size(192, 24);
             this.checkBox6.TabIndex = 5;
+            this.checkBox6.TabStop = false;
             this.checkBox6.Text = "Копать поляну";
             this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox6.UseVisualStyleBackColor = true;
@@ -229,6 +237,7 @@
             this.checkBox5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox5.Size = new System.Drawing.Size(192, 24);
             this.checkBox5.TabIndex = 4;
+            this.checkBox5.TabStop = false;
             this.checkBox5.Text = "Продавать ненужные вещи";
             this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox5.UseVisualStyleBackColor = true;
@@ -243,6 +252,7 @@
             this.checkBox4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox4.Size = new System.Drawing.Size(192, 24);
             this.checkBox4.TabIndex = 3;
+            this.checkBox4.TabStop = false;
             this.checkBox4.Text = "Выгуливать питомца";
             this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox4.UseVisualStyleBackColor = true;
@@ -257,6 +267,7 @@
             this.checkBox3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox3.Size = new System.Drawing.Size(192, 24);
             this.checkBox3.TabIndex = 2;
+            this.checkBox3.TabStop = false;
             this.checkBox3.Text = "Ходить на выставки";
             this.checkBox3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox3.UseVisualStyleBackColor = true;
@@ -271,6 +282,7 @@
             this.checkBox2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox2.Size = new System.Drawing.Size(192, 24);
             this.checkBox2.TabIndex = 1;
+            this.checkBox2.TabStop = false;
             this.checkBox2.Text = "Играть с питомцем";
             this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox2.UseVisualStyleBackColor = true;
@@ -285,6 +297,7 @@
             this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBox1.Size = new System.Drawing.Size(192, 24);
             this.checkBox1.TabIndex = 0;
+            this.checkBox1.TabStop = false;
             this.checkBox1.Text = "Кормить питомца";
             this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -299,6 +312,7 @@
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(347, 318);
             this.richTextBox1.TabIndex = 8;
+            this.richTextBox1.TabStop = false;
             this.richTextBox1.Text = "";
             // 
             // statusStrip1

@@ -1,13 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace mpets.bot.Libs
+namespace mpets.mobi.bot.Libs
 {
     class INIManager
     {
         public INIManager(string aPath)
         {
-            path = aPath;
+            Path = aPath;
         }
 
         public INIManager() : this("") { }
@@ -15,19 +15,18 @@ namespace mpets.bot.Libs
         public string get(string aSection, string aKey)
         {
             StringBuilder buffer = new StringBuilder(SIZE);
-            GetPrivateString(aSection, aKey, null, buffer, SIZE, path);
+            GetPrivateString(aSection, aKey, null, buffer, SIZE, Path);
             return buffer.ToString();
         }
 
         public void write(string aSection, string aKey, string aValue)
         {
-            WritePrivateString(aSection, aKey, aValue, path);
+            WritePrivateString(aSection, aKey, aValue, Path);
         }
 
-        public string Path { get { return path; } set { path = value; } }
+        public string Path { get; set; } = null;
 
         private const int SIZE = 1024;
-        private string path = null;
 
         [DllImport("kernel32.dll", EntryPoint = "GetPrivateProfileString")]
         private static extern int GetPrivateString(string section, string key, string def, StringBuilder buffer, int size, string path);
