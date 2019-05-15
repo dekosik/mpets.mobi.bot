@@ -49,6 +49,11 @@ namespace mpets.mobi.bot
             }
         }
 
+        public void StatusLog(string text)
+        {
+            Invoke(new Action(() => statusStrip1.Items[0].Text = text));
+        }
+
         public async Task<bool> Authorization(string name, string password)
         {
             string result = await httpClient.PostAsync("/login", new FormUrlEncodedContent(new[] {
@@ -94,40 +99,118 @@ namespace mpets.mobi.bot
             }
         }
 
+        public async Task Glade()
+        {
+            string result = await httpClient.GetAsync("/glade").Result.Content.ReadAsStringAsync();
+
+            if (result.Contains("Копать"))
+            {
+                Log("Копаю поляну...");
+
+                do
+                {
+                    result = await httpClient.GetAsync("/glade_dig").Result.Content.ReadAsStringAsync();
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (result.Contains("Копать"));
+
+                Log("Закончил копать поляну.");
+            }
+        }
+
+        public async Task Sell_all()
+        {
+            string result = await httpClient.GetAsync("/sell_all?confirm=1&backparent=").Result.Content.ReadAsStringAsync();
+
+            if (!result.Contains("У вас нет ненужных вещей на продажу"))
+            {
+                Log("-- Были проданы ненужные вещи.");
+            }
+        }
+
         private void Start_Click(object sender, EventArgs e)
         {
+            isStart = true;
             isTimer = false;
 
             Task.Run(async () =>
             {
+                StatusLog("Запуск метода = Authorization");
+
                 isLogin = await Authorization(login.Text, password.Text);
 
                 if(isLogin)
                 {
-                    if(checkBox4.Checked)
+                    if (checkBox4.Checked)
                     {
+                        StatusLog("Запуск метода = Travel");
+
                         await Travel();
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+
+                    if(checkBox6.Checked)
+                    {
+                        StatusLog("Запуск метода = Glade");
+
+                        await Glade();
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+
+                    if(checkBox5.Checked)
+                    {
+                        StatusLog("Запуск метода = Sell_all");
+
+                        await Sell_all();
                         await Task.Delay(random.Next(500, 1000));
                     }
 
                     isTimer = true;
                     taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(numericUpDown1.Value));
                 }
+                else
+                {
+                    Log("Вы ввели неправильный логин или пароль.");
+                }
             });
+        }
+
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            isStart = false;
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if(isTimer)
+            if(isStart)
             {
-                DateTime now = DateTime.Now;
-
-                if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second)
+                if (isTimer)
                 {
-                    start.PerformClick();
-                }
+                    DateTime now = DateTime.Now;
 
-                statusStrip1.Items[0].Text = $"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек";
+                    if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second)
+                    {
+                        start.PerformClick();
+                    }
+
+                    StatusLog($"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек");
+                }
+            }
+        }
+
+        private void Timer2_Tick(object sender, EventArgs e)
+        {
+            if (isStart)
+            {
+                start.Enabled = false;
+                stop.Enabled = true;
+            }
+            else
+            {
+                start.Enabled = true;
+                stop.Enabled = false;
+
+                StatusLog("Запустите бота");
             }
         }
 
