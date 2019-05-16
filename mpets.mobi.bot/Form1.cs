@@ -45,7 +45,7 @@ namespace mpets.mobi.bot
             if(show_times)
             {
                 Invoke(new Action(() => richTextBox1.SelectionColor = color));
-                Invoke(new Action(() => richTextBox1.AppendText($" [ {DateTime.Now} ] {text} {Environment.NewLine}")));
+                Invoke(new Action(() => richTextBox1.AppendText($" [ {DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} ] {text} {Environment.NewLine}")));
                 Invoke(new Action(() => richTextBox1.ScrollToCaret()));
             }
             else
@@ -467,7 +467,7 @@ namespace mpets.mobi.bot
                         StartBot();
                     }
 
-                    StatusLog($"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек", Properties.Resources.sleep);
+                    StatusLog($"Жду {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
                 }
             }
         }
@@ -583,7 +583,17 @@ namespace mpets.mobi.bot
             settings.Write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
         }
 
-        private void ToolStripStatusLabel2_Click(object sender, EventArgs e)
+        private void LinkLabel1_MouseEnter(object sender, EventArgs e)
+        {
+            linkLabel1.LinkColor = Color.RoyalBlue;
+        }
+
+        private void LinkLabel1_MouseLeave(object sender, EventArgs e)
+        {
+            linkLabel1.LinkColor = Color.Black;
+        }
+
+        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
         }
