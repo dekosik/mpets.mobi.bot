@@ -45,20 +45,21 @@ namespace mpets.mobi.bot
             if(show_times)
             {
                 Invoke(new Action(() => richTextBox1.SelectionColor = color));
-                Invoke(new Action(() => richTextBox1.AppendText($"[ {DateTime.Now} ] {text} {Environment.NewLine}")));
+                Invoke(new Action(() => richTextBox1.AppendText($" [ {DateTime.Now} ] {text} {Environment.NewLine}")));
                 Invoke(new Action(() => richTextBox1.ScrollToCaret()));
             }
             else
             {
                 Invoke(new Action(() => richTextBox1.SelectionColor = color));
-                Invoke(new Action(() => richTextBox1.AppendText($"{text} {Environment.NewLine}")));
+                Invoke(new Action(() => richTextBox1.AppendText($" {text} {Environment.NewLine}")));
                 Invoke(new Action(() => richTextBox1.ScrollToCaret()));
             }
         }
 
-        public void StatusLog(string text)
+        public void StatusLog(string text, Image image = null)
         {
             Invoke(new Action(() => statusStrip1.Items[0].Text = text));
+            Invoke(new Action(() => statusStrip1.Items[0].Image = image));
         }
 
         public static void AutoRun(bool flag)
@@ -220,6 +221,8 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Дать витаминку за"))
             {
+                StatusLog("Даю витаминку...", Properties.Resources.heart);
+
                 await Task.Delay(random.Next(500, 1000));
 
                 await httpClient.GetAsync("/wakeup").Result.Content.ReadAsStringAsync();
@@ -322,12 +325,14 @@ namespace mpets.mobi.bot
 
             Task.Run(async () =>
             {
-                StatusLog("Authorization(string, string);");
+                StatusLog("Авторизация...", Properties.Resources.document);
 
                 isLogin = await Authorization(login.Text, password.Text);
 
                 if (isLogin)
                 {
+                    Log("-- Запускаю задачи...");
+
                     bool status = true;
                     do
                     {
@@ -362,7 +367,7 @@ namespace mpets.mobi.bot
                             {
                                 if (checkBox1.Checked)
                                 {
-                                    StatusLog("Food();");
+                                    StatusLog("Кормлю питомца...", Properties.Resources.meat);
 
                                     await Food();
                                     await Task.Delay(random.Next(500, 1000));
@@ -370,7 +375,7 @@ namespace mpets.mobi.bot
 
                                 if (checkBox2.Checked)
                                 {
-                                    StatusLog("Play();");
+                                    StatusLog("Играю с питомцем...", Properties.Resources.mouse);
 
                                     await Play();
                                     await Task.Delay(random.Next(500, 1000));
@@ -378,13 +383,11 @@ namespace mpets.mobi.bot
 
                                 if (checkBox2.Checked)
                                 {
-                                    StatusLog("Showing();");
+                                    StatusLog("На выставке...", Properties.Resources.cup);
 
                                     await Showing();
                                     await Task.Delay(random.Next(500, 1000));
                                 }
-
-                                StatusLog("WakeUp();");
 
                                 await WakeUp();
                                 await Task.Delay(random.Next(1000, 2000));
@@ -395,7 +398,7 @@ namespace mpets.mobi.bot
 
                     if (checkBox4.Checked)
                     {
-                        StatusLog("Travel();");
+                        StatusLog("Проверяю прогулки...", Properties.Resources.travel);
 
                         await Travel();
                         await Task.Delay(random.Next(500, 1000));
@@ -403,7 +406,7 @@ namespace mpets.mobi.bot
 
                     if (checkBox6.Checked)
                     {
-                        StatusLog("Glade();");
+                        StatusLog("Проверяю поляну...", Properties.Resources.garden);
 
                         await Glade();
                         await Task.Delay(random.Next(500, 1000));
@@ -411,7 +414,7 @@ namespace mpets.mobi.bot
 
                     if (checkBox5.Checked)
                     {
-                        StatusLog("Sell_all();");
+                        StatusLog("Проверяю шкаф...", Properties.Resources.chest);
 
                         await Sell_all();
                         await Task.Delay(random.Next(500, 1000));
@@ -419,7 +422,7 @@ namespace mpets.mobi.bot
 
                     if (checkBox7.Checked)
                     {
-                        StatusLog("Tasks();");
+                        StatusLog("Проверяю задания...", Properties.Resources.tasks);
 
                         await Tasks();
                         await Task.Delay(random.Next(500, 1000));
@@ -427,10 +430,16 @@ namespace mpets.mobi.bot
 
                     isTimer = true;
                     taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(numericUpDown1.Value));
+
+                    Log("-- Все задачи выполнены.");
+                    Log("", false);
                 }
                 else
                 {
-                    Log("Вы ввели неправильный логин или пароль.");
+                    isStart = false;
+                    isTimer = true;
+
+                    Log("-- Вы ввели неправильный логин или пароль.");
                 }
             });
         }
@@ -458,7 +467,7 @@ namespace mpets.mobi.bot
                         StartBot();
                     }
 
-                    StatusLog($"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек");
+                    StatusLog($"Жду {taskStop.Subtract(now).Minutes} мин : {taskStop.Subtract(now).Seconds} сек", Properties.Resources.sleep);
                 }
             }
         }
@@ -489,23 +498,23 @@ namespace mpets.mobi.bot
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            login.Text = settings.get("Authorization", "Login");
-            password.Text = settings.get("Authorization", "Password");
+            login.Text = settings.Get("Authorization", "Login");
+            password.Text = settings.Get("Authorization", "Password");
 
-            if (settings.get("BotSettings", "IntervalTimer").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.get("BotSettings", "IntervalTimer"));
-            if (settings.get("BotSettings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.get("BotSettings", "Food"));
-            if (settings.get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.get("BotSettings", "Play"));
-            if (settings.get("BotSettings", "Show").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.get("BotSettings", "Show"));
-            if (settings.get("BotSettings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.get("BotSettings", "Travel"));
-            if (settings.get("BotSettings", "Sell_All").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.get("BotSettings", "Sell_All"));
-            if (settings.get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.get("BotSettings", "Glade"));
-            if (settings.get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.get("BotSettings", "Tasks"));
+            if (settings.Get("BotSettings", "IntervalTimer").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("BotSettings", "IntervalTimer"));
+            if (settings.Get("BotSettings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Food"));
+            if (settings.Get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Play"));
+            if (settings.Get("BotSettings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Showing"));
+            if (settings.Get("BotSettings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Travel"));
+            if (settings.Get("BotSettings", "Sell_All").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Sell_All"));
+            if (settings.Get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Glade"));
+            if (settings.Get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Tasks"));
 
-            if (settings.get("BotSettings", "AutoLoad_and_AutoStart").Length > 0)
+            if (settings.Get("BotSettings", "AutoLoad_and_AutoStart").Length > 0)
             {
-                checkBox8.Checked = Convert.ToBoolean(settings.get("BotSettings", "AutoLoad_and_AutoStart"));
+                checkBox8.Checked = Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart"));
 
-                if(Convert.ToBoolean(settings.get("BotSettings", "AutoLoad_and_AutoStart")))
+                if(Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart")))
                 {
                     HideForm(isHide);
                     StartBot();
@@ -520,58 +529,58 @@ namespace mpets.mobi.bot
 
         private void Login_TextChanged(object sender, EventArgs e)
         {
-            settings.write("Authorization", "Login", login.Text);
+            settings.Write("Authorization", "Login", login.Text);
         }
 
         private void Password_TextChanged(object sender, EventArgs e)
         {
-            settings.write("Authorization", "Password", password.Text);
+            settings.Write("Authorization", "Password", password.Text);
         }
 
         private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "IntervalTimer", numericUpDown1.Value.ToString());
+            settings.Write("BotSettings", "IntervalTimer", numericUpDown1.Value.ToString());
         }
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Food", checkBox1.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Food", checkBox1.Checked.ToString().ToLower());
         }
 
         private void CheckBox2_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Play", checkBox2.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Play", checkBox2.Checked.ToString().ToLower());
         }
 
         private void CheckBox3_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Show", checkBox3.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Showing", checkBox3.Checked.ToString().ToLower());
         }
 
         private void CheckBox4_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Travel", checkBox4.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Travel", checkBox4.Checked.ToString().ToLower());
         }
 
         private void CheckBox5_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Sell_All", checkBox5.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Sell_All", checkBox5.Checked.ToString().ToLower());
         }
 
         private void CheckBox6_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Glade", checkBox6.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Glade", checkBox6.Checked.ToString().ToLower());
         }
 
         private void CheckBox7_CheckedChanged(object sender, EventArgs e)
         {
-            settings.write("BotSettings", "Tasks", checkBox7.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Tasks", checkBox7.Checked.ToString().ToLower());
         }
 
         private void CheckBox8_CheckedChanged(object sender, EventArgs e)
         {
             AutoRun(checkBox8.Checked);
-            settings.write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
         }
 
         private void ToolStripStatusLabel2_Click(object sender, EventArgs e)

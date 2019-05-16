@@ -86,7 +86,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="avatar_icon.ico" />
-    <Content Include="Resources\vk_icon.png" />
+    <None Include="Resources\travel.png" />
+    <None Include="Resources\garden.png" />
+    <None Include="Resources\tasks.png" />
+    <None Include="Resources\chest.png" />
+    <None Include="Resources\sleep.png" />
+    <None Include="Resources\meat.png" />
+    <None Include="Resources\mouse.png" />
+    <None Include="Resources\heart.png" />
+    <None Include="Resources\document.png" />
+    <None Include="Resources\cup.png" />
+    <Content Include="Resources\vk.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

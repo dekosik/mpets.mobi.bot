@@ -12,14 +12,14 @@ namespace mpets.mobi.bot.Libs
 
         public INIManager() : this("") { }
 
-        public string get(string aSection, string aKey)
+        public string Get(string aSection, string aKey)
         {
             StringBuilder buffer = new StringBuilder(SIZE);
             GetPrivateString(aSection, aKey, null, buffer, SIZE, Path);
             return buffer.ToString();
         }
 
-        public void write(string aSection, string aKey, string aValue)
+        public void Write(string aSection, string aKey, string aValue)
         {
             WritePrivateString(aSection, aKey, aValue, Path);
         }
