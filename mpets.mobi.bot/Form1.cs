@@ -429,7 +429,7 @@ namespace mpets.mobi.bot
                     }
 
                     isTimer = true;
-                    taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(numericUpDown1.Value));
+                    taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(random.Next(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value))));
 
                     Log("-- Все задачи выполнены.");
                     Log("", false);
@@ -501,7 +501,8 @@ namespace mpets.mobi.bot
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
 
-            if (settings.Get("BotSettings", "IntervalTimer").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("BotSettings", "IntervalTimer"));
+            if (settings.Get("BotSettings", "TimerMin").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("BotSettings", "TimerMin"));
+            if (settings.Get("BotSettings", "TimerMax").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("BotSettings", "TimerMax"));
             if (settings.Get("BotSettings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Food"));
             if (settings.Get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Play"));
             if (settings.Get("BotSettings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Showing"));
@@ -527,6 +528,11 @@ namespace mpets.mobi.bot
             HideForm(isHide);
         }
 
+        private void Timer3_Tick(object sender, EventArgs e)
+        {
+            numericUpDown1.Maximum = numericUpDown2.Value;
+        }
+
         private void Login_TextChanged(object sender, EventArgs e)
         {
             settings.Write("Authorization", "Login", login.Text);
@@ -539,7 +545,12 @@ namespace mpets.mobi.bot
 
         private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "IntervalTimer", numericUpDown1.Value.ToString());
+            settings.Write("BotSettings", "TimerMin", numericUpDown1.Value.ToString());
+        }
+
+        private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            settings.Write("BotSettings", "TimerMax", numericUpDown2.Value.ToString());
         }
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
