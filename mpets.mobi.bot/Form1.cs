@@ -27,11 +27,15 @@ namespace mpets.mobi.bot
         private bool isLogin;
         private bool isTimer;
         private bool isHide;
-        private readonly bool isDev = false;
 
-        // private int coin = 0;
-        // private int heart = 0;
-        private int expirience = 0;
+        private int[] expirience = { 0, 0 };
+        private bool expirience_bool = false;
+
+        private int[] coin = { 0, 0 };
+        private bool coin_bool = false;
+
+        private int[] heart = { 0, 0 };
+        private bool heart_bool = false;
 
         public Form1()
         {
@@ -49,7 +53,7 @@ namespace mpets.mobi.bot
 
         public void Log(string text, bool show_times = true, Color color = new Color())
         {
-            if(show_times)
+            if (show_times)
             {
                 Invoke(new Action(() => richTextBox1.SelectionColor = color));
                 Invoke(new Action(() => richTextBox1.AppendText($" [ {DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} ] {text} {Environment.NewLine}")));
@@ -134,11 +138,6 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Гулять дальше"))
             {
-                if(isDev)
-                {
-                    File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.txt", result);
-                }
-
                 await Task.Delay(random.Next(500, 1000));
                 result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
             }
@@ -147,7 +146,7 @@ namespace mpets.mobi.bot
             {
                 var travel = new Regex(@"go_travel(.*?)\"" class=").Matches(result);
 
-                if(travel.Count > 0)
+                if (travel.Count > 0)
                 {
                     int temp_id = 0, curr_id = 0;
 
@@ -250,6 +249,7 @@ namespace mpets.mobi.bot
             string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
             {
+                StatusLog("Кормлю питомца...", Properties.Resources.meat);
                 Log("-- Кормлю питомца...");
 
                 await Task.Delay(random.Next(500, 1000));
@@ -273,6 +273,7 @@ namespace mpets.mobi.bot
             string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
             {
+                StatusLog("Играю с питомцем...", Properties.Resources.mouse);
                 Log("-- Играю с питомцем...");
 
                 await Task.Delay(random.Next(500, 1000));
@@ -295,6 +296,7 @@ namespace mpets.mobi.bot
 
             if (result.Contains("show?start=1"))
             {
+                StatusLog("На выставке...", Properties.Resources.cup);
                 Log("-- Иду на выставку...");
 
                 bool status = false;
@@ -328,6 +330,56 @@ namespace mpets.mobi.bot
             }
         }
 
+        public async Task Statistics()
+        {
+            StatusLog("Обновляю статистику...", Properties.Resources.about);
+
+            string result = await httpClient.GetAsync("/profile").Result.Content.ReadAsStringAsync();
+
+            string expirience_string = new Regex(@"Опыт: (.*?) /").Match(result).Groups[1].Value;
+            string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
+            string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
+
+            if (expirience_string.Length > 0)
+            {
+                if (!expirience_bool)
+                {
+                    expirience[0] = Convert.ToInt32(expirience_string);
+                    expirience_bool = true;
+                }
+                else
+                {
+                    expirience[1] = Convert.ToInt32(expirience_string) - expirience[0];
+                }
+            }
+
+            if (coin_string.Length > 0)
+            {
+                if (!coin_bool)
+                {
+                    coin[0] = Convert.ToInt32(coin_string);
+                    coin_bool = true;
+                }
+                else
+                {
+                    coin[1] = Convert.ToInt32(coin_string) - coin[0];
+                }
+            }
+
+            if (heart_string.Length > 0)
+            {
+                if (!heart_bool)
+                {
+                    heart[0] = Convert.ToInt32(heart_string);
+                    heart_bool = true;
+                }
+                else
+                {
+                    heart[1] = Convert.ToInt32(heart_string) - heart[0];
+                }
+            }
+        }
+
         public void StartBot()
         {
             CreateHttpClient();
@@ -344,6 +396,9 @@ namespace mpets.mobi.bot
                 if (isLogin)
                 {
                     Log("-- Запускаю задачи...");
+
+                    await Statistics();
+                    await Task.Delay(random.Next(500, 1000));
 
                     bool status = true;
                     do
@@ -379,30 +434,28 @@ namespace mpets.mobi.bot
                             {
                                 if (checkBox1.Checked)
                                 {
-                                    StatusLog("Кормлю питомца...", Properties.Resources.meat);
-
                                     await Food();
                                     await Task.Delay(random.Next(500, 1000));
                                 }
 
                                 if (checkBox2.Checked)
                                 {
-                                    StatusLog("Играю с питомцем...", Properties.Resources.mouse);
-
                                     await Play();
                                     await Task.Delay(random.Next(500, 1000));
                                 }
 
                                 if (checkBox2.Checked)
                                 {
-                                    StatusLog("На выставке...", Properties.Resources.cup);
-
                                     await Showing();
                                     await Task.Delay(random.Next(500, 1000));
                                 }
 
                                 await WakeUp();
                                 await Task.Delay(random.Next(1000, 2000));
+                            }
+                            else
+                            {
+                                StatusLog("Питомец отдыхает...", Properties.Resources.sleep);
                             }
                         }
                     }
@@ -440,6 +493,9 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
+                    await Statistics();
+                    await Task.Delay(random.Next(500, 1000));
+
                     isTimer = true;
                     taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(random.Next(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value))));
 
@@ -468,7 +524,7 @@ namespace mpets.mobi.bot
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if(isStart)
+            if (isStart)
             {
                 if (isTimer)
                 {
@@ -490,7 +546,7 @@ namespace mpets.mobi.bot
             {
                 start.Enabled = false;
 
-                if(isTimer)
+                if (isTimer)
                 {
                     stop.Enabled = true;
                 }
@@ -498,9 +554,15 @@ namespace mpets.mobi.bot
                 {
                     stop.Enabled = false;
                 }
+
+                numericUpDown1.Enabled = false;
+                numericUpDown2.Enabled = false;
             }
             else
             {
+                numericUpDown1.Enabled = true;
+                numericUpDown2.Enabled = true;
+
                 start.Enabled = true;
                 stop.Enabled = false;
 
@@ -510,11 +572,6 @@ namespace mpets.mobi.bot
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if(!isDev)
-            {
-                Size = new Size(625, 452);
-            }
-
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
 
@@ -533,7 +590,7 @@ namespace mpets.mobi.bot
             {
                 checkBox8.Checked = Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart"));
 
-                if(Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart")))
+                if (Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart")))
                 {
                     HideForm(isHide);
                     StartBot();
@@ -553,7 +610,9 @@ namespace mpets.mobi.bot
 
         private void Timer4_Tick(object sender, EventArgs e)
         {
-            label7.Text = $"Собрано опыта: {expirience}";
+            statusStrip1.Items[1].Text = $"{coin[1]} собрано";
+            statusStrip1.Items[2].Text = $"{heart[1]} собрано";
+            statusStrip1.Items[3].Text = $"{expirience[1]} собрано";
         }
 
         private void Login_TextChanged(object sender, EventArgs e)
@@ -617,19 +676,9 @@ namespace mpets.mobi.bot
             settings.Write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
         }
 
-        private void LinkLabel1_MouseEnter(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            linkLabel1.LinkColor = Color.RoyalBlue;
-        }
-
-        private void LinkLabel1_MouseLeave(object sender, EventArgs e)
-        {
-            linkLabel1.LinkColor = Color.Black;
-        }
-
-        private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
+            System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
         }
     }
 }
