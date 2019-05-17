@@ -76,10 +76,9 @@ namespace mpets.mobi.bot
         public static void AutoRun(bool flag)
         {
             string ExePath = Application.ExecutablePath;
-            string name = "";
             FileInfo fi = new FileInfo(ExePath);
             int k = fi.Name.IndexOf('.');
-            name = fi.Name.Substring(0, k);
+            string name = fi.Name.Substring(0, k);
 
             RegistryKey reg;
             reg = Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
@@ -586,13 +585,18 @@ namespace mpets.mobi.bot
             if (settings.Get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Glade"));
             if (settings.Get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Tasks"));
 
-            if (settings.Get("BotSettings", "AutoLoad_and_AutoStart").Length > 0)
+            if (settings.Get("BotSettings", "AutoRun").Length > 0)
             {
-                checkBox8.Checked = Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart"));
+                checkBox8.Checked = Convert.ToBoolean(settings.Get("BotSettings", "AutoRun"));
+                checkBox9.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Hide"));
 
-                if (Convert.ToBoolean(settings.Get("BotSettings", "AutoLoad_and_AutoStart")))
+                if (Convert.ToBoolean(settings.Get("BotSettings", "AutoRun")))
                 {
-                    HideForm(isHide);
+                    if (Convert.ToBoolean(settings.Get("BotSettings", "Hide")))
+                    {
+                        HideForm(isHide);
+                    }
+
                     StartBot();
                 }
             }
@@ -606,6 +610,10 @@ namespace mpets.mobi.bot
         private void Timer3_Tick(object sender, EventArgs e)
         {
             numericUpDown1.Maximum = numericUpDown2.Value;
+
+            checkBox9.Enabled = checkBox8.Checked;
+            if (!checkBox8.Checked)
+                checkBox9.Checked = false;
         }
 
         private void Timer4_Tick(object sender, EventArgs e)
@@ -673,7 +681,12 @@ namespace mpets.mobi.bot
         private void CheckBox8_CheckedChanged(object sender, EventArgs e)
         {
             AutoRun(checkBox8.Checked);
-            settings.Write("BotSettings", "AutoLoad_and_AutoStart", checkBox8.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "AutoRun", checkBox8.Checked.ToString().ToLower());
+        }
+
+        private void CheckBox9_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.Write("BotSettings", "Hide", checkBox9.Checked.ToString().ToLower());
         }
 
         private void Button1_Click(object sender, EventArgs e)
