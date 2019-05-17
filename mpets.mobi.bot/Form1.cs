@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -120,25 +121,46 @@ namespace mpets.mobi.bot
             }
         }
 
+        public async Task<string> Get(string url)
+        {
+            try
+            {
+                string result = await httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
         public async Task<bool> Authorization(string name, string password)
         {
-            string result = await httpClient.PostAsync("/login", new FormUrlEncodedContent(new[] {
+            try
+            {
+                string result = await httpClient.PostAsync("/login", new FormUrlEncodedContent(new[] {
 
-                new KeyValuePair<string, string>("name", name), new KeyValuePair<string, string>("password", password)
+                    new KeyValuePair<string, string>("name", name), new KeyValuePair<string, string>("password", password)
 
-            })).Result.Content.ReadAsStringAsync();
+                })).Result.Content.ReadAsStringAsync();
 
-            return result.Contains("Чат");
+                return result.Contains("Чат");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task Travel()
         {
-            string result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
+            string result = await Get("/travel");
 
             if (result.Contains("Гулять дальше"))
             {
                 await Task.Delay(random.Next(500, 1000));
-                result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
+                result = await Get("/travel");
             }
 
             if (!result.Contains("Ваш питомец гуляет"))
@@ -161,7 +183,7 @@ namespace mpets.mobi.bot
                         temp_id = news_id;
                     }
 
-                    result = await httpClient.GetAsync("/go_travel?id=" + curr_id).Result.Content.ReadAsStringAsync();
+                    result = await Get("/go_travel?id=" + curr_id);
 
                     if (result.Contains("Ваш питомец гуляет"))
                     {
@@ -173,7 +195,7 @@ namespace mpets.mobi.bot
 
         public async Task Glade()
         {
-            string result = await httpClient.GetAsync("/glade").Result.Content.ReadAsStringAsync();
+            string result = await Get("/glade");
 
             if (result.Contains("Копать"))
             {
@@ -181,7 +203,7 @@ namespace mpets.mobi.bot
 
                 do
                 {
-                    result = await httpClient.GetAsync("/glade_dig").Result.Content.ReadAsStringAsync();
+                    result = await Get("/glade_dig");
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (result.Contains("Копать"));
@@ -192,7 +214,7 @@ namespace mpets.mobi.bot
 
         public async Task Sell_all()
         {
-            string result = await httpClient.GetAsync("/sell_all?confirm=1&backparent=").Result.Content.ReadAsStringAsync();
+            string result = await Get("/sell_all?confirm=1&backparent=");
 
             if (!result.Contains("У вас нет ненужных вещей на продажу"))
             {
@@ -202,7 +224,7 @@ namespace mpets.mobi.bot
 
         public async Task Tasks()
         {
-            string result = await httpClient.GetAsync("/task").Result.Content.ReadAsStringAsync();
+            string result = await Get("/task");
 
             MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
 
@@ -216,7 +238,7 @@ namespace mpets.mobi.bot
 
                     if (id.Length > 0)
                     {
-                        result = await httpClient.GetAsync("/task_reward?id=" + id).Result.Content.ReadAsStringAsync();
+                        result = await Get("/task_reward?id=" + id);
                         await Task.Delay(random.Next(500, 1000));
                     }
                 }
@@ -227,7 +249,7 @@ namespace mpets.mobi.bot
 
         public async Task WakeUp()
         {
-            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+            string result = await Get("/");
 
             if (result.Contains("Дать витаминку за"))
             {
@@ -235,7 +257,7 @@ namespace mpets.mobi.bot
 
                 await Task.Delay(random.Next(500, 1000));
 
-                await httpClient.GetAsync("/wakeup").Result.Content.ReadAsStringAsync();
+                await Get("/wakeup");
 
                 Log("-- Питомец получил витаминку.");
             }
@@ -243,7 +265,7 @@ namespace mpets.mobi.bot
 
         public async Task Food()
         {
-            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+            string result = await Get("/");
 
             string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -254,7 +276,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await httpClient.GetAsync("/?action=food&rand=" + rand).Result.Content.ReadAsStringAsync();
+                    result = await Get("/?action=food&rand=" + rand);
                     rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -267,7 +289,7 @@ namespace mpets.mobi.bot
 
         public async Task Play()
         {
-            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+            string result = await Get("/");
 
             string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -278,7 +300,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await httpClient.GetAsync("/?action=play&rand=" + rand).Result.Content.ReadAsStringAsync();
+                    result = await Get("/?action=play&rand=" + rand);
                     rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -291,7 +313,7 @@ namespace mpets.mobi.bot
 
         public async Task Showing()
         {
-            string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+            string result = await Get("/");
 
             if (result.Contains("show?start=1"))
             {
@@ -299,12 +321,12 @@ namespace mpets.mobi.bot
                 Log("-- Иду на выставку...");
 
                 bool status = false;
-                await httpClient.GetAsync("/show?start=1").Result.Content.ReadAsStringAsync();
+                await Get("/show?start=1");
 
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await httpClient.GetAsync("/show").Result.Content.ReadAsStringAsync();
+                    result = await Get("/show");
 
                     if (result.Contains("Участвовать за"))
                         status = true;
@@ -333,7 +355,7 @@ namespace mpets.mobi.bot
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
 
-            string result = await httpClient.GetAsync("/profile").Result.Content.ReadAsStringAsync();
+            string result = await Get("/profile");
 
             string expirience_string = new Regex(@"Опыт: (.*?) /").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
@@ -402,7 +424,7 @@ namespace mpets.mobi.bot
                     bool status = true;
                     do
                     {
-                        string result = await httpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
+                        string result = await Get("/");
                         bool sleep = false;
 
                         if (result.Contains("Играть ещё"))
@@ -416,7 +438,7 @@ namespace mpets.mobi.bot
 
                         if (result.Contains("Разбудить бесплатно"))
                         {
-                            result = await httpClient.GetAsync("/wakeup_sleep").Result.Content.ReadAsStringAsync();
+                            result = await Get("/wakeup_sleep");
                             Log("-- Разбудили питомца бесплатно.");
                         }
 
