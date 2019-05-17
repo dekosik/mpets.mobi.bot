@@ -27,6 +27,11 @@ namespace mpets.mobi.bot
         private bool isLogin;
         private bool isTimer;
         private bool isHide;
+        private bool isDev = false;
+
+        private int coin = 0;
+        private int heart = 0;
+        private int expirience = 0;
 
         public Form1()
         {
@@ -127,6 +132,11 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Гулять дальше"))
             {
+                var travel_exp = new Regex(@"expirience.png\"" />(.*?)<").Match(result).Groups[1].Value;
+
+                if (travel_exp.Length > 0)
+                    expirience += Convert.ToInt32(travel_exp);
+
                 await Task.Delay(random.Next(500, 1000));
                 result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
             }
@@ -498,6 +508,11 @@ namespace mpets.mobi.bot
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            if(!isDev)
+            {
+                Size = new Size(625, 452);
+            }
+
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
 
@@ -532,6 +547,11 @@ namespace mpets.mobi.bot
         private void Timer3_Tick(object sender, EventArgs e)
         {
             numericUpDown1.Maximum = numericUpDown2.Value;
+        }
+
+        private void Timer4_Tick(object sender, EventArgs e)
+        {
+            label7.Text = $"Собрано опыта: {expirience}";
         }
 
         private void Login_TextChanged(object sender, EventArgs e)
@@ -605,9 +625,29 @@ namespace mpets.mobi.bot
             linkLabel1.LinkColor = Color.Black;
         }
 
+        public async Task test()
+        {
+            CreateHttpClient();
+
+            string result = await httpClient.GetAsync("http://pet.cc/temp_travel/https%20_mpets.mobi_travel1.htm").Result.Content.ReadAsStringAsync();
+
+            var travel_exp = new Regex(@"expirience.png\"" />(.*?)src=").Match(result).Groups[1].Value;
+
+            if (travel_exp.Length > 0)
+                MessageBox.Show(travel_exp);
+                //expirience += Convert.ToInt32(travel_exp);
+        }
+
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
+            if(!isDev)
+            {
+                System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
+            }
+            else
+            {
+                Task.Run(() => test());
+            }
         }
     }
 }
