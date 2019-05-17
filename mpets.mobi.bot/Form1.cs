@@ -132,10 +132,13 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Гулять дальше"))
             {
-                var travel_exp = new Regex(@"expirience.png\"" />(.*?)<").Match(result).Groups[1].Value;
+                if(!isDev)
+                {
+                    var travel_exp = new Regex(@"expirience.png\"" />(.*?)<").Match(result).Groups[1].Value;
 
-                if (travel_exp.Length > 0)
-                    expirience += Convert.ToInt32(travel_exp);
+                    if (travel_exp.Length > 0)
+                        expirience += Convert.ToInt32(travel_exp);
+                }
 
                 await Task.Delay(random.Next(500, 1000));
                 result = await httpClient.GetAsync("/travel").Result.Content.ReadAsStringAsync();
