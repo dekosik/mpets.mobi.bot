@@ -27,10 +27,10 @@ namespace mpets.mobi.bot
         private bool isLogin;
         private bool isTimer;
         private bool isHide;
-        private bool isDev = false;
+        private readonly bool isDev = false;
 
-        private int coin = 0;
-        private int heart = 0;
+        // private int coin = 0;
+        // private int heart = 0;
         private int expirience = 0;
 
         public Form1()
@@ -40,8 +40,10 @@ namespace mpets.mobi.bot
 
         private void CreateHttpClient()
         {
-            httpClient = new HttpClient();
-            httpClient.BaseAddress = new Uri("https://mpets.mobi");
+            httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://mpets.mobi")
+            };
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
         }
 
@@ -69,7 +71,7 @@ namespace mpets.mobi.bot
 
         public static void AutoRun(bool flag)
         {
-            string ExePath = System.Windows.Forms.Application.ExecutablePath;
+            string ExePath = Application.ExecutablePath;
             string name = "";
             FileInfo fi = new FileInfo(ExePath);
             int k = fi.Name.IndexOf('.');
@@ -132,12 +134,9 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Гулять дальше"))
             {
-                if(!isDev)
+                if(isDev)
                 {
-                    var travel_exp = new Regex(@"expirience.png\"" />(.*?)<").Match(result).Groups[1].Value;
-
-                    if (travel_exp.Length > 0)
-                        expirience += Convert.ToInt32(travel_exp);
+                    File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.txt", result);
                 }
 
                 await Task.Delay(random.Next(500, 1000));
@@ -628,29 +627,9 @@ namespace mpets.mobi.bot
             linkLabel1.LinkColor = Color.Black;
         }
 
-        public async Task test()
-        {
-            CreateHttpClient();
-
-            string result = await httpClient.GetAsync("http://pet.cc/temp_travel/https%20_mpets.mobi_travel1.htm").Result.Content.ReadAsStringAsync();
-
-            var travel_exp = new Regex(@"expirience.png\"" />(.*?)src=").Match(result).Groups[1].Value;
-
-            if (travel_exp.Length > 0)
-                MessageBox.Show(travel_exp);
-                //expirience += Convert.ToInt32(travel_exp);
-        }
-
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if(!isDev)
-            {
-                System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
-            }
-            else
-            {
-                Task.Run(() => test());
-            }
+            System.Diagnostics.Process.Start("https://vk.com/mpets_mobi_bot");
         }
     }
 }
