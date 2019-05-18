@@ -43,6 +43,7 @@
             this.start = new System.Windows.Forms.Button();
             this.stop = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
@@ -54,16 +55,14 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.timer3 = new System.Windows.Forms.Timer(this.components);
-            this.timer4 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -241,6 +240,20 @@
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
+            // checkBox9
+            // 
+            this.checkBox9.Enabled = false;
+            this.checkBox9.Location = new System.Drawing.Point(6, 161);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox9.Size = new System.Drawing.Size(192, 24);
+            this.checkBox9.TabIndex = 8;
+            this.checkBox9.TabStop = false;
+            this.checkBox9.Text = "Запускать свернутым";
+            this.checkBox9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox9.UseVisualStyleBackColor = true;
+            this.checkBox9.CheckedChanged += new System.EventHandler(this.CheckBox9_CheckedChanged);
+            // 
             // checkBox8
             // 
             this.checkBox8.Location = new System.Drawing.Point(6, 142);
@@ -392,49 +405,6 @@
             this.toolStripStatusLabel1.Text = "Запустите бота";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
-            // 
-            // timer2
-            // 
-            this.timer2.Enabled = true;
-            this.timer2.Tick += new System.EventHandler(this.Timer2_Tick);
-            // 
-            // notifyIcon1
-            // 
-            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "mpets.mobi.bot";
-            this.notifyIcon1.Visible = true;
-            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseClick);
-            // 
-            // timer3
-            // 
-            this.timer3.Enabled = true;
-            this.timer3.Interval = 1;
-            this.timer3.Tick += new System.EventHandler(this.Timer3_Tick);
-            // 
-            // timer4
-            // 
-            this.timer4.Enabled = true;
-            this.timer4.Interval = 1000;
-            this.timer4.Tick += new System.EventHandler(this.Timer4_Tick);
-            // 
-            // button1
-            // 
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.ImageIndex = 0;
-            this.button1.Location = new System.Drawing.Point(220, 367);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(382, 31);
-            this.button1.TabIndex = 8;
-            this.button1.TabStop = false;
-            this.button1.Text = "Наша группа ВКонтакте";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
-            // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
@@ -461,19 +431,42 @@
             this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
             this.toolStripStatusLabel4.Text = "0 собрано";
             // 
-            // checkBox9
+            // timer1
             // 
-            this.checkBox9.Enabled = false;
-            this.checkBox9.Location = new System.Drawing.Point(6, 161);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox9.Size = new System.Drawing.Size(192, 24);
-            this.checkBox9.TabIndex = 8;
-            this.checkBox9.TabStop = false;
-            this.checkBox9.Text = "Запускать свернутым";
-            this.checkBox9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox9.UseVisualStyleBackColor = true;
-            this.checkBox9.CheckedChanged += new System.EventHandler(this.CheckBox9_CheckedChanged);
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.Timer1_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Tick += new System.EventHandler(this.Timer2_Tick);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "mpets.mobi.bot";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseClick);
+            // 
+            // timer3
+            // 
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 1;
+            this.timer3.Tick += new System.EventHandler(this.Timer3_Tick);
+            // 
+            // button1
+            // 
+            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button1.ImageIndex = 0;
+            this.button1.Location = new System.Drawing.Point(220, 367);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(382, 31);
+            this.button1.TabIndex = 8;
+            this.button1.TabStop = false;
+            this.button1.Text = "Наша группа ВКонтакте";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // Form1
             // 
@@ -538,7 +531,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Timer timer3;
-        private System.Windows.Forms.Timer timer4;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;

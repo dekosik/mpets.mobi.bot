@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
@@ -43,15 +38,14 @@ namespace mpets.mobi.bot
             InitializeComponent();
         }
 
+        // Метод который создает новый HttpClient
         private void CreateHttpClient()
         {
-            httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://mpets.mobi")
-            };
+            httpClient = new HttpClient { BaseAddress = new Uri("https://mpets.mobi") };
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
         }
 
+        // Метод отправки текста в richTextBox
         public void Log(string text, bool show_times = true, Color color = new Color())
         {
             if (show_times)
@@ -68,12 +62,14 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод отправки в statusStrip1
         public void StatusLog(string text, Image image = null)
         {
             Invoke(new Action(() => statusStrip1.Items[0].Text = text));
             Invoke(new Action(() => statusStrip1.Items[0].Image = image));
         }
 
+        // Метод который убирает или добавляет в автозагрузки Windows
         public static void AutoRun(bool flag)
         {
             string ExePath = Application.ExecutablePath;
@@ -98,6 +94,7 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который показывает или прячет форму в трей
         public void HideForm(bool flag)
         {
             if (flag)
@@ -121,12 +118,12 @@ namespace mpets.mobi.bot
             }
         }
 
-        public async Task<string> Get(string url)
+        // Метод который отправляет GET запрос
+        public async Task<string> GetHttp(string url)
         {
             try
             {
                 string result = await httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
-
                 return result;
             }
             catch (Exception)
@@ -135,6 +132,7 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который авторизуется в игре
         public async Task<bool> Authorization(string name, string password)
         {
             try
@@ -153,14 +151,15 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который выгуливает питомца
         public async Task Travel()
         {
-            string result = await Get("/travel");
+            string result = await GetHttp("/travel");
 
             if (result.Contains("Гулять дальше"))
             {
                 await Task.Delay(random.Next(500, 1000));
-                result = await Get("/travel");
+                result = await GetHttp("/travel");
             }
 
             if (!result.Contains("Ваш питомец гуляет"))
@@ -183,7 +182,7 @@ namespace mpets.mobi.bot
                         temp_id = news_id;
                     }
 
-                    result = await Get("/go_travel?id=" + curr_id);
+                    result = await GetHttp("/go_travel?id=" + curr_id);
 
                     if (result.Contains("Ваш питомец гуляет"))
                     {
@@ -193,9 +192,10 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который копает поляну
         public async Task Glade()
         {
-            string result = await Get("/glade");
+            string result = await GetHttp("/glade");
 
             if (result.Contains("Копать"))
             {
@@ -203,7 +203,7 @@ namespace mpets.mobi.bot
 
                 do
                 {
-                    result = await Get("/glade_dig");
+                    result = await GetHttp("/glade_dig");
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (result.Contains("Копать"));
@@ -212,9 +212,10 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который продает ненужные вещи
         public async Task Sell_all()
         {
-            string result = await Get("/sell_all?confirm=1&backparent=");
+            string result = await GetHttp("/sell_all?confirm=1&backparent=");
 
             if (!result.Contains("У вас нет ненужных вещей на продажу"))
             {
@@ -222,9 +223,10 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который забирает выполненные задания
         public async Task Tasks()
         {
-            string result = await Get("/task");
+            string result = await GetHttp("/task");
 
             MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
 
@@ -238,7 +240,7 @@ namespace mpets.mobi.bot
 
                     if (id.Length > 0)
                     {
-                        result = await Get("/task_reward?id=" + id);
+                        result = await GetHttp("/task_reward?id=" + id);
                         await Task.Delay(random.Next(500, 1000));
                     }
                 }
@@ -247,25 +249,26 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который даёт питомцу витаминку
         public async Task WakeUp()
         {
-            string result = await Get("/");
+            string result = await GetHttp("/");
 
             if (result.Contains("Дать витаминку за"))
             {
                 StatusLog("Даю витаминку...", Properties.Resources.heart);
 
                 await Task.Delay(random.Next(500, 1000));
-
-                await Get("/wakeup");
+                await GetHttp("/wakeup");
 
                 Log("-- Питомец получил витаминку.");
             }
         }
 
+        // Метод который кормит питомца
         public async Task Food()
         {
-            string result = await Get("/");
+            string result = await GetHttp("/");
 
             string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -276,7 +279,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await Get("/?action=food&rand=" + rand);
+                    result = await GetHttp("/?action=food&rand=" + rand);
                     rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -287,9 +290,10 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который играет с питомцем
         public async Task Play()
         {
-            string result = await Get("/");
+            string result = await GetHttp("/");
 
             string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -300,7 +304,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await Get("/?action=play&rand=" + rand);
+                    result = await GetHttp("/?action=play&rand=" + rand);
                     rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -311,9 +315,10 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который ходит на выставки
         public async Task Showing()
         {
-            string result = await Get("/");
+            string result = await GetHttp("/");
 
             if (result.Contains("show?start=1"))
             {
@@ -321,12 +326,12 @@ namespace mpets.mobi.bot
                 Log("-- Иду на выставку...");
 
                 bool status = false;
-                await Get("/show?start=1");
+                await GetHttp("/show?start=1");
 
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await Get("/show");
+                    result = await GetHttp("/show");
 
                     if (result.Contains("Участвовать за"))
                         status = true;
@@ -351,11 +356,12 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который обновляет статистику сердечек, опыта и монет
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
 
-            string result = await Get("/profile");
+            string result = await GetHttp("/profile");
 
             string expirience_string = new Regex(@"Опыт: (.*?) /").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
@@ -401,6 +407,7 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Главный метод старта бота
         public void StartBot()
         {
             CreateHttpClient();
@@ -424,7 +431,7 @@ namespace mpets.mobi.bot
                     bool status = true;
                     do
                     {
-                        string result = await Get("/");
+                        string result = await GetHttp("/");
                         bool sleep = false;
 
                         if (result.Contains("Играть ещё"))
@@ -438,7 +445,7 @@ namespace mpets.mobi.bot
 
                         if (result.Contains("Разбудить бесплатно"))
                         {
-                            result = await Get("/wakeup_sleep");
+                            result = await GetHttp("/wakeup_sleep");
                             Log("-- Разбудили питомца бесплатно.");
                         }
 
@@ -635,11 +642,10 @@ namespace mpets.mobi.bot
 
             checkBox9.Enabled = checkBox8.Checked;
             if (!checkBox8.Checked)
+            {
                 checkBox9.Checked = false;
-        }
+            }
 
-        private void Timer4_Tick(object sender, EventArgs e)
-        {
             statusStrip1.Items[1].Text = $"{coin[1]} собрано";
             statusStrip1.Items[2].Text = $"{heart[1]} собрано";
             statusStrip1.Items[3].Text = $"{expirience[1]} собрано";
