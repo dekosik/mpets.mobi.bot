@@ -723,22 +723,28 @@ namespace mpets.mobi.bot
             settings.Write("BotSettings", "Hide", checkBox9.Checked.ToString().ToLower());
         }
 
+
+        //
+        // ВРОДЕ И МЕТОД ГОТОВ, НО РАБОТАЕТ НЕ ТАК КАК НАДО... ОН ОДЕВАЕТ ВЕЩЬ КОТОРАЯ ЛУЧШЕ И СРАЗУ ЖЕ ПРОДАЕТ НЕНУЖНЫЕ.
+        // ПОКА ОТЛОЖУ ДАННЫЙ МЕТОД, НУЖНО БОЛЬШЕ ТЕСТИРОВАНИЯ.
+        //
         public async Task test()
         {
             string result = await HTTP_Get("/chest");
             string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value; 
 
-            if(url.Length > 0)
+            if(url.Length > 0 && !url.Contains("open_item"))
             {
                 Log("Надеваю вещи...");
 
                 do
                 {
                     await Task.Delay(random.Next(500, 1000));
+
                     result = await HTTP_Get(url);
                     url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
 
-                    if(url.Contains("open_item"))
+                    if (url.Contains("open_item"))
                     {
                         break;
                     }
