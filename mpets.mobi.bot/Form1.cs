@@ -19,17 +19,23 @@ namespace mpets.mobi.bot
 
         private DateTime taskStop;
 
+        // Системные переменные
         private bool isStart;
         private bool isLogin;
         private bool isTimer;
         private bool isHide;
 
+        private bool isDev = false;
+
+        // Переменные для хранения статистики опыта
         private int[] expirience = { 0, 0 };
         private bool expirience_bool = false;
 
+        // Переменные для хранения статистики монет
         private int[] coin = { 0, 0 };
         private bool coin_bool = false;
 
+        // Переменные для хранения статистики сердечек
         private int[] heart = { 0, 0 };
         private bool heart_bool = false;
 
@@ -90,7 +96,7 @@ namespace mpets.mobi.bot
             }
             catch
             {
-                MessageBox.Show("Автозапуск не возможен");
+                MessageBox.Show("Произошла ошибка, автозапуск невозможен.");
             }
         }
 
@@ -119,7 +125,7 @@ namespace mpets.mobi.bot
         }
 
         // Метод который отправляет GET запрос
-        public async Task<string> GetHttp(string url)
+        public async Task<string> HTTP_Get(string url)
         {
             try
             {
@@ -154,12 +160,12 @@ namespace mpets.mobi.bot
         // Метод который выгуливает питомца
         public async Task Travel()
         {
-            string result = await GetHttp("/travel");
+            string result = await HTTP_Get("/travel");
 
             if (result.Contains("Гулять дальше"))
             {
                 await Task.Delay(random.Next(500, 1000));
-                result = await GetHttp("/travel");
+                result = await HTTP_Get("/travel");
             }
 
             if (!result.Contains("Ваш питомец гуляет"))
@@ -182,7 +188,7 @@ namespace mpets.mobi.bot
                         temp_id = news_id;
                     }
 
-                    result = await GetHttp("/go_travel?id=" + curr_id);
+                    result = await HTTP_Get("/go_travel?id=" + curr_id);
 
                     if (result.Contains("Ваш питомец гуляет"))
                     {
@@ -195,7 +201,7 @@ namespace mpets.mobi.bot
         // Метод который копает поляну
         public async Task Glade()
         {
-            string result = await GetHttp("/glade");
+            string result = await HTTP_Get("/glade");
 
             if (result.Contains("Копать"))
             {
@@ -203,7 +209,7 @@ namespace mpets.mobi.bot
 
                 do
                 {
-                    result = await GetHttp("/glade_dig");
+                    result = await HTTP_Get("/glade_dig");
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (result.Contains("Копать"));
@@ -215,7 +221,7 @@ namespace mpets.mobi.bot
         // Метод который продает ненужные вещи
         public async Task Sell_all()
         {
-            string result = await GetHttp("/sell_all?confirm=1&backparent=");
+            string result = await HTTP_Get("/sell_all?confirm=1&backparent=");
 
             if (!result.Contains("У вас нет ненужных вещей на продажу"))
             {
@@ -226,7 +232,7 @@ namespace mpets.mobi.bot
         // Метод который забирает выполненные задания
         public async Task Tasks()
         {
-            string result = await GetHttp("/task");
+            string result = await HTTP_Get("/task");
 
             MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
 
@@ -240,7 +246,7 @@ namespace mpets.mobi.bot
 
                     if (id.Length > 0)
                     {
-                        result = await GetHttp("/task_reward?id=" + id);
+                        result = await HTTP_Get("/task_reward?id=" + id);
                         await Task.Delay(random.Next(500, 1000));
                     }
                 }
@@ -252,14 +258,14 @@ namespace mpets.mobi.bot
         // Метод который даёт питомцу витаминку
         public async Task WakeUp()
         {
-            string result = await GetHttp("/");
+            string result = await HTTP_Get("/");
 
             if (result.Contains("Дать витаминку за"))
             {
                 StatusLog("Даю витаминку...", Properties.Resources.heart);
 
                 await Task.Delay(random.Next(500, 1000));
-                await GetHttp("/wakeup");
+                await HTTP_Get("/wakeup");
 
                 Log("-- Питомец получил витаминку.");
             }
@@ -268,7 +274,7 @@ namespace mpets.mobi.bot
         // Метод который кормит питомца
         public async Task Food()
         {
-            string result = await GetHttp("/");
+            string result = await HTTP_Get("/");
 
             string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -279,7 +285,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await GetHttp("/?action=food&rand=" + rand);
+                    result = await HTTP_Get("/?action=food&rand=" + rand);
                     rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -293,7 +299,7 @@ namespace mpets.mobi.bot
         // Метод который играет с питомцем
         public async Task Play()
         {
-            string result = await GetHttp("/");
+            string result = await HTTP_Get("/");
 
             string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
             if (rand.Length > 0)
@@ -304,7 +310,7 @@ namespace mpets.mobi.bot
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await GetHttp("/?action=play&rand=" + rand);
+                    result = await HTTP_Get("/?action=play&rand=" + rand);
                     rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
                     await Task.Delay(random.Next(500, 1000));
@@ -318,7 +324,7 @@ namespace mpets.mobi.bot
         // Метод который ходит на выставки
         public async Task Showing()
         {
-            string result = await GetHttp("/");
+            string result = await HTTP_Get("/");
 
             if (result.Contains("show?start=1"))
             {
@@ -326,12 +332,12 @@ namespace mpets.mobi.bot
                 Log("-- Иду на выставку...");
 
                 bool status = false;
-                await GetHttp("/show?start=1");
+                await HTTP_Get("/show?start=1");
 
                 await Task.Delay(random.Next(500, 1000));
                 do
                 {
-                    result = await GetHttp("/show");
+                    result = await HTTP_Get("/show");
 
                     if (result.Contains("Участвовать за"))
                         status = true;
@@ -361,7 +367,7 @@ namespace mpets.mobi.bot
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
 
-            string result = await GetHttp("/profile");
+            string result = await HTTP_Get("/profile");
 
             string expirience_string = new Regex(@"Опыт: (.*?) /").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
@@ -431,7 +437,7 @@ namespace mpets.mobi.bot
                     bool status = true;
                     do
                     {
-                        string result = await GetHttp("/");
+                        string result = await HTTP_Get("/");
                         bool sleep = false;
 
                         if (result.Contains("Играть ещё"))
@@ -445,7 +451,7 @@ namespace mpets.mobi.bot
 
                         if (result.Contains("Разбудить бесплатно"))
                         {
-                            result = await GetHttp("/wakeup_sleep");
+                            result = await HTTP_Get("/wakeup_sleep");
                             Log("-- Разбудили питомца бесплатно.");
                         }
 
@@ -717,9 +723,42 @@ namespace mpets.mobi.bot
             settings.Write("BotSettings", "Hide", checkBox9.Checked.ToString().ToLower());
         }
 
+        public async Task test()
+        {
+            string result = await HTTP_Get("/chest");
+            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value; 
+
+            if(url.Length > 0)
+            {
+                Log("Надеваю вещи...");
+
+                do
+                {
+                    await Task.Delay(random.Next(500, 1000));
+                    result = await HTTP_Get(url);
+                    url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+
+                    if(url.Contains("open_item"))
+                    {
+                        break;
+                    }
+                }
+                while (url.Length > 0);
+
+                Log("Закончил надевать...");
+            }
+        }
+
         private void Button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
+            if(isDev)
+            {
+                Task.Run(() => test());
+            }
+            else
+            {
+                System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
+            }
         }
     }
 }
