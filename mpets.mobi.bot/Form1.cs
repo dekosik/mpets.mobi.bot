@@ -25,7 +25,7 @@ namespace mpets.mobi.bot
         private bool isTimer;
         private bool isHide;
 
-        private bool isDev = false;
+        private bool isDev = true;
 
         // Переменные для хранения статистики опыта
         private int[] expirience = { 0, 0 };
@@ -434,6 +434,9 @@ namespace mpets.mobi.bot
                     await Statistics();
                     await Task.Delay(random.Next(500, 1000));
 
+                    await test();
+                    await Task.Delay(random.Next(500, 1000));
+
                     bool status = true;
                     do
                     {
@@ -452,6 +455,7 @@ namespace mpets.mobi.bot
                         if (result.Contains("Разбудить бесплатно"))
                         {
                             result = await HTTP_Get("/wakeup_sleep");
+                            status = true;
                             Log("-- Разбудили питомца бесплатно.");
                         }
 
@@ -731,27 +735,49 @@ namespace mpets.mobi.bot
         public async Task test()
         {
             string result = await HTTP_Get("/chest");
-            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value; 
+            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+            string name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
 
-            if(url.Length > 0 && !url.Contains("open_item"))
+            if (url.Length > 0 && !url.Contains("open_item"))
             {
-                Log("Надеваю вещи...");
+                Log("-- Надеваю вещи...");
 
-                do
+                while (url.Length > 0 && !url.Contains("open_item"))
                 {
+                    // Задержка
                     await Task.Delay(random.Next(500, 1000));
 
+                    // если в url есть wear_item, значит мы одеваем вещь
+                    if (url.Contains("wear_item"))
+                        Log($"--- Надел {name}", true, Color.Green);
+
+                    // если в url есть sell_item, значит мы продаём вещь
+                    if (url.Contains("sell_item"))
+                        Log($"--- Продал {name}", true, Color.Red);
+
+                    // Выполняем запрос
                     result = await HTTP_Get(url);
+                    // Парсим ссылку
                     url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-
-                    if (url.Contains("open_item"))
-                    {
-                        break;
-                    }
+                    // Парсим название вещи
+                    name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
                 }
-                while (url.Length > 0);
 
-                Log("Закончил надевать...");
+                //do
+                //{
+                    //await Task.Delay(random.Next(500, 1000));
+
+                    //result = await HTTP_Get(url);
+                    //url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+
+                    //if (url.Contains("open_item"))
+                    //{
+                        //break;
+                    //}
+                //}
+                //while (url.Length > 0);
+
+                Log("-- Закончил надевать...");
             }
         }
 
