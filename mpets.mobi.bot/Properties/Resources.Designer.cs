@@ -73,6 +73,16 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap beauty {
+            get {
+                object obj = ResourceManager.GetObject("beauty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap chest {
             get {
                 object obj = ResourceManager.GetObject("chest", resourceCulture);
@@ -106,16 +116,6 @@ namespace mpets.mobi.bot.Properties {
         internal static System.Drawing.Bitmap document {
             get {
                 object obj = ResourceManager.GetObject("document", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap expirience {
-            get {
-                object obj = ResourceManager.GetObject("expirience", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

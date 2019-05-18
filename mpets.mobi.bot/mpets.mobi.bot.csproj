@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="avatar_icon.ico" />
+    <None Include="Resources\beauty.png" />
     <None Include="Resources\travel.png" />
     <None Include="Resources\garden.png" />
     <None Include="Resources\tasks.png" />
@@ -99,7 +100,6 @@
     <None Include="Resources\cup.png" />
     <None Include="Resources\about.png" />
     <None Include="Resources\coin.png" />
-    <None Include="Resources\expirience.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

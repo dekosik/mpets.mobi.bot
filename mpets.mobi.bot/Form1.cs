@@ -25,11 +25,9 @@ namespace mpets.mobi.bot
         private bool isTimer;
         private bool isHide;
 
-        private bool isDev = true;
-
-        // Переменные для хранения статистики опыта
-        private int[] expirience = { 0, 0 };
-        private bool expirience_bool = false;
+        // Переменные для хранения статистики красоты
+        private int[] beauty = { 0, 0 };
+        private bool beauty_bool = false;
 
         // Переменные для хранения статистики монет
         private int[] coin = { 0, 0 };
@@ -218,14 +216,33 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который продает ненужные вещи
-        public async Task Sell_all()
+        // Метод который одевает вещи и продаёт ненужные
+        public async Task Сhest()
         {
-            string result = await HTTP_Get("/sell_all?confirm=1&backparent=");
+            string result = await HTTP_Get("/chest");
+            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+            string name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
 
-            if (!result.Contains("У вас нет ненужных вещей на продажу"))
+            if (url.Length > 0 && !url.Contains("open_item"))
             {
-                Log("-- Были проданы ненужные вещи.");
+                Log("-- В шкафу есть вещи...");
+
+                while (url.Length > 0 && !url.Contains("open_item"))
+                {
+                    await Task.Delay(random.Next(500, 1000));
+
+                    if (url.Contains("wear_item"))
+                        Log($"--- Надел {name}.", true, Color.Green);
+
+                    if (url.Contains("sell_item"))
+                        Log($"--- Продал {name}.", true, Color.Red);
+
+                    result = await HTTP_Get(url);
+                    url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+                    name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
+                }
+
+                Log("-- Закончил работу в шкафу...");
             }
         }
 
@@ -369,20 +386,20 @@ namespace mpets.mobi.bot
 
             string result = await HTTP_Get("/profile");
 
-            string expirience_string = new Regex(@"Опыт: (.*?) /").Match(result).Groups[1].Value;
+            string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
 
-            if (expirience_string.Length > 0)
+            if (beauty_string.Length > 0)
             {
-                if (!expirience_bool)
+                if (!beauty_bool)
                 {
-                    expirience[0] = Convert.ToInt32(expirience_string);
-                    expirience_bool = true;
+                    beauty[0] = Convert.ToInt32(beauty_string);
+                    beauty_bool = true;
                 }
                 else
                 {
-                    expirience[1] = Convert.ToInt32(expirience_string) - expirience[0];
+                    beauty[1] = Convert.ToInt32(beauty_string) - beauty[0];
                 }
             }
 
@@ -432,9 +449,6 @@ namespace mpets.mobi.bot
                     Log("-- Запускаю задачи...");
 
                     await Statistics();
-                    await Task.Delay(random.Next(500, 1000));
-
-                    await test();
                     await Task.Delay(random.Next(500, 1000));
 
                     bool status = true;
@@ -519,7 +533,7 @@ namespace mpets.mobi.bot
                     {
                         StatusLog("Проверяю шкаф...", Properties.Resources.chest);
 
-                        await Sell_all();
+                        await Сhest();
                         await Task.Delay(random.Next(500, 1000));
                     }
 
@@ -620,7 +634,7 @@ namespace mpets.mobi.bot
             if (settings.Get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Play"));
             if (settings.Get("BotSettings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Showing"));
             if (settings.Get("BotSettings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Travel"));
-            if (settings.Get("BotSettings", "Sell_All").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Sell_All"));
+            if (settings.Get("BotSettings", "Сhest").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Сhest"));
             if (settings.Get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Glade"));
             if (settings.Get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Tasks"));
 
@@ -658,7 +672,7 @@ namespace mpets.mobi.bot
 
             statusStrip1.Items[1].Text = $"{coin[1]} собрано";
             statusStrip1.Items[2].Text = $"{heart[1]} собрано";
-            statusStrip1.Items[3].Text = $"{expirience[1]} собрано";
+            statusStrip1.Items[3].Text = $"{beauty[1]} собрано";
         }
 
         private void Login_TextChanged(object sender, EventArgs e)
@@ -703,7 +717,7 @@ namespace mpets.mobi.bot
 
         private void CheckBox5_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Sell_All", checkBox5.Checked.ToString().ToLower());
+            settings.Write("BotSettings", "Сhest", checkBox5.Checked.ToString().ToLower());
         }
 
         private void CheckBox6_CheckedChanged(object sender, EventArgs e)
@@ -727,70 +741,9 @@ namespace mpets.mobi.bot
             settings.Write("BotSettings", "Hide", checkBox9.Checked.ToString().ToLower());
         }
 
-
-        //
-        // ВРОДЕ И МЕТОД ГОТОВ, НО РАБОТАЕТ НЕ ТАК КАК НАДО... ОН ОДЕВАЕТ ВЕЩЬ КОТОРАЯ ЛУЧШЕ И СРАЗУ ЖЕ ПРОДАЕТ НЕНУЖНЫЕ.
-        // ПОКА ОТЛОЖУ ДАННЫЙ МЕТОД, НУЖНО БОЛЬШЕ ТЕСТИРОВАНИЯ.
-        //
-        public async Task test()
-        {
-            string result = await HTTP_Get("/chest");
-            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-            string name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
-
-            if (url.Length > 0 && !url.Contains("open_item"))
-            {
-                Log("-- Надеваю вещи...");
-
-                while (url.Length > 0 && !url.Contains("open_item"))
-                {
-                    // Задержка
-                    await Task.Delay(random.Next(500, 1000));
-
-                    // если в url есть wear_item, значит мы одеваем вещь
-                    if (url.Contains("wear_item"))
-                        Log($"--- Надел {name}", true, Color.Green);
-
-                    // если в url есть sell_item, значит мы продаём вещь
-                    if (url.Contains("sell_item"))
-                        Log($"--- Продал {name}", true, Color.Red);
-
-                    // Выполняем запрос
-                    result = await HTTP_Get(url);
-                    // Парсим ссылку
-                    url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-                    // Парсим название вещи
-                    name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
-                }
-
-                //do
-                //{
-                    //await Task.Delay(random.Next(500, 1000));
-
-                    //result = await HTTP_Get(url);
-                    //url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-
-                    //if (url.Contains("open_item"))
-                    //{
-                        //break;
-                    //}
-                //}
-                //while (url.Length > 0);
-
-                Log("-- Закончил надевать...");
-            }
-        }
-
         private void Button1_Click(object sender, EventArgs e)
         {
-            if(isDev)
-            {
-                Task.Run(() => test());
-            }
-            else
-            {
-                System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
-            }
+            System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
         }
     }
 }
