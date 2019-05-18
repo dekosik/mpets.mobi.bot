@@ -14,7 +14,7 @@
 - Может автозапускаться с **Windows** и сразу стартовать.
 
 # Скриншот бота
-![alt скриншот бота](https://pp.userapi.com/c845120/v845120023/203f26/mAimwLoXFWQ.jpg)
+![alt скриншот бота](https://pp.userapi.com/c849532/v849532288/191c65/KhXyGOGx9Po.jpg)
 
 # Контакты
 [Группа ВКонтакте](https://vk.com/mpets_mobi_bot)
