@@ -21,7 +21,7 @@ namespace mpets.mobi.bot
 
         // Системные переменные
         private bool isStart;
-        private bool isLogin;
+        private string isLogin;
         private bool isTimer;
         private bool isHide;
 
@@ -137,7 +137,7 @@ namespace mpets.mobi.bot
         }
 
         // Метод который авторизуется в игре
-        public async Task<bool> Authorization(string name, string password)
+        public async Task<string> Authorization(string name, string password)
         {
             try
             {
@@ -147,11 +147,11 @@ namespace mpets.mobi.bot
 
                 })).Result.Content.ReadAsStringAsync();
 
-                return result.Contains("Чат");
+                return result.Contains("Чат").ToString().ToLower();
             }
             catch (Exception)
             {
-                return false;
+                return "error";
             }
         }
 
@@ -163,7 +163,8 @@ namespace mpets.mobi.bot
             if (result.Contains("Гулять дальше"))
             {
                 await Task.Delay(random.Next(500, 1000));
-                result = await HTTP_Get("/travel");
+                result = await HTTP_Get("/travel?clear=1");
+                await Task.Delay(random.Next(400, 700));
             }
 
             if (!result.Contains("Ваш питомец гуляет"))
@@ -444,7 +445,7 @@ namespace mpets.mobi.bot
 
                 isLogin = await Authorization(login.Text, password.Text);
 
-                if (isLogin)
+                if (isLogin == "true")
                 {
                     Log("-- Запускаю задачи...");
 
@@ -457,6 +458,12 @@ namespace mpets.mobi.bot
                         string result = await HTTP_Get("/");
                         bool sleep = false;
 
+                        if (result.Contains("Разбудить бесплатно"))
+                        {
+                            result = await HTTP_Get("/wakeup_sleep");
+                            Log("-- Разбудили питомца бесплатно.");
+                        }
+
                         if (result.Contains("Играть ещё"))
                             status = false;
 
@@ -465,13 +472,6 @@ namespace mpets.mobi.bot
 
                         if (!checkBox1.Checked & !checkBox2.Checked & !checkBox3.Checked)
                             status = false;
-
-                        if (result.Contains("Разбудить бесплатно"))
-                        {
-                            result = await HTTP_Get("/wakeup_sleep");
-                            status = true;
-                            Log("-- Разбудили питомца бесплатно.");
-                        }
 
                         if (new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
                         {
@@ -554,12 +554,21 @@ namespace mpets.mobi.bot
                     Log("-- Все задачи выполнены.");
                     Log("", false);
                 }
-                else
+                else if(isLogin == "false")
                 {
                     isStart = false;
                     isTimer = true;
 
                     Log("-- Вы ввели неправильный логин или пароль.");
+                    Log("", false);
+                }
+                else if(isLogin == "error")
+                {
+                    Log("-- Ошибка сети, повтор через 1 минуту....");
+                    Log("", false);
+
+                    isTimer = true;
+                    taskStop = DateTime.Now.AddMinutes(1);
                 }
             });
         }
@@ -587,7 +596,7 @@ namespace mpets.mobi.bot
                         StartBot();
                     }
 
-                    StatusLog($"Жду {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
+                    StatusLog($"Повтор через {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
                 }
             }
         }
