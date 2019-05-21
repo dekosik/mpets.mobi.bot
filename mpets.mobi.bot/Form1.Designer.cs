@@ -55,14 +55,14 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.timer3 = new System.Windows.Forms.Timer(this.components);
             this.button1 = new System.Windows.Forms.Button();
+            this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -387,12 +387,13 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
+            this.toolStripStatusLabel5,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 403);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 548);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(608, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1019, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
@@ -404,32 +405,6 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(90, 17);
             this.toolStripStatusLabel1.Text = "Запустите бота";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
-            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(345, 17);
-            this.toolStripStatusLabel2.Spring = true;
-            this.toolStripStatusLabel2.Text = "0 собрано";
-            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
-            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel3.Text = "0 собрано";
-            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel4
-            // 
-            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel4.Text = "0 собрано";
             // 
             // timer1
             // 
@@ -449,12 +424,6 @@
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1_MouseClick);
             // 
-            // timer3
-            // 
-            this.timer3.Enabled = true;
-            this.timer3.Interval = 1;
-            this.timer3.Tick += new System.EventHandler(this.Timer3_Tick);
-            // 
             // button1
             // 
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -468,11 +437,46 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // toolStripStatusLabel5
+            // 
+            this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
+            this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(646, 17);
+            this.toolStripStatusLabel5.Spring = true;
+            this.toolStripStatusLabel5.Text = "0 собрано";
+            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel2.Text = "0 собрано";
+            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel3.Text = "0 собрано";
+            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel4.Text = "0 собрано";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(608, 425);
+            this.ClientSize = new System.Drawing.Size(1019, 570);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.richTextBox1);
@@ -530,11 +534,11 @@
         private System.Windows.Forms.NumericUpDown numericUpDown2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Timer timer3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBox9;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
     }
 }

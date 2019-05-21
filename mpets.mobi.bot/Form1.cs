@@ -37,6 +37,8 @@ namespace mpets.mobi.bot
         private int[] heart = { 0, 0 };
         private bool heart_bool = false;
 
+        private int exp = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -163,7 +165,15 @@ namespace mpets.mobi.bot
             if (result.Contains("Гулять дальше"))
             {
                 await Task.Delay(random.Next(500, 1000));
+
+                File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.txt", result);
+
+                string e = new Regex(@"expirience.png\"" />(.*?)<br />").Match(result).Groups[1].Value;
+                if (e.Length > 0)
+                    exp += Convert.ToInt32(e);
+
                 result = await HTTP_Get("/travel?clear=1");
+
                 await Task.Delay(random.Next(400, 700));
             }
 
@@ -209,6 +219,11 @@ namespace mpets.mobi.bot
                 do
                 {
                     result = await HTTP_Get("/glade_dig");
+
+                    string e = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
+                    if (e.Length > 0)
+                        exp += Convert.ToInt32(e);
+
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (result.Contains("Копать"));
@@ -265,6 +280,11 @@ namespace mpets.mobi.bot
                     if (id.Length > 0)
                     {
                         result = await HTTP_Get("/task_reward?id=" + id);
+
+                        string e = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
+                        if (e.Length > 0)
+                            exp += Convert.ToInt32(e);
+
                         await Task.Delay(random.Next(500, 1000));
                     }
                 }
@@ -304,7 +324,12 @@ namespace mpets.mobi.bot
                 do
                 {
                     result = await HTTP_Get("/?action=food&rand=" + rand);
+                    
                     rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    string e = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
+                    if (e.Length > 0)
+                        exp += Convert.ToInt32(e);
 
                     await Task.Delay(random.Next(500, 1000));
                 }
@@ -330,6 +355,10 @@ namespace mpets.mobi.bot
                 {
                     result = await HTTP_Get("/?action=play&rand=" + rand);
                     rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    string e = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
+                    if (e.Length > 0)
+                       exp += Convert.ToInt32(e);
 
                     await Task.Delay(random.Next(500, 1000));
                 }
@@ -372,6 +401,10 @@ namespace mpets.mobi.bot
                     if (result.Contains("Снежки"))
                         status = false;
 
+                    string e = new Regex(@"expirience.png\"" />(.*?)</td>").Match(result).Groups[1].Value;
+                    if (e.Length > 0)
+                        exp += Convert.ToInt32(e);
+
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (status);
@@ -380,7 +413,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который обновляет статистику сердечек, опыта и монет
+        // Метод который обновляет статистику Красоты, Монет и Сердечек
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
@@ -559,7 +592,7 @@ namespace mpets.mobi.bot
                     isStart = false;
                     isTimer = true;
 
-                    Log("-- Вы ввели неправильный логин или пароль.");
+                    Log("-- Вы ввели неправильное имя или пароль.");
                     Log("", false);
                 }
                 else if(isLogin == "error")
@@ -629,32 +662,47 @@ namespace mpets.mobi.bot
 
                 StatusLog("Запустите бота");
             }
+
+            numericUpDown1.Maximum = numericUpDown2.Value;
+
+            checkBox9.Enabled = checkBox8.Checked;
+            if (!checkBox8.Checked)
+            {
+                checkBox9.Checked = false;
+            }
+
+            statusStrip1.Items[1].Text = $"{exp} собрано";
+            statusStrip1.Items[2].Text = $"{coin[1]} собрано";
+            statusStrip1.Items[3].Text = $"{heart[1]} собрано";
+            statusStrip1.Items[4].Text = $"{beauty[1]} собрано";            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Size = new Size(624, 464);
+
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
 
-            if (settings.Get("BotSettings", "TimerIntervalMin").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("BotSettings", "TimerIntervalMin"));
-            if (settings.Get("BotSettings", "TimerIntervalMax").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("BotSettings", "TimerIntervalMax"));
+            if (settings.Get("Timer", "Min").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("Timer", "Min"));
+            if (settings.Get("Timer", "Max").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("Timer", "Max"));
 
-            if (settings.Get("BotSettings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Food"));
-            if (settings.Get("BotSettings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Play"));
-            if (settings.Get("BotSettings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Showing"));
-            if (settings.Get("BotSettings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Travel"));
-            if (settings.Get("BotSettings", "Сhest").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Сhest"));
-            if (settings.Get("BotSettings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Glade"));
-            if (settings.Get("BotSettings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Tasks"));
+            if (settings.Get("Settings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.Get("Settings", "Food"));
+            if (settings.Get("Settings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("Settings", "Play"));
+            if (settings.Get("Settings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("Settings", "Showing"));
+            if (settings.Get("Settings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("Settings", "Travel"));
+            if (settings.Get("Settings", "Chest").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
+            if (settings.Get("Settings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
+            if (settings.Get("Settings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("Settings", "Tasks"));
 
-            if (settings.Get("BotSettings", "AutoRun").Length > 0)
+            if (settings.Get("Settings", "AutoRun").Length > 0)
             {
-                checkBox8.Checked = Convert.ToBoolean(settings.Get("BotSettings", "AutoRun"));
-                checkBox9.Checked = Convert.ToBoolean(settings.Get("BotSettings", "Hide"));
+                checkBox8.Checked = Convert.ToBoolean(settings.Get("Settings", "AutoRun"));
+                checkBox9.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
 
-                if (Convert.ToBoolean(settings.Get("BotSettings", "AutoRun")))
+                if (Convert.ToBoolean(settings.Get("Settings", "AutoRun")))
                 {
-                    if (Convert.ToBoolean(settings.Get("BotSettings", "Hide")))
+                    if (Convert.ToBoolean(settings.Get("Settings", "Hide")))
                     {
                         HideForm(isHide);
                     }
@@ -671,17 +719,7 @@ namespace mpets.mobi.bot
 
         private void Timer3_Tick(object sender, EventArgs e)
         {
-            numericUpDown1.Maximum = numericUpDown2.Value;
 
-            checkBox9.Enabled = checkBox8.Checked;
-            if (!checkBox8.Checked)
-            {
-                checkBox9.Checked = false;
-            }
-
-            statusStrip1.Items[1].Text = $"{coin[1]} собрано";
-            statusStrip1.Items[2].Text = $"{heart[1]} собрано";
-            statusStrip1.Items[3].Text = $"{beauty[1]} собрано";
         }
 
         private void Login_TextChanged(object sender, EventArgs e)
@@ -696,58 +734,58 @@ namespace mpets.mobi.bot
 
         private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "TimerIntervalMin", numericUpDown1.Value.ToString());
+            settings.Write("Timer", "Min", numericUpDown1.Value.ToString());
         }
 
         private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "TimerIntervalMax", numericUpDown2.Value.ToString());
+            settings.Write("Timer", "Max", numericUpDown2.Value.ToString());
         }
 
         private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Food", checkBox1.Checked.ToString().ToLower());
+            settings.Write("Settings", "Food", checkBox1.Checked.ToString().ToLower());
         }
 
         private void CheckBox2_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Play", checkBox2.Checked.ToString().ToLower());
+            settings.Write("Settings", "Play", checkBox2.Checked.ToString().ToLower());
         }
 
         private void CheckBox3_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Showing", checkBox3.Checked.ToString().ToLower());
+            settings.Write("Settings", "Showing", checkBox3.Checked.ToString().ToLower());
         }
 
         private void CheckBox4_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Travel", checkBox4.Checked.ToString().ToLower());
+            settings.Write("Settings", "Travel", checkBox4.Checked.ToString().ToLower());
         }
 
         private void CheckBox5_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Сhest", checkBox5.Checked.ToString().ToLower());
+            settings.Write("Settings", "Chest", checkBox5.Checked.ToString().ToLower());
         }
 
         private void CheckBox6_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Glade", checkBox6.Checked.ToString().ToLower());
+            settings.Write("Settings", "Glade", checkBox6.Checked.ToString().ToLower());
         }
 
         private void CheckBox7_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Tasks", checkBox7.Checked.ToString().ToLower());
+            settings.Write("Settings", "Tasks", checkBox7.Checked.ToString().ToLower());
         }
 
         private void CheckBox8_CheckedChanged(object sender, EventArgs e)
         {
+            settings.Write("Settings", "AutoRun", checkBox8.Checked.ToString().ToLower());
             AutoRun(checkBox8.Checked);
-            settings.Write("BotSettings", "AutoRun", checkBox8.Checked.ToString().ToLower());
         }
 
         private void CheckBox9_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("BotSettings", "Hide", checkBox9.Checked.ToString().ToLower());
+            settings.Write("Settings", "Hide", checkBox9.Checked.ToString().ToLower());
         }
 
         private void Button1_Click(object sender, EventArgs e)
