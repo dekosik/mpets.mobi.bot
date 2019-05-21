@@ -113,9 +113,6 @@ namespace mpets.mobi.bot
             }
             else
             {
-                notifyIcon1.BalloonTipText = "Нажмите на иконку приложения 1 раз чтобы скрыть или показать форму.";
-                notifyIcon1.ShowBalloonTip(1000);
-
                 ShowInTaskbar = false;
                 WindowState = FormWindowState.Minimized;
                 Hide();
@@ -135,6 +132,19 @@ namespace mpets.mobi.bot
             catch (Exception)
             {
                 return "";
+            }
+        }
+
+        public void SaveExpirience(string type, string result)
+        {
+            string expirience;
+
+            switch (type)
+            {
+                case "Travel":
+                    expirience = new Regex(@"expirience.png\"" />(.*?)<br />").Match(result).Groups[1].Value;
+                    if(expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                break;
             }
         }
 
@@ -166,14 +176,12 @@ namespace mpets.mobi.bot
             {
                 await Task.Delay(random.Next(500, 1000));
 
-                File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.txt", result);
-
-                string e = new Regex(@"expirience.png\"" />(.*?)<br />").Match(result).Groups[1].Value;
-                if (e.Length > 0)
-                    exp += Convert.ToInt32(e);
+                // DEBUG
+                File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.html", result);
+                // DEBUG
+                SaveExpirience("Travel", result);
 
                 result = await HTTP_Get("/travel?clear=1");
-
                 await Task.Delay(random.Next(400, 700));
             }
 
@@ -671,10 +679,10 @@ namespace mpets.mobi.bot
                 checkBox9.Checked = false;
             }
 
-            statusStrip1.Items[1].Text = $"{exp} собрано";
-            statusStrip1.Items[2].Text = $"{coin[1]} собрано";
-            statusStrip1.Items[3].Text = $"{heart[1]} собрано";
-            statusStrip1.Items[4].Text = $"{beauty[1]} собрано";            
+            statusStrip1.Items[1].Text = $"{exp.ToString("#,##0")} собрано";
+            statusStrip1.Items[2].Text = $"{coin[1].ToString("#,##0")} собрано";
+            statusStrip1.Items[3].Text = $"{heart[1].ToString("#,##0")} собрано";
+            statusStrip1.Items[4].Text = $"{beauty[1].ToString("#,##0")} собрано";            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -715,11 +723,6 @@ namespace mpets.mobi.bot
         private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
         {
             HideForm(isHide);
-        }
-
-        private void Timer3_Tick(object sender, EventArgs e)
-        {
-
         }
 
         private void Login_TextChanged(object sender, EventArgs e)

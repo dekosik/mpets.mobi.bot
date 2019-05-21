@@ -55,14 +55,14 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button1 = new System.Windows.Forms.Button();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -406,6 +406,41 @@
             this.toolStripStatusLabel1.Text = "Запустите бота";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // toolStripStatusLabel5
+            // 
+            this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
+            this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(677, 17);
+            this.toolStripStatusLabel5.Spring = true;
+            this.toolStripStatusLabel5.Text = "0 собрано";
+            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel2.Text = "0 собрано";
+            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel3.Text = "0 собрано";
+            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
+            this.toolStripStatusLabel4.Text = "0 собрано";
+            // 
             // timer1
             // 
             this.timer1.Enabled = true;
@@ -437,41 +472,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
-            // toolStripStatusLabel5
-            // 
-            this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
-            this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(646, 17);
-            this.toolStripStatusLabel5.Spring = true;
-            this.toolStripStatusLabel5.Text = "0 собрано";
-            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
-            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel2.Text = "0 собрано";
-            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
-            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel3.Text = "0 собрано";
-            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel4
-            // 
-            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel4.Text = "0 собрано";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -489,7 +489,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Удивительные питомца By DeKoSiK ( v1.3.1 )";
+            this.Text = "Удивительные питомца By DeKoSiK ( v1.4 )";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
