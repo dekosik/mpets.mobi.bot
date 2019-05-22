@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -145,6 +143,7 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который считает опыт за каждое выполненное действие 
         public void SaveExpirience(string type, string result)
         {
             string expirience;
@@ -196,6 +195,7 @@ namespace mpets.mobi.bot
             }
         }
 
+        // Метод который конвертирует число в более читабельное и приятное на глаз
         public string StringFormat(string number)
         {
             return Convert.ToInt32(number).ToString("#,##0", new CultureInfo("en-US"));

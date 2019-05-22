@@ -68,6 +68,7 @@
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -139,6 +140,8 @@
             this.groupBox3.TabIndex = 11;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Интервал повторов ( мин )";
+            this.toolTip1.SetToolTip(this.groupBox3, "Тут можно выбрать интервал повторов.\r\nНапример: Бот выберёт рандомное число от 30" +
+        " до 60 минут для следующего старта.");
             // 
             // label5
             // 
@@ -257,6 +260,7 @@
             this.checkBox9.TabStop = false;
             this.checkBox9.Text = "Запускать свернутым";
             this.checkBox9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox9, resources.GetString("checkBox9.ToolTip"));
             this.checkBox9.UseVisualStyleBackColor = true;
             this.checkBox9.CheckedChanged += new System.EventHandler(this.CheckBox9_CheckedChanged);
             // 
@@ -270,6 +274,8 @@
             this.checkBox8.TabStop = false;
             this.checkBox8.Text = "Автозапуск и автостарт";
             this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox8, "Установив данную галочку бот будет загружаться вместе с Windows, а так же сразу с" +
+        "тартовать.");
             this.checkBox8.UseVisualStyleBackColor = true;
             this.checkBox8.CheckedChanged += new System.EventHandler(this.CheckBox8_CheckedChanged);
             // 
@@ -285,6 +291,7 @@
             this.checkBox7.TabStop = false;
             this.checkBox7.Text = "Забирать задания";
             this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox7, "Бот будет забирать все выполненные задания (включая медали).");
             this.checkBox7.UseVisualStyleBackColor = true;
             this.checkBox7.CheckedChanged += new System.EventHandler(this.CheckBox7_CheckedChanged);
             // 
@@ -300,6 +307,7 @@
             this.checkBox6.TabStop = false;
             this.checkBox6.Text = "Копать поляну";
             this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox6, "Бот будет копать поляну.");
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.CheckBox6_CheckedChanged);
             // 
@@ -315,6 +323,7 @@
             this.checkBox5.TabStop = false;
             this.checkBox5.Text = "Надевать и продавать вещи";
             this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox5, "Бот будет надевать вещи которые лучше и продавать ненужные.");
             this.checkBox5.UseVisualStyleBackColor = true;
             this.checkBox5.CheckedChanged += new System.EventHandler(this.CheckBox5_CheckedChanged);
             // 
@@ -330,6 +339,7 @@
             this.checkBox4.TabStop = false;
             this.checkBox4.Text = "Выгуливать питомца";
             this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox4, "Бот будет отправлять питомца на длительную прогулку.");
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.CheckedChanged += new System.EventHandler(this.CheckBox4_CheckedChanged);
             // 
@@ -345,6 +355,7 @@
             this.checkBox3.TabStop = false;
             this.checkBox3.Text = "Ходить на выставки";
             this.checkBox3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox3, "Бот будет ходить на выставки.");
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.CheckBox3_CheckedChanged);
             // 
@@ -360,6 +371,7 @@
             this.checkBox2.TabStop = false;
             this.checkBox2.Text = "Играть с питомцем";
             this.checkBox2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox2, "Бот будет играть с питомцем.");
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBox2_CheckedChanged);
             // 
@@ -375,6 +387,7 @@
             this.checkBox1.TabStop = false;
             this.checkBox1.Text = "Кормить питомца";
             this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.checkBox1, "Бот будет кормить питомца.");
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
             // 
@@ -497,7 +510,7 @@
             this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
             this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(266, 17);
             this.toolStripStatusLabel5.Spring = true;
             this.toolStripStatusLabel5.Text = "0 собрано";
             this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -507,7 +520,7 @@
             this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
             this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 17);
             this.toolStripStatusLabel2.Text = "0 собрано";
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -516,7 +529,7 @@
             this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
             this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
             this.toolStripStatusLabel3.Text = "0 собрано";
             this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -524,8 +537,13 @@
             // 
             this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
             this.toolStripStatusLabel4.Text = "0 собрано";
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.toolTip1.ToolTipTitle = "Информация";
             // 
             // Form1
             // 
@@ -603,5 +621,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel5;
         private System.Windows.Forms.ToolStripLabel toolStripLabel6;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
