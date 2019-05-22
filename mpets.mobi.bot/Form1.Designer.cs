@@ -122,7 +122,7 @@
             this.groupBox1.Controls.Add(this.password);
             this.groupBox1.Controls.Add(this.login);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(7, 21);
+            this.groupBox1.Location = new System.Drawing.Point(7, 19);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(206, 175);
             this.groupBox1.TabIndex = 4;
@@ -211,7 +211,7 @@
             // 
             // start
             // 
-            this.start.Location = new System.Drawing.Point(7, 201);
+            this.start.Location = new System.Drawing.Point(7, 199);
             this.start.Name = "start";
             this.start.Size = new System.Drawing.Size(100, 30);
             this.start.TabIndex = 5;
@@ -223,7 +223,7 @@
             // stop
             // 
             this.stop.Enabled = false;
-            this.stop.Location = new System.Drawing.Point(113, 201);
+            this.stop.Location = new System.Drawing.Point(113, 199);
             this.stop.Name = "stop";
             this.stop.Size = new System.Drawing.Size(100, 30);
             this.stop.TabIndex = 6;
@@ -243,7 +243,7 @@
             this.groupBox2.Controls.Add(this.checkBox3);
             this.groupBox2.Controls.Add(this.checkBox2);
             this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Location = new System.Drawing.Point(7, 230);
+            this.groupBox2.Location = new System.Drawing.Point(7, 228);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(206, 189);
             this.groupBox2.TabIndex = 7;
@@ -394,7 +394,7 @@
             // richTextBox1
             // 
             this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.richTextBox1.Location = new System.Drawing.Point(219, 29);
+            this.richTextBox1.Location = new System.Drawing.Point(219, 26);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(382, 353);
@@ -410,7 +410,7 @@
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 425);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 422);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(608, 22);
             this.statusStrip1.SizingGrip = false;
@@ -447,7 +447,7 @@
             // 
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.button1.ImageIndex = 0;
-            this.button1.Location = new System.Drawing.Point(219, 387);
+            this.button1.Location = new System.Drawing.Point(219, 385);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(382, 31);
             this.button1.TabIndex = 8;
@@ -549,7 +549,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(608, 447);
+            this.ClientSize = new System.Drawing.Size(608, 444);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusStrip1);

@@ -18,6 +18,7 @@ namespace mpets.mobi.bot
         private static HttpClient httpClient;
         private static readonly Random random = new Random();
 
+        // Переменная для своеобразного таймера
         private DateTime taskStop;
 
         // Системные переменные
@@ -460,7 +461,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который обновляет статистику Красоты, Монет и Сердечек
+        // Метод который обновляет статистику красоты, монет, cердечек и уровеня
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
@@ -523,7 +524,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Главный метод старта бота
+        // Главный метод бота
         public void StartBot()
         {
             CreateHttpClient();
