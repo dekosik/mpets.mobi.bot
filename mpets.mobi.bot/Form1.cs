@@ -30,7 +30,7 @@ namespace mpets.mobi.bot
         // Версия бота
         private readonly string version = "v1.4";
 
-        // Переменная разработчика
+        // Переменная для разработчика (немного больше логов)
         private bool isDev = false;
 
         // Переменные для хранения статистики красоты
@@ -77,7 +77,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод отправки в statusStrip1
+        // Метод отправки текста в statusStrip1
         public void StatusLog(string text, Image image = null)
         {
             Invoke(new Action(() => statusStrip1.Items[0].Text = text));
@@ -290,7 +290,7 @@ namespace mpets.mobi.bot
         }
 
         // Метод который одевает вещи и продаёт ненужные
-        public async Task Сhest()
+        public async Task Chest()
         {
             string result = await HTTP_Get("/chest");
             string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
@@ -461,7 +461,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который обновляет статистику красоты, монет, cердечек и уровеня
+        // Метод который обновляет статистику красоты, монет, cердечек и уровня
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
@@ -626,7 +626,7 @@ namespace mpets.mobi.bot
                     {
                         StatusLog("Проверяю шкаф...", Properties.Resources.chest);
 
-                        await Сhest();
+                        await Chest();
                         await Task.Delay(random.Next(500, 1000));
                     }
 
