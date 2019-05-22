@@ -55,20 +55,26 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.button1 = new System.Windows.Forms.Button();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLabel6 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -115,7 +121,7 @@
             this.groupBox1.Controls.Add(this.password);
             this.groupBox1.Controls.Add(this.login);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(8, 1);
+            this.groupBox1.Location = new System.Drawing.Point(7, 21);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(206, 175);
             this.groupBox1.TabIndex = 4;
@@ -202,7 +208,7 @@
             // 
             // start
             // 
-            this.start.Location = new System.Drawing.Point(8, 181);
+            this.start.Location = new System.Drawing.Point(7, 201);
             this.start.Name = "start";
             this.start.Size = new System.Drawing.Size(100, 30);
             this.start.TabIndex = 5;
@@ -214,7 +220,7 @@
             // stop
             // 
             this.stop.Enabled = false;
-            this.stop.Location = new System.Drawing.Point(114, 181);
+            this.stop.Location = new System.Drawing.Point(113, 201);
             this.stop.Name = "stop";
             this.stop.Size = new System.Drawing.Size(100, 30);
             this.stop.TabIndex = 6;
@@ -234,7 +240,7 @@
             this.groupBox2.Controls.Add(this.checkBox3);
             this.groupBox2.Controls.Add(this.checkBox2);
             this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Location = new System.Drawing.Point(8, 210);
+            this.groupBox2.Location = new System.Drawing.Point(7, 230);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(206, 189);
             this.groupBox2.TabIndex = 7;
@@ -375,7 +381,7 @@
             // richTextBox1
             // 
             this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.richTextBox1.Location = new System.Drawing.Point(220, 8);
+            this.richTextBox1.Location = new System.Drawing.Point(219, 29);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(382, 353);
@@ -391,9 +397,9 @@
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 548);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 425);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1019, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(608, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 9;
             this.statusStrip1.Text = "statusStrip1";
@@ -405,41 +411,6 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(90, 17);
             this.toolStripStatusLabel1.Text = "Запустите бота";
             this.toolStripStatusLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel5
-            // 
-            this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
-            this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(677, 17);
-            this.toolStripStatusLabel5.Spring = true;
-            this.toolStripStatusLabel5.Text = "0 собрано";
-            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
-            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel2.Text = "0 собрано";
-            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
-            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel3.Text = "0 собрано";
-            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // toolStripStatusLabel4
-            // 
-            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 17);
-            this.toolStripStatusLabel4.Text = "0 собрано";
             // 
             // timer1
             // 
@@ -463,7 +434,7 @@
             // 
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.button1.ImageIndex = 0;
-            this.button1.Location = new System.Drawing.Point(220, 367);
+            this.button1.Location = new System.Drawing.Point(219, 387);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(382, 31);
             this.button1.TabIndex = 8;
@@ -472,11 +443,96 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStrip1.CanOverflow = false;
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabel6,
+            this.toolStripLabel5,
+            this.toolStripLabel3,
+            this.toolStripLabel2});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(608, 25);
+            this.toolStrip1.TabIndex = 10;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripLabel6
+            // 
+            this.toolStripLabel6.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel6.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.toolStripLabel6.Margin = new System.Windows.Forms.Padding(0, 1, 6, 2);
+            this.toolStripLabel6.Name = "toolStripLabel6";
+            this.toolStripLabel6.Size = new System.Drawing.Size(87, 22);
+            this.toolStripLabel6.Text = "Сердечек: 0";
+            // 
+            // toolStripLabel5
+            // 
+            this.toolStripLabel5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel5.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.toolStripLabel5.Name = "toolStripLabel5";
+            this.toolStripLabel5.Size = new System.Drawing.Size(71, 22);
+            this.toolStripLabel5.Text = "Монет: 0";
+            // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel3.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(79, 22);
+            this.toolStripLabel3.Text = "Красота: 0";
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Image = global::mpets.mobi.bot.Properties.Resources.ico16_up;
+            this.toolStripLabel2.Margin = new System.Windows.Forms.Padding(6, 1, 0, 2);
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(81, 22);
+            this.toolStripLabel2.Text = "Уровень: 1";
+            // 
+            // toolStripStatusLabel5
+            // 
+            this.toolStripStatusLabel5.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
+            this.toolStripStatusLabel5.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel5.Spring = true;
+            this.toolStripStatusLabel5.Text = "0 собрано";
+            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.toolStripStatusLabel2.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel2.Text = "0 собрано";
+            this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.toolStripStatusLabel3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel3.Text = "0 собрано";
+            this.toolStripStatusLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(79, 16);
+            this.toolStripStatusLabel4.Text = "0 собрано";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1019, 570);
+            this.ClientSize = new System.Drawing.Size(608, 447);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.richTextBox1);
@@ -489,7 +545,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Удивительные питомца By DeKoSiK ( v1.4 )";
+            this.Text = "Удивительные питомца By DeKoSiK";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -500,6 +556,8 @@
             this.groupBox2.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -540,5 +598,10 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel5;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel6;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
     }
 }

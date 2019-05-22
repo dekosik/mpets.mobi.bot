@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="avatar_icon.ico" />
+    <None Include="Resources\ico16-up.png" />
     <None Include="Resources\expirience.png" />
     <None Include="Resources\beauty.png" />
     <None Include="Resources\travel.png" />

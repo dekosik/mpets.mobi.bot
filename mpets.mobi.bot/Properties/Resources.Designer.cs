@@ -153,6 +153,16 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ico16_up {
+            get {
+                object obj = ResourceManager.GetObject("ico16_up", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap meat {
             get {
                 object obj = ResourceManager.GetObject("meat", resourceCulture);

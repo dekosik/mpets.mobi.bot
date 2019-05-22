@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,6 +28,12 @@ namespace mpets.mobi.bot
         private bool isTimer;
         private bool isHide;
 
+        // Версия бота
+        private readonly string version = "v1.4";
+
+        // Переменная разработчика
+        private bool isDev = false;
+
         // Переменные для хранения статистики красоты
         private int[] beauty = { 0, 0 };
         private bool beauty_bool = false;
@@ -37,6 +46,7 @@ namespace mpets.mobi.bot
         private int[] heart = { 0, 0 };
         private bool heart_bool = false;
 
+        // Переменная для хранения очков опыта
         private int exp = 0;
 
         public Form1()
@@ -143,9 +153,52 @@ namespace mpets.mobi.bot
             {
                 case "Travel":
                     expirience = new Regex(@"expirience.png\"" />(.*?)<br />").Match(result).Groups[1].Value;
-                    if(expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                break;
+
+                    if (expirience.Contains("heart")) expirience = new Regex(@"(.*?),").Match(expirience).Groups[1].Value;
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev) Log($"Travel = {expirience}", false);
+                    break;
+
+                case "Glade":
+                    expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
+
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev) Log($"Glade = {expirience}", false);
+                    break;
+
+                case "Tasks":
+                    expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
+
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev) Log($"Tasks = {expirience}", false);
+                    break;
+
+                case "Food":
+                    expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
+
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev) Log($"Food = {expirience}", false);
+                    break;
+
+                case "Play":
+                    expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
+
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev) Log($"Play = {expirience}", false);
+                    break;
+
+                case "Showing":
+                    expirience = new Regex(@"expirience.png\"" />(.*?)</td>").Match(result).Groups[1].Value;
+
+                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
+                    if (isDev & expirience.Length > 0) Log($"Showing = {expirience}", false);
+                    break;
             }
+        }
+
+        public string StringFormat(string number)
+        {
+            return Convert.ToInt32(number).ToString("#,##0", new CultureInfo("en-US"));
         }
 
         // Метод который авторизуется в игре
@@ -174,14 +227,11 @@ namespace mpets.mobi.bot
 
             if (result.Contains("Гулять дальше"))
             {
-                await Task.Delay(random.Next(500, 1000));
+                await Task.Delay(random.Next(400, 700));
 
-                // DEBUG
-                File.WriteAllText($"{AppDomain.CurrentDomain.BaseDirectory}/travel/{DateTime.UtcNow.ToFileTimeUtc()}.html", result);
-                // DEBUG
                 SaveExpirience("Travel", result);
-
                 result = await HTTP_Get("/travel?clear=1");
+
                 await Task.Delay(random.Next(400, 700));
             }
 
@@ -228,9 +278,7 @@ namespace mpets.mobi.bot
                 {
                     result = await HTTP_Get("/glade_dig");
 
-                    string e = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
-                    if (e.Length > 0)
-                        exp += Convert.ToInt32(e);
+                    SaveExpirience("Glade", result);
 
                     await Task.Delay(random.Next(500, 1000));
                 }
@@ -262,6 +310,7 @@ namespace mpets.mobi.bot
                         Log($"--- Продал {name}.", true, Color.Red);
 
                     result = await HTTP_Get(url);
+
                     url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
                     name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
                 }
@@ -289,9 +338,7 @@ namespace mpets.mobi.bot
                     {
                         result = await HTTP_Get("/task_reward?id=" + id);
 
-                        string e = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
-                        if (e.Length > 0)
-                            exp += Convert.ToInt32(e);
+                        SaveExpirience("Tasks", result);
 
                         await Task.Delay(random.Next(500, 1000));
                     }
@@ -332,13 +379,9 @@ namespace mpets.mobi.bot
                 do
                 {
                     result = await HTTP_Get("/?action=food&rand=" + rand);
-                    
                     rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
-                    string e = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
-                    if (e.Length > 0)
-                        exp += Convert.ToInt32(e);
-
+                    SaveExpirience("Food", result);
                     await Task.Delay(random.Next(500, 1000));
                 }
                 while (rand.Length > 0);
@@ -364,9 +407,7 @@ namespace mpets.mobi.bot
                     result = await HTTP_Get("/?action=play&rand=" + rand);
                     rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
 
-                    string e = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
-                    if (e.Length > 0)
-                       exp += Convert.ToInt32(e);
+                    SaveExpirience("Play", result);
 
                     await Task.Delay(random.Next(500, 1000));
                 }
@@ -409,9 +450,7 @@ namespace mpets.mobi.bot
                     if (result.Contains("Снежки"))
                         status = false;
 
-                    string e = new Regex(@"expirience.png\"" />(.*?)</td>").Match(result).Groups[1].Value;
-                    if (e.Length > 0)
-                        exp += Convert.ToInt32(e);
+                    SaveExpirience("Showing", result);
 
                     await Task.Delay(random.Next(500, 1000));
                 }
@@ -431,9 +470,12 @@ namespace mpets.mobi.bot
             string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
+            string level_string = new Regex(@", (.*?) уровень").Match(result).Groups[1].Value;
 
             if (beauty_string.Length > 0)
             {
+                toolStrip1.Items[2].Text = $"Красота: {StringFormat(beauty_string)}";
+
                 if (!beauty_bool)
                 {
                     beauty[0] = Convert.ToInt32(beauty_string);
@@ -447,6 +489,8 @@ namespace mpets.mobi.bot
 
             if (coin_string.Length > 0)
             {
+                toolStrip1.Items[1].Text = $"Монеты: {StringFormat(coin_string)}";
+
                 if (!coin_bool)
                 {
                     coin[0] = Convert.ToInt32(coin_string);
@@ -460,6 +504,8 @@ namespace mpets.mobi.bot
 
             if (heart_string.Length > 0)
             {
+                toolStrip1.Items[0].Text = $"Сердечки: {StringFormat(heart_string)}";
+
                 if (!heart_bool)
                 {
                     heart[0] = Convert.ToInt32(heart_string);
@@ -469,6 +515,11 @@ namespace mpets.mobi.bot
                 {
                     heart[1] = Convert.ToInt32(heart_string) - heart[0];
                 }
+            }
+
+            if(level_string.Length > 0)
+            {
+                toolStrip1.Items[3].Text = $"Уровень: {level_string}";
             }
         }
 
@@ -679,15 +730,17 @@ namespace mpets.mobi.bot
                 checkBox9.Checked = false;
             }
 
-            statusStrip1.Items[1].Text = $"{exp.ToString("#,##0")} собрано";
-            statusStrip1.Items[2].Text = $"{coin[1].ToString("#,##0")} собрано";
-            statusStrip1.Items[3].Text = $"{heart[1].ToString("#,##0")} собрано";
-            statusStrip1.Items[4].Text = $"{beauty[1].ToString("#,##0")} собрано";            
+            statusStrip1.Items[1].Text = $"{StringFormat(exp.ToString())} собрано";
+            statusStrip1.Items[2].Text = $"{StringFormat(coin[1].ToString())} собрано";
+            statusStrip1.Items[3].Text = $"{StringFormat(heart[1].ToString())} собрано";
+            statusStrip1.Items[4].Text = $"{StringFormat(beauty[1].ToString())} собрано";
+
+            if(isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Size = new Size(624, 464);
+            Size = new Size(624, 486);
 
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
