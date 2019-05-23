@@ -136,6 +136,7 @@ namespace mpets.mobi.bot
             try
             {
                 string result = await httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
+
                 return result;
             }
             catch (Exception)
