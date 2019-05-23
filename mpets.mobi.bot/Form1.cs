@@ -741,7 +741,7 @@ namespace mpets.mobi.bot
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Size = new Size(624, 486);
+            Size = new Size(622, 483);
 
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
