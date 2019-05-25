@@ -60,28 +60,28 @@ namespace mpets.mobi.bot
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
         }
 
-        // Метод отправки текста в richTextBox
+        // Метод отправки текста в LogBox
         public void Log(string text, bool show_times = true, Color color = new Color())
         {
             if (show_times)
             {
-                Invoke(new Action(() => richTextBox1.SelectionColor = color));
-                Invoke(new Action(() => richTextBox1.AppendText($" [ {DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} ] {text} {Environment.NewLine}")));
-                Invoke(new Action(() => richTextBox1.ScrollToCaret()));
+                Invoke(new Action(() => LogBox.SelectionColor = color));
+                Invoke(new Action(() => LogBox.AppendText($" [ {DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} ] {text} {Environment.NewLine}")));
+                Invoke(new Action(() => LogBox.ScrollToCaret()));
             }
             else
             {
-                Invoke(new Action(() => richTextBox1.SelectionColor = color));
-                Invoke(new Action(() => richTextBox1.AppendText($" {text} {Environment.NewLine}")));
-                Invoke(new Action(() => richTextBox1.ScrollToCaret()));
+                Invoke(new Action(() => LogBox.SelectionColor = color));
+                Invoke(new Action(() => LogBox.AppendText($" {text} {Environment.NewLine}")));
+                Invoke(new Action(() => LogBox.ScrollToCaret()));
             }
         }
 
-        // Метод отправки текста в toolStripLabel8
+        // Метод отправки текста в BotsLogs
         public void StatusLog(string text, Image image = null)
         {
-            Invoke(new Action(() => toolStripLabel8.Text = text));
-            Invoke(new Action(() => toolStripLabel8.Image = image));
+            Invoke(new Action(() => BotsLogs.Text = text));
+            Invoke(new Action(() => BotsLogs.Image = image));
         }
 
         // Метод который убирает или добавляет в автозагрузки Windows
@@ -475,7 +475,7 @@ namespace mpets.mobi.bot
 
             if (beauty_string.Length > 0)
             {
-                toolStripLabel3.Text = $"Красота: {StringFormat(beauty_string)}";
+                BeautyCurrent.Text = $"Красота: {StringFormat(beauty_string)}";
 
                 if (!beauty_bool)
                 {
@@ -490,7 +490,7 @@ namespace mpets.mobi.bot
 
             if (coin_string.Length > 0)
             {
-                toolStripLabel5.Text = $"Монеты: {StringFormat(coin_string)}";
+                CoinCurrent.Text = $"Монеты: {StringFormat(coin_string)}";
 
                 if (!coin_bool)
                 {
@@ -505,7 +505,7 @@ namespace mpets.mobi.bot
 
             if (heart_string.Length > 0)
             {
-                toolStripLabel6.Text = $"Сердечки: {StringFormat(heart_string)}";
+                HeartCurrent.Text = $"Сердечки: {StringFormat(heart_string)}";
 
                 if (!heart_bool)
                 {
@@ -589,7 +589,7 @@ namespace mpets.mobi.bot
                     }
                     while (status);
 
-                    if (checkBox4.Checked)
+                    if (TravelCheckBox.Checked)
                     {
                         StatusLog("Проверяю прогулки...", Properties.Resources.travel);
 
@@ -597,7 +597,7 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
-                    if (checkBox6.Checked)
+                    if (GladeCheckBox.Checked)
                     {
                         StatusLog("Проверяю поляну...", Properties.Resources.garden);
 
@@ -605,7 +605,7 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
-                    if (checkBox5.Checked)
+                    if (ChestCheckBox.Checked)
                     {
                         StatusLog("Проверяю шкаф...", Properties.Resources.chest);
 
@@ -613,7 +613,7 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
                     }
 
-                    if (checkBox7.Checked)
+                    if (TasksCheckBox.Checked)
                     {
                         StatusLog("Проверяю задания...", Properties.Resources.tasks);
 
@@ -627,7 +627,7 @@ namespace mpets.mobi.bot
                     isTimer = true;
                     taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(random.Next(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value))));
 
-                    Invoke(new Action(() => richTextBox1.Focus()));
+                    Invoke(new Action(() => LogBox.Focus()));
 
                     Log("-- Все задачи выполнены.");
                     Log("", false);
@@ -711,16 +711,16 @@ namespace mpets.mobi.bot
 
             numericUpDown1.Maximum = numericUpDown2.Value;
 
-            checkBox9.Enabled = checkBox8.Checked;
-            if (!checkBox8.Checked)
+            HideCheckBox.Enabled = AutoRunCheckBox.Checked;
+            if (!AutoRunCheckBox.Checked)
             {
-                checkBox9.Checked = false;
+                HideCheckBox.Checked = false;
             }
 
-            toolStripLabel7.Text = $"{StringFormat(exp.ToString())} собрано";
-            toolStripLabel4.Text = $"{StringFormat(coin[1].ToString())} собрано";
-            toolStripLabel1.Text = $"{StringFormat(heart[1].ToString())} собрано";
-            toolStripLabel10.Text = $"{StringFormat(beauty[1].ToString())} собрано";
+            ExpSession.Text = $"{StringFormat(exp.ToString())} собрано";
+            CoinSession.Text = $"{StringFormat(coin[1].ToString())} собрано";
+            HeartSession.Text = $"{StringFormat(heart[1].ToString())} собрано";
+            BeautySession.Text = $"{StringFormat(beauty[1].ToString())} собрано";
 
             if (isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
         }
@@ -733,15 +733,15 @@ namespace mpets.mobi.bot
             if (settings.Get("Timer", "Min").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("Timer", "Min"));
             if (settings.Get("Timer", "Max").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("Timer", "Max"));
 
-            if (settings.Get("Settings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("Settings", "Travel"));
-            if (settings.Get("Settings", "Chest").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
-            if (settings.Get("Settings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
-            if (settings.Get("Settings", "Tasks").Length > 0) checkBox7.Checked = Convert.ToBoolean(settings.Get("Settings", "Tasks"));
+            if (settings.Get("Settings", "Travel").Length > 0) TravelCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Travel"));
+            if (settings.Get("Settings", "Chest").Length > 0) ChestCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
+            if (settings.Get("Settings", "Glade").Length > 0) GladeCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
+            if (settings.Get("Settings", "Tasks").Length > 0) TasksCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Tasks"));
 
             if (settings.Get("Settings", "AutoRun").Length > 0)
             {
-                checkBox8.Checked = Convert.ToBoolean(settings.Get("Settings", "AutoRun"));
-                checkBox9.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
+                AutoRunCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "AutoRun"));
+                HideCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
 
                 if (Convert.ToBoolean(settings.Get("Settings", "AutoRun")))
                 {
@@ -780,35 +780,35 @@ namespace mpets.mobi.bot
             settings.Write("Timer", "Max", numericUpDown2.Value.ToString());
         }
 
-        private void CheckBox4_CheckedChanged(object sender, EventArgs e)
+        private void TravelCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Travel", checkBox4.Checked.ToString().ToLower());
+            settings.Write("Settings", "Travel", TravelCheckBox.Checked.ToString().ToLower());
         }
 
-        private void CheckBox5_CheckedChanged(object sender, EventArgs e)
+        private void ChestCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Chest", checkBox5.Checked.ToString().ToLower());
+            settings.Write("Settings", "Chest", ChestCheckBox.Checked.ToString().ToLower());
         }
 
-        private void CheckBox6_CheckedChanged(object sender, EventArgs e)
+        private void GladeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Glade", checkBox6.Checked.ToString().ToLower());
+            settings.Write("Settings", "Glade", GladeCheckBox.Checked.ToString().ToLower());
         }
 
-        private void CheckBox7_CheckedChanged(object sender, EventArgs e)
+        private void TasksCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Tasks", checkBox7.Checked.ToString().ToLower());
+            settings.Write("Settings", "Tasks", TasksCheckBox.Checked.ToString().ToLower());
         }
 
-        private void CheckBox8_CheckedChanged(object sender, EventArgs e)
+        private void AutoRunCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "AutoRun", checkBox8.Checked.ToString().ToLower());
-            AutoRun(checkBox8.Checked);
+            settings.Write("Settings", "AutoRun", AutoRunCheckBox.Checked.ToString().ToLower());
+            AutoRun(AutoRunCheckBox.Checked);
         }
 
-        private void CheckBox9_CheckedChanged(object sender, EventArgs e)
+        private void HideCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Hide", checkBox9.Checked.ToString().ToLower());
+            settings.Write("Settings", "Hide", HideCheckBox.Checked.ToString().ToLower());
         }
 
         private void Button1_Click(object sender, EventArgs e)

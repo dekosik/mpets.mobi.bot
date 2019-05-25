@@ -120,7 +120,10 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>408, 22</value>
   </metadata>
-  <data name="checkBox9.ToolTip" xml:space="preserve">
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>408, 22</value>
+  </metadata>
+  <data name="HideCheckBox.ToolTip" xml:space="preserve">
     <value>Если установить данную галочку, то бот будет запускаться в свернутом режиме.
 А так же вы всегда можете самостоятельно свернуть бота в трей, для этого нажмите на иноку в трее, чтобы показать или скрыть форму.</value>
   </data>

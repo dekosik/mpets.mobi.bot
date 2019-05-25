@@ -42,28 +42,28 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.start = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.HideCheckBox = new System.Windows.Forms.CheckBox();
+            this.AutoRunCheckBox = new System.Windows.Forms.CheckBox();
+            this.TasksCheckBox = new System.Windows.Forms.CheckBox();
+            this.GladeCheckBox = new System.Windows.Forms.CheckBox();
+            this.ChestCheckBox = new System.Windows.Forms.CheckBox();
+            this.TravelCheckBox = new System.Windows.Forms.CheckBox();
+            this.LogBox = new System.Windows.Forms.RichTextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel6 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.HeartCurrent = new System.Windows.Forms.ToolStripLabel();
+            this.BeautyCurrent = new System.Windows.Forms.ToolStripLabel();
+            this.CoinCurrent = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel7 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel8 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel10 = new System.Windows.Forms.ToolStripLabel();
+            this.BeautySession = new System.Windows.Forms.ToolStripLabel();
+            this.HeartSession = new System.Windows.Forms.ToolStripLabel();
+            this.CoinSession = new System.Windows.Forms.ToolStripLabel();
+            this.ExpSession = new System.Windows.Forms.ToolStripLabel();
+            this.BotsLogs = new System.Windows.Forms.ToolStripLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -233,12 +233,12 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.checkBox9);
-            this.groupBox2.Controls.Add(this.checkBox8);
-            this.groupBox2.Controls.Add(this.checkBox7);
-            this.groupBox2.Controls.Add(this.checkBox6);
-            this.groupBox2.Controls.Add(this.checkBox5);
-            this.groupBox2.Controls.Add(this.checkBox4);
+            this.groupBox2.Controls.Add(this.HideCheckBox);
+            this.groupBox2.Controls.Add(this.AutoRunCheckBox);
+            this.groupBox2.Controls.Add(this.TasksCheckBox);
+            this.groupBox2.Controls.Add(this.GladeCheckBox);
+            this.groupBox2.Controls.Add(this.ChestCheckBox);
+            this.groupBox2.Controls.Add(this.TravelCheckBox);
             this.groupBox2.Location = new System.Drawing.Point(6, 209);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.groupBox2.Name = "groupBox2";
@@ -247,117 +247,117 @@
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             // 
-            // checkBox9
+            // HideCheckBox
             // 
-            this.checkBox9.Enabled = false;
-            this.checkBox9.Location = new System.Drawing.Point(7, 118);
-            this.checkBox9.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox9.Size = new System.Drawing.Size(192, 22);
-            this.checkBox9.TabIndex = 8;
-            this.checkBox9.TabStop = false;
-            this.checkBox9.Text = "Запускать свернутым";
-            this.checkBox9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox9, resources.GetString("checkBox9.ToolTip"));
-            this.checkBox9.UseVisualStyleBackColor = true;
-            this.checkBox9.CheckedChanged += new System.EventHandler(this.CheckBox9_CheckedChanged);
+            this.HideCheckBox.Enabled = false;
+            this.HideCheckBox.Location = new System.Drawing.Point(7, 118);
+            this.HideCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.HideCheckBox.Name = "HideCheckBox";
+            this.HideCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.HideCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.HideCheckBox.TabIndex = 8;
+            this.HideCheckBox.TabStop = false;
+            this.HideCheckBox.Text = "Запускать свернутым";
+            this.HideCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.HideCheckBox, resources.GetString("HideCheckBox.ToolTip"));
+            this.HideCheckBox.UseVisualStyleBackColor = true;
+            this.HideCheckBox.CheckedChanged += new System.EventHandler(this.HideCheckBox_CheckedChanged);
             // 
-            // checkBox8
+            // AutoRunCheckBox
             // 
-            this.checkBox8.Location = new System.Drawing.Point(7, 97);
-            this.checkBox8.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox8.Size = new System.Drawing.Size(192, 22);
-            this.checkBox8.TabIndex = 7;
-            this.checkBox8.TabStop = false;
-            this.checkBox8.Text = "Автозапуск и автостарт";
-            this.checkBox8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox8, "Установив данную галочку бот будет загружаться вместе с Windows, а так же сразу с" +
+            this.AutoRunCheckBox.Location = new System.Drawing.Point(7, 97);
+            this.AutoRunCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.AutoRunCheckBox.Name = "AutoRunCheckBox";
+            this.AutoRunCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.AutoRunCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.AutoRunCheckBox.TabIndex = 7;
+            this.AutoRunCheckBox.TabStop = false;
+            this.AutoRunCheckBox.Text = "Автозапуск и автостарт";
+            this.AutoRunCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.AutoRunCheckBox, "Установив данную галочку бот будет загружаться вместе с Windows, а так же сразу с" +
         "тартовать.");
-            this.checkBox8.UseVisualStyleBackColor = true;
-            this.checkBox8.CheckedChanged += new System.EventHandler(this.CheckBox8_CheckedChanged);
+            this.AutoRunCheckBox.UseVisualStyleBackColor = true;
+            this.AutoRunCheckBox.CheckedChanged += new System.EventHandler(this.AutoRunCheckBox_CheckedChanged);
             // 
-            // checkBox7
+            // TasksCheckBox
             // 
-            this.checkBox7.Checked = true;
-            this.checkBox7.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox7.Location = new System.Drawing.Point(7, 76);
-            this.checkBox7.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox7.Size = new System.Drawing.Size(192, 22);
-            this.checkBox7.TabIndex = 6;
-            this.checkBox7.TabStop = false;
-            this.checkBox7.Text = "Забирать задания";
-            this.checkBox7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox7, "Бот будет забирать все выполненные задания (включая медали).");
-            this.checkBox7.UseVisualStyleBackColor = true;
-            this.checkBox7.CheckedChanged += new System.EventHandler(this.CheckBox7_CheckedChanged);
+            this.TasksCheckBox.Checked = true;
+            this.TasksCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.TasksCheckBox.Location = new System.Drawing.Point(7, 76);
+            this.TasksCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.TasksCheckBox.Name = "TasksCheckBox";
+            this.TasksCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.TasksCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.TasksCheckBox.TabIndex = 6;
+            this.TasksCheckBox.TabStop = false;
+            this.TasksCheckBox.Text = "Забирать задания";
+            this.TasksCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.TasksCheckBox, "Бот будет забирать все выполненные задания (включая медали).");
+            this.TasksCheckBox.UseVisualStyleBackColor = true;
+            this.TasksCheckBox.CheckedChanged += new System.EventHandler(this.TasksCheckBox_CheckedChanged);
             // 
-            // checkBox6
+            // GladeCheckBox
             // 
-            this.checkBox6.Checked = true;
-            this.checkBox6.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox6.Location = new System.Drawing.Point(7, 55);
-            this.checkBox6.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox6.Size = new System.Drawing.Size(192, 22);
-            this.checkBox6.TabIndex = 5;
-            this.checkBox6.TabStop = false;
-            this.checkBox6.Text = "Копать поляну";
-            this.checkBox6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox6, "Бот будет копать поляну.");
-            this.checkBox6.UseVisualStyleBackColor = true;
-            this.checkBox6.CheckedChanged += new System.EventHandler(this.CheckBox6_CheckedChanged);
+            this.GladeCheckBox.Checked = true;
+            this.GladeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GladeCheckBox.Location = new System.Drawing.Point(7, 55);
+            this.GladeCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.GladeCheckBox.Name = "GladeCheckBox";
+            this.GladeCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.GladeCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.GladeCheckBox.TabIndex = 5;
+            this.GladeCheckBox.TabStop = false;
+            this.GladeCheckBox.Text = "Копать поляну";
+            this.GladeCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.GladeCheckBox, "Бот будет копать поляну.");
+            this.GladeCheckBox.UseVisualStyleBackColor = true;
+            this.GladeCheckBox.CheckedChanged += new System.EventHandler(this.GladeCheckBox_CheckedChanged);
             // 
-            // checkBox5
+            // ChestCheckBox
             // 
-            this.checkBox5.Checked = true;
-            this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox5.Location = new System.Drawing.Point(7, 34);
-            this.checkBox5.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox5.Size = new System.Drawing.Size(192, 22);
-            this.checkBox5.TabIndex = 4;
-            this.checkBox5.TabStop = false;
-            this.checkBox5.Text = "Надевать и продавать вещи";
-            this.checkBox5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox5, "Бот будет надевать вещи которые лучше и продавать ненужные.");
-            this.checkBox5.UseVisualStyleBackColor = true;
-            this.checkBox5.CheckedChanged += new System.EventHandler(this.CheckBox5_CheckedChanged);
+            this.ChestCheckBox.Checked = true;
+            this.ChestCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ChestCheckBox.Location = new System.Drawing.Point(7, 34);
+            this.ChestCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.ChestCheckBox.Name = "ChestCheckBox";
+            this.ChestCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.ChestCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.ChestCheckBox.TabIndex = 4;
+            this.ChestCheckBox.TabStop = false;
+            this.ChestCheckBox.Text = "Надевать и продавать вещи";
+            this.ChestCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.ChestCheckBox, "Бот будет надевать вещи которые лучше и продавать ненужные.");
+            this.ChestCheckBox.UseVisualStyleBackColor = true;
+            this.ChestCheckBox.CheckedChanged += new System.EventHandler(this.ChestCheckBox_CheckedChanged);
             // 
-            // checkBox4
+            // TravelCheckBox
             // 
-            this.checkBox4.Checked = true;
-            this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox4.Location = new System.Drawing.Point(7, 13);
-            this.checkBox4.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBox4.Size = new System.Drawing.Size(192, 22);
-            this.checkBox4.TabIndex = 3;
-            this.checkBox4.TabStop = false;
-            this.checkBox4.Text = "Отправлять на прогулку";
-            this.checkBox4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.toolTip1.SetToolTip(this.checkBox4, "Бот будет отправлять питомца на длительную прогулку.");
-            this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.CheckedChanged += new System.EventHandler(this.CheckBox4_CheckedChanged);
+            this.TravelCheckBox.Checked = true;
+            this.TravelCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.TravelCheckBox.Location = new System.Drawing.Point(7, 13);
+            this.TravelCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.TravelCheckBox.Name = "TravelCheckBox";
+            this.TravelCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.TravelCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.TravelCheckBox.TabIndex = 3;
+            this.TravelCheckBox.TabStop = false;
+            this.TravelCheckBox.Text = "Отправлять на прогулку";
+            this.TravelCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.TravelCheckBox, "Бот будет отправлять питомца на длительную прогулку.");
+            this.TravelCheckBox.UseVisualStyleBackColor = true;
+            this.TravelCheckBox.CheckedChanged += new System.EventHandler(this.TravelCheckBox_CheckedChanged);
             // 
-            // richTextBox1
+            // LogBox
             // 
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.richTextBox1.Location = new System.Drawing.Point(216, 34);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(382, 283);
-            this.richTextBox1.TabIndex = 8;
-            this.richTextBox1.TabStop = false;
-            this.richTextBox1.Text = "";
+            this.LogBox.BackColor = System.Drawing.SystemColors.Window;
+            this.LogBox.Location = new System.Drawing.Point(216, 34);
+            this.LogBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.LogBox.Name = "LogBox";
+            this.LogBox.ReadOnly = true;
+            this.LogBox.Size = new System.Drawing.Size(382, 283);
+            this.LogBox.TabIndex = 8;
+            this.LogBox.TabStop = false;
+            this.LogBox.Text = "";
             // 
             // timer1
             // 
@@ -406,9 +406,9 @@
             this.toolStrip1.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel6,
-            this.toolStripLabel3,
-            this.toolStripLabel5});
+            this.HeartCurrent,
+            this.BeautyCurrent,
+            this.CoinCurrent});
             this.toolStrip1.Location = new System.Drawing.Point(216, 5);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
@@ -417,30 +417,30 @@
             this.toolStrip1.TabIndex = 10;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripLabel6
+            // HeartCurrent
             // 
-            this.toolStripLabel6.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel6.Image = global::mpets.mobi.bot.Properties.Resources.heart;
-            this.toolStripLabel6.Margin = new System.Windows.Forms.Padding(0, 1, 6, 2);
-            this.toolStripLabel6.Name = "toolStripLabel6";
-            this.toolStripLabel6.Size = new System.Drawing.Size(86, 22);
-            this.toolStripLabel6.Text = "Сердечек: 0";
+            this.HeartCurrent.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.HeartCurrent.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.HeartCurrent.Margin = new System.Windows.Forms.Padding(0, 1, 6, 2);
+            this.HeartCurrent.Name = "HeartCurrent";
+            this.HeartCurrent.Size = new System.Drawing.Size(86, 22);
+            this.HeartCurrent.Text = "Сердечек: 0";
             // 
-            // toolStripLabel5
+            // BeautyCurrent
             // 
-            this.toolStripLabel5.Image = global::mpets.mobi.bot.Properties.Resources.coin;
-            this.toolStripLabel5.Margin = new System.Windows.Forms.Padding(6, 1, 0, 2);
-            this.toolStripLabel5.Name = "toolStripLabel5";
-            this.toolStripLabel5.Size = new System.Drawing.Size(70, 22);
-            this.toolStripLabel5.Text = "Монет: 0";
+            this.BeautyCurrent.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.BeautyCurrent.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.BeautyCurrent.Name = "BeautyCurrent";
+            this.BeautyCurrent.Size = new System.Drawing.Size(77, 22);
+            this.BeautyCurrent.Text = "Красота: 0";
             // 
-            // toolStripLabel3
+            // CoinCurrent
             // 
-            this.toolStripLabel3.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel3.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
-            this.toolStripLabel3.Name = "toolStripLabel3";
-            this.toolStripLabel3.Size = new System.Drawing.Size(77, 22);
-            this.toolStripLabel3.Text = "Красота: 0";
+            this.CoinCurrent.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.CoinCurrent.Margin = new System.Windows.Forms.Padding(6, 1, 0, 2);
+            this.CoinCurrent.Name = "CoinCurrent";
+            this.CoinCurrent.Size = new System.Drawing.Size(70, 22);
+            this.CoinCurrent.Text = "Монет: 0";
             // 
             // toolStrip2
             // 
@@ -450,11 +450,11 @@
             this.toolStrip2.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel10,
-            this.toolStripLabel1,
-            this.toolStripLabel4,
-            this.toolStripLabel7,
-            this.toolStripLabel8});
+            this.BeautySession,
+            this.HeartSession,
+            this.CoinSession,
+            this.ExpSession,
+            this.BotsLogs});
             this.toolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip2.Location = new System.Drawing.Point(0, 359);
             this.toolStrip2.Name = "toolStrip2";
@@ -463,45 +463,45 @@
             this.toolStrip2.TabIndex = 11;
             this.toolStrip2.Text = "toolStrip2";
             // 
-            // toolStripLabel1
+            // BeautySession
             // 
-            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel1.Image = global::mpets.mobi.bot.Properties.Resources.heart;
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(78, 22);
-            this.toolStripLabel1.Text = "0 собрано";
+            this.BeautySession.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.BeautySession.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
+            this.BeautySession.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.BeautySession.Name = "BeautySession";
+            this.BeautySession.Size = new System.Drawing.Size(78, 22);
+            this.BeautySession.Text = "0 собрано";
             // 
-            // toolStripLabel4
+            // HeartSession
             // 
-            this.toolStripLabel4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel4.Image = global::mpets.mobi.bot.Properties.Resources.coin;
-            this.toolStripLabel4.Name = "toolStripLabel4";
-            this.toolStripLabel4.Size = new System.Drawing.Size(78, 22);
-            this.toolStripLabel4.Text = "0 собрано";
+            this.HeartSession.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.HeartSession.Image = global::mpets.mobi.bot.Properties.Resources.heart;
+            this.HeartSession.Name = "HeartSession";
+            this.HeartSession.Size = new System.Drawing.Size(78, 22);
+            this.HeartSession.Text = "0 собрано";
             // 
-            // toolStripLabel7
+            // CoinSession
             // 
-            this.toolStripLabel7.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel7.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
-            this.toolStripLabel7.Name = "toolStripLabel7";
-            this.toolStripLabel7.Size = new System.Drawing.Size(78, 22);
-            this.toolStripLabel7.Text = "0 собрано";
+            this.CoinSession.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.CoinSession.Image = global::mpets.mobi.bot.Properties.Resources.coin;
+            this.CoinSession.Name = "CoinSession";
+            this.CoinSession.Size = new System.Drawing.Size(78, 22);
+            this.CoinSession.Text = "0 собрано";
             // 
-            // toolStripLabel8
+            // ExpSession
             // 
-            this.toolStripLabel8.Margin = new System.Windows.Forms.Padding(4, 1, 0, 2);
-            this.toolStripLabel8.Name = "toolStripLabel8";
-            this.toolStripLabel8.Size = new System.Drawing.Size(87, 22);
-            this.toolStripLabel8.Text = "Запустите бота";
+            this.ExpSession.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.ExpSession.Image = global::mpets.mobi.bot.Properties.Resources.expirience;
+            this.ExpSession.Name = "ExpSession";
+            this.ExpSession.Size = new System.Drawing.Size(78, 22);
+            this.ExpSession.Text = "0 собрано";
             // 
-            // toolStripLabel10
+            // BotsLogs
             // 
-            this.toolStripLabel10.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripLabel10.Image = global::mpets.mobi.bot.Properties.Resources.beauty;
-            this.toolStripLabel10.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripLabel10.Name = "toolStripLabel10";
-            this.toolStripLabel10.Size = new System.Drawing.Size(78, 22);
-            this.toolStripLabel10.Text = "0 собрано";
+            this.BotsLogs.Margin = new System.Windows.Forms.Padding(4, 1, 0, 2);
+            this.BotsLogs.Name = "BotsLogs";
+            this.BotsLogs.Size = new System.Drawing.Size(87, 22);
+            this.BotsLogs.Text = "Запустите бота";
             // 
             // Form1
             // 
@@ -511,7 +511,7 @@
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.LogBox);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.start);
             this.Controls.Add(this.groupBox1);
@@ -550,12 +550,12 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button start;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.CheckBox checkBox8;
-        private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.CheckBox checkBox6;
-        private System.Windows.Forms.CheckBox checkBox5;
-        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.RichTextBox LogBox;
+        private System.Windows.Forms.CheckBox AutoRunCheckBox;
+        private System.Windows.Forms.CheckBox TasksCheckBox;
+        private System.Windows.Forms.CheckBox GladeCheckBox;
+        private System.Windows.Forms.CheckBox ChestCheckBox;
+        private System.Windows.Forms.CheckBox TravelCheckBox;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
@@ -564,17 +564,17 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox checkBox9;
+        private System.Windows.Forms.CheckBox HideCheckBox;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel6;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel5;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripLabel HeartCurrent;
+        private System.Windows.Forms.ToolStripLabel CoinCurrent;
+        private System.Windows.Forms.ToolStripLabel BeautyCurrent;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel4;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel7;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel8;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel10;
+        private System.Windows.Forms.ToolStripLabel HeartSession;
+        private System.Windows.Forms.ToolStripLabel CoinSession;
+        private System.Windows.Forms.ToolStripLabel ExpSession;
+        private System.Windows.Forms.ToolStripLabel BotsLogs;
+        private System.Windows.Forms.ToolStripLabel BeautySession;
     }
 }

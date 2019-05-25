@@ -91,6 +91,7 @@
     <Content Include="ScreenHistory\v1.2.jpg" />
     <Content Include="ScreenHistory\v1.3.jpg" />
     <Content Include="ScreenHistory\v1.4.jpg" />
+    <Content Include="ScreenHistory\v1.5.jpg" />
     <None Include="Resources\ico16-up.png" />
     <None Include="Resources\expirience.png" />
     <None Include="Resources\beauty.png" />
