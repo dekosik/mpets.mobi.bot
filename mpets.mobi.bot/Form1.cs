@@ -28,7 +28,7 @@ namespace mpets.mobi.bot
         private bool isHide;
 
         // Версия бота
-        private readonly string version = "v1.4";
+        private readonly string version = "v1.5";
 
         // Переменная для разработчика (немного больше логов)
         private bool isDev = false;
@@ -77,11 +77,11 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод отправки текста в statusStrip1
+        // Метод отправки текста в toolStripLabel8
         public void StatusLog(string text, Image image = null)
         {
-            Invoke(new Action(() => statusStrip1.Items[0].Text = text));
-            Invoke(new Action(() => statusStrip1.Items[0].Image = image));
+            Invoke(new Action(() => toolStripLabel8.Text = text));
+            Invoke(new Action(() => toolStripLabel8.Image = image));
         }
 
         // Метод который убирает или добавляет в автозагрузки Windows
@@ -157,42 +157,42 @@ namespace mpets.mobi.bot
 
                     if (expirience.Contains("heart")) expirience = new Regex(@"(.*?),").Match(expirience).Groups[1].Value;
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"Travel = {expirience}", false);
+                    if (isDev) Log($"{type} = {expirience}", false);
                     break;
 
                 case "Glade":
                     expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
 
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"Glade = {expirience}", false);
+                    if (isDev) Log($"{type} = {expirience}", false);
                     break;
 
                 case "Tasks":
                     expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
 
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"Tasks = {expirience}", false);
+                    if (isDev) Log($"{type} = {expirience}", false);
                     break;
 
                 case "Food":
                     expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
 
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"Food = {expirience}", false);
+                    if (isDev) Log($"{type} = {expirience}", false);
                     break;
 
                 case "Play":
                     expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
 
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"Play = {expirience}", false);
+                    if (isDev) Log($"{type} = {expirience}", false);
                     break;
 
                 case "Showing":
                     expirience = new Regex(@"expirience.png\"" />(.*?)</td>").Match(result).Groups[1].Value;
 
                     if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev & expirience.Length > 0) Log($"Showing = {expirience}", false);
+                    if (isDev & expirience.Length > 0) Log($"{type} = {expirience}", false);
                     break;
             }
         }
@@ -462,7 +462,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который обновляет статистику красоты, монет, cердечек и уровня
+        // Метод который обновляет статистику красоты, монет и cердечек
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
@@ -472,11 +472,10 @@ namespace mpets.mobi.bot
             string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
-            string level_string = new Regex(@", (.*?) уровень").Match(result).Groups[1].Value;
 
             if (beauty_string.Length > 0)
             {
-                toolStrip1.Items[2].Text = $"Красота: {StringFormat(beauty_string)}";
+                toolStripLabel3.Text = $"Красота: {StringFormat(beauty_string)}";
 
                 if (!beauty_bool)
                 {
@@ -491,7 +490,7 @@ namespace mpets.mobi.bot
 
             if (coin_string.Length > 0)
             {
-                toolStrip1.Items[1].Text = $"Монеты: {StringFormat(coin_string)}";
+                toolStripLabel5.Text = $"Монеты: {StringFormat(coin_string)}";
 
                 if (!coin_bool)
                 {
@@ -506,7 +505,7 @@ namespace mpets.mobi.bot
 
             if (heart_string.Length > 0)
             {
-                toolStrip1.Items[0].Text = $"Сердечки: {StringFormat(heart_string)}";
+                toolStripLabel6.Text = $"Сердечки: {StringFormat(heart_string)}";
 
                 if (!heart_bool)
                 {
@@ -517,11 +516,6 @@ namespace mpets.mobi.bot
                 {
                     heart[1] = Convert.ToInt32(heart_string) - heart[0];
                 }
-            }
-
-            if(level_string.Length > 0)
-            {
-                toolStrip1.Items[3].Text = $"Уровень: {level_string}";
             }
         }
 
@@ -564,9 +558,6 @@ namespace mpets.mobi.bot
                         if (result.Contains("Разбудить"))
                             status = false;
 
-                        if (!checkBox1.Checked & !checkBox2.Checked & !checkBox3.Checked)
-                            status = false;
-
                         if (new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
                         {
                             sleep = true;
@@ -578,23 +569,14 @@ namespace mpets.mobi.bot
                         {
                             if (!sleep)
                             {
-                                if (checkBox1.Checked)
-                                {
-                                    await Food();
-                                    await Task.Delay(random.Next(500, 1000));
-                                }
+                                await Food();
+                                await Task.Delay(random.Next(500, 1000));
 
-                                if (checkBox2.Checked)
-                                {
-                                    await Play();
-                                    await Task.Delay(random.Next(500, 1000));
-                                }
+                                await Play();
+                                await Task.Delay(random.Next(500, 1000));
 
-                                if (checkBox2.Checked)
-                                {
-                                    await Showing();
-                                    await Task.Delay(random.Next(500, 1000));
-                                }
+                                await Showing();
+                                await Task.Delay(random.Next(500, 1000));
 
                                 await WakeUp();
                                 await Task.Delay(random.Next(1000, 2000));
@@ -645,6 +627,8 @@ namespace mpets.mobi.bot
                     isTimer = true;
                     taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(random.Next(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value))));
 
+                    Invoke(new Action(() => richTextBox1.Focus()));
+
                     Log("-- Все задачи выполнены.");
                     Log("", false);
                 }
@@ -669,12 +653,14 @@ namespace mpets.mobi.bot
 
         private void Start_Click(object sender, EventArgs e)
         {
-            StartBot();
-        }
-
-        private void Stop_Click(object sender, EventArgs e)
-        {
-            isStart = false;
+            if(isStart)
+            {
+                isStart = false;
+            }
+            else
+            {
+                StartBot();
+            }
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
@@ -697,17 +683,17 @@ namespace mpets.mobi.bot
 
         private void Timer2_Tick(object sender, EventArgs e)
         {
-            if (isStart)
+            if(isStart)
             {
-                start.Enabled = false;
+                start.Text = "ОСТАНОВИТЬ БОТА";
 
                 if (isTimer)
                 {
-                    stop.Enabled = true;
+                    start.Enabled = true;
                 }
                 else
                 {
-                    stop.Enabled = false;
+                    start.Enabled = false;
                 }
 
                 numericUpDown1.Enabled = false;
@@ -715,11 +701,10 @@ namespace mpets.mobi.bot
             }
             else
             {
+                start.Text = "ЗАПУСТИТЬ БОТА";
+
                 numericUpDown1.Enabled = true;
                 numericUpDown2.Enabled = true;
-
-                start.Enabled = true;
-                stop.Enabled = false;
 
                 StatusLog("Запустите бота");
             }
@@ -732,27 +717,22 @@ namespace mpets.mobi.bot
                 checkBox9.Checked = false;
             }
 
-            statusStrip1.Items[1].Text = $"{StringFormat(exp.ToString())} собрано";
-            statusStrip1.Items[2].Text = $"{StringFormat(coin[1].ToString())} собрано";
-            statusStrip1.Items[3].Text = $"{StringFormat(heart[1].ToString())} собрано";
-            statusStrip1.Items[4].Text = $"{StringFormat(beauty[1].ToString())} собрано";
+            toolStripLabel7.Text = $"{StringFormat(exp.ToString())} собрано";
+            toolStripLabel4.Text = $"{StringFormat(coin[1].ToString())} собрано";
+            toolStripLabel1.Text = $"{StringFormat(heart[1].ToString())} собрано";
+            toolStripLabel10.Text = $"{StringFormat(beauty[1].ToString())} собрано";
 
-            if(isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
+            if (isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Size = new Size(622, 483);
-
             login.Text = settings.Get("Authorization", "Login");
             password.Text = settings.Get("Authorization", "Password");
 
             if (settings.Get("Timer", "Min").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("Timer", "Min"));
             if (settings.Get("Timer", "Max").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("Timer", "Max"));
 
-            if (settings.Get("Settings", "Food").Length > 0) checkBox1.Checked = Convert.ToBoolean(settings.Get("Settings", "Food"));
-            if (settings.Get("Settings", "Play").Length > 0) checkBox2.Checked = Convert.ToBoolean(settings.Get("Settings", "Play"));
-            if (settings.Get("Settings", "Showing").Length > 0) checkBox3.Checked = Convert.ToBoolean(settings.Get("Settings", "Showing"));
             if (settings.Get("Settings", "Travel").Length > 0) checkBox4.Checked = Convert.ToBoolean(settings.Get("Settings", "Travel"));
             if (settings.Get("Settings", "Chest").Length > 0) checkBox5.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
             if (settings.Get("Settings", "Glade").Length > 0) checkBox6.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
@@ -798,21 +778,6 @@ namespace mpets.mobi.bot
         private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             settings.Write("Timer", "Max", numericUpDown2.Value.ToString());
-        }
-
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write("Settings", "Food", checkBox1.Checked.ToString().ToLower());
-        }
-
-        private void CheckBox2_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write("Settings", "Play", checkBox2.Checked.ToString().ToLower());
-        }
-
-        private void CheckBox3_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write("Settings", "Showing", checkBox3.Checked.ToString().ToLower());
         }
 
         private void CheckBox4_CheckedChanged(object sender, EventArgs e)
