@@ -19,4 +19,4 @@
 ![alt скриншот бота](https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/ScreenHistory/v1.5.jpg)
 
 # Контакты
-[<img src="https://psv4.userapi.com/c848124/u221976758/docs/d14/61e71b4da133/mpets_mobi_bot.png?extra=nHN5zL2I9lIzUGqsOw6T6AvGXP7Hc8G_FNcj8aSEBCwQHef82ZcVyS0NT3ClAp3Qo2gOlmwoC8mY5xfO8I5GGosC7_A7Bzd4G1q_BB5-cThcZIDc-OJKddFDh9O4Nv2USUpTIntE9NE1neGg0xqmtIOHXA" width="400px;">](https://vk.cc/9oWxgt)
+[<img src="http://i.piccy.info/i9/c742da12d9e139947f50b1343ed51833/1559499216/42803/1321119/mpets_mobi_bot.png" width="400px;">](https://vk.cc/9oWxgt)
