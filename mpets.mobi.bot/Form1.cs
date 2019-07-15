@@ -563,7 +563,7 @@ namespace mpets.mobi.bot
                             sleep = true;
                         }
 
-                        await Task.Delay(random.Next(500, 1000));
+                        await Task.Delay(random.Next(800, 1000));
 
                         if (status)
                         {
@@ -632,15 +632,15 @@ namespace mpets.mobi.bot
                     Log("-- Все задачи выполнены.");
                     Log("", false);
                 }
-                else if(isLogin == "false")
+                else if (isLogin == "false")
                 {
-                    isStart = false;
-                    isTimer = true;
-
-                    Log("-- Вы ввели неправильное имя или пароль.");
+                    Log("-- Вы ввели неправильное имя или пароль. (через минуту попробую повторить)");
                     Log("", false);
+
+                    isTimer = true;
+                    taskStop = DateTime.Now.AddMinutes(1);
                 }
-                else if(isLogin == "error")
+                else if (isLogin == "error")
                 {
                     Log("-- Ошибка сети, повтор через 1 минуту....");
                     Log("", false);
@@ -653,7 +653,7 @@ namespace mpets.mobi.bot
 
         private void Start_Click(object sender, EventArgs e)
         {
-            if(isStart)
+            if (isStart)
             {
                 isStart = false;
             }
@@ -671,7 +671,7 @@ namespace mpets.mobi.bot
                 {
                     DateTime now = DateTime.Now;
 
-                    if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second)
+                    if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second)
                     {
                         StartBot();
                     }
@@ -683,7 +683,7 @@ namespace mpets.mobi.bot
 
         private void Timer2_Tick(object sender, EventArgs e)
         {
-            if(isStart)
+            if (isStart)
             {
                 start.Text = "ОСТАНОВИТЬ БОТА";
 
@@ -706,6 +706,8 @@ namespace mpets.mobi.bot
                 numericUpDown1.Enabled = true;
                 numericUpDown2.Enabled = true;
 
+                start.Enabled = true;
+
                 StatusLog("Запустите бота");
             }
 
@@ -721,8 +723,6 @@ namespace mpets.mobi.bot
             CoinSession.Text = $"{StringFormat(coin[1].ToString())} собрано";
             HeartSession.Text = $"{StringFormat(heart[1].ToString())} собрано";
             BeautySession.Text = $"{StringFormat(beauty[1].ToString())} собрано";
-
-            if (isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -753,6 +753,8 @@ namespace mpets.mobi.bot
                     StartBot();
                 }
             }
+
+            if (isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
         }
 
         private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
