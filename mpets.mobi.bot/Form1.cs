@@ -28,7 +28,7 @@ namespace mpets.mobi.bot
         private bool isHide;
 
         // Версия бота
-        private readonly string version = "v1.5";
+        private readonly string version = "v1.5.1";
 
         // Переменная для разработчика (немного больше логов)
         private bool isDev = false;
@@ -634,7 +634,7 @@ namespace mpets.mobi.bot
                 }
                 else if (isLogin == "false")
                 {
-                    Log("-- Вы ввели неправильное имя или пароль. (через минуту попробую повторить)");
+                    Log("-- Вы ввели неправильное имя или пароль, повтор через 1 минуту.");
                     Log("", false);
 
                     isTimer = true;
