@@ -53,7 +53,7 @@ namespace mpets.mobi.bot
             InitializeComponent();
         }
 
-        // Метод который создает новый HttpClient
+        // Метод, который создает новый HttpClient
         private void CreateHttpClient()
         {
             httpClient = new HttpClient { BaseAddress = new Uri("https://mpets.mobi") };
@@ -84,7 +84,7 @@ namespace mpets.mobi.bot
             Invoke(new Action(() => BotsLogs.Image = image));
         }
 
-        // Метод который убирает или добавляет в автозагрузки Windows
+        // Метод, который убирает или добавляет в автозагрузки Windows
         public static void AutoRun(bool flag)
         {
             string ExePath = Application.ExecutablePath;
@@ -109,7 +109,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который показывает или прячет форму в трей
+        // Метод, который показывает или прячет форму в трей
         public void HideForm(bool flag)
         {
             if (flag)
@@ -130,7 +130,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который отправляет GET запрос
+        // Метод, который отправляет GET запрос
         public async Task<string> HTTP_Get(string url)
         {
             try
@@ -141,11 +141,11 @@ namespace mpets.mobi.bot
             }
             catch (Exception)
             {
-                return "";
+                return "error Get";
             }
         }
 
-        // Метод который считает опыт за каждое выполненное действие 
+        // Метод, который считает опыт за каждое выполненное действие 
         public void SaveExpirience(string type, string result)
         {
             string expirience;
@@ -197,13 +197,13 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который конвертирует число в более читабельное и приятное на глаз
+        // Метод, который конвертирует число в более читабельное и приятное на глаз
         public string StringFormat(string number)
         {
             return Convert.ToInt32(number).ToString("#,##0", new CultureInfo("en-US"));
         }
 
-        // Метод который авторизуется в игре
+        // Метод, который авторизуется в игре
         public async Task<string> Authorization(string name, string password)
         {
             try
@@ -222,7 +222,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который выгуливает питомца
+        // Метод, который выгуливает питомца
         public async Task Travel()
         {
             string result = await HTTP_Get("/travel");
@@ -249,10 +249,7 @@ namespace mpets.mobi.bot
                     {
                         int news_id = Convert.ToInt32(match.Groups[1].Value.Replace("?id=", ""));
 
-                        if (news_id > temp_id)
-                        {
-                            curr_id = news_id;
-                        }
+                        if (news_id > temp_id) curr_id = news_id;
 
                         temp_id = news_id;
                     }
@@ -267,7 +264,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который копает поляну
+        // Метод, который копает поляну
         public async Task Glade()
         {
             string result = await HTTP_Get("/glade");
@@ -290,7 +287,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который одевает вещи и продаёт ненужные
+        // Метод, который одевает вещи и продаёт ненужные
         public async Task Chest()
         {
             string result = await HTTP_Get("/chest");
@@ -321,7 +318,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который забирает выполненные задания
+        // Метод, который забирает выполненные задания
         public async Task Tasks()
         {
             string result = await HTTP_Get("/task");
@@ -350,7 +347,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который даёт питомцу витаминку
+        // Метод, который даёт питомцу витаминку
         public async Task WakeUp()
         {
             string result = await HTTP_Get("/");
@@ -366,7 +363,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который кормит питомца
+        // Метод, который кормит питомца
         public async Task Food()
         {
             string result = await HTTP_Get("/");
@@ -392,7 +389,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который играет с питомцем
+        // Метод, который играет с питомцем
         public async Task Play()
         {
             string result = await HTTP_Get("/");
@@ -419,7 +416,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который ходит на выставки
+        // Метод, который ходит на выставки
         public async Task Showing()
         {
             string result = await HTTP_Get("/");
@@ -462,7 +459,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который обновляет статистику красоты, монет и cердечек
+        // Метод, который обновляет статистику красоты, монет и cердечек
         public async Task Statistics()
         {
             StatusLog("Обновляю статистику...", Properties.Resources.about);
@@ -653,31 +650,22 @@ namespace mpets.mobi.bot
 
         private void Start_Click(object sender, EventArgs e)
         {
-            if (isStart)
-            {
-                isStart = false;
-            }
-            else
-            {
-                StartBot();
-            }
+            if (isStart) isStart = false;
+            else StartBot();
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if (isStart)
+            if (isStart && isTimer)
             {
-                if (isTimer)
+                DateTime now = DateTime.Now;
+
+                if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second)
                 {
-                    DateTime now = DateTime.Now;
-
-                    if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second)
-                    {
-                        StartBot();
-                    }
-
-                    StatusLog($"Повтор через {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
+                    StartBot();
                 }
+
+                StatusLog($"Повтор через {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
             }
         }
 
@@ -686,15 +674,7 @@ namespace mpets.mobi.bot
             if (isStart)
             {
                 start.Text = "ОСТАНОВИТЬ БОТА";
-
-                if (isTimer)
-                {
-                    start.Enabled = true;
-                }
-                else
-                {
-                    start.Enabled = false;
-                }
+                start.Enabled = isTimer ? true : false;
 
                 numericUpDown1.Enabled = false;
                 numericUpDown2.Enabled = false;
@@ -702,10 +682,10 @@ namespace mpets.mobi.bot
             else
             {
                 start.Text = "ЗАПУСТИТЬ БОТА";
-
+                
                 numericUpDown1.Enabled = true;
                 numericUpDown2.Enabled = true;
-
+                
                 start.Enabled = true;
 
                 StatusLog("Запустите бота");
@@ -714,10 +694,7 @@ namespace mpets.mobi.bot
             numericUpDown1.Maximum = numericUpDown2.Value;
 
             HideCheckBox.Enabled = AutoRunCheckBox.Checked;
-            if (!AutoRunCheckBox.Checked)
-            {
-                HideCheckBox.Checked = false;
-            }
+            HideCheckBox.Checked = !AutoRunCheckBox.Checked;
 
             ExpSession.Text = $"{StringFormat(exp.ToString())} собрано";
             CoinSession.Text = $"{StringFormat(coin[1].ToString())} собрано";
