@@ -28,10 +28,10 @@ namespace mpets.mobi.bot
         private bool isHide;
 
         // Версия бота
-        private readonly string version = "v1.5.1";
+        private readonly string version = "v1.5.3";
 
         // Переменная для разработчика (немного больше логов)
-        private bool isDev = false;
+        private readonly bool isDev = false;
 
         // Переменные для хранения статистики красоты
         private int[] beauty = { 0, 0 };
@@ -47,6 +47,9 @@ namespace mpets.mobi.bot
 
         // Переменная для хранения очков опыта
         private int exp = 0;
+
+        // Переменная для хранения активного vip-аккаунта
+        private bool isVip = false;
 
         public Form1()
         {
@@ -66,7 +69,7 @@ namespace mpets.mobi.bot
             if (show_times)
             {
                 Invoke(new Action(() => LogBox.SelectionColor = color));
-                Invoke(new Action(() => LogBox.AppendText($" [ {DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")} ] {text} {Environment.NewLine}")));
+                Invoke(new Action(() => LogBox.AppendText($" [ {DateTime.Now:dd.MM.yyyy HH:mm:ss} ] {text} {Environment.NewLine}")));
                 Invoke(new Action(() => LogBox.ScrollToCaret()));
             }
             else
@@ -133,16 +136,18 @@ namespace mpets.mobi.bot
         // Метод который отправляет GET запрос
         public async Task<string> HTTP_Get(string url)
         {
+            string result;
+
             try
             {
-                string result = await httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
-
-                return result;
+                result = await httpClient.GetAsync(url).Result.Content.ReadAsStringAsync();
             }
             catch (Exception)
             {
-                return "";
+                result = "";
             }
+
+            return result;
         }
 
         // Метод который считает опыт за каждое выполненное действие 
@@ -319,6 +324,21 @@ namespace mpets.mobi.bot
 
                 Log("-- Закончил работу в шкафу...");
             }
+
+            if(OpenCaseCheckBox.Checked)
+            {
+                if (url.Contains("open_item"))
+                {
+                    if (!isVip)
+                    {
+                        if (result.Contains("Стальной ключ"))
+                        {
+                            await HTTP_Get(url);
+                            Log($"-- Открыл сундук ключем.");
+                        }
+                    }
+                }
+            }
         }
 
         // Метод который забирает выполненные задания
@@ -472,6 +492,7 @@ namespace mpets.mobi.bot
             string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
+            string isVip_string = new Regex(@"category(.*?)effect").Match(result).Groups[1].Value;
 
             if (beauty_string.Length > 0)
             {
@@ -517,6 +538,8 @@ namespace mpets.mobi.bot
                     heart[1] = Convert.ToInt32(heart_string) - heart[0];
                 }
             }
+
+            isVip = isVip_string.Length > 0;
         }
 
         // Главный метод бота
@@ -676,7 +699,7 @@ namespace mpets.mobi.bot
                         StartBot();
                     }
 
-                    StatusLog($"Повтор через {taskStop.Subtract(now).ToString("mm")} мин : {taskStop.Subtract(now).ToString("ss")} сек", Properties.Resources.sleep);
+                    StatusLog($"Повтор через {taskStop.Subtract(now):mm} мин : {taskStop.Subtract(now):ss} сек", Properties.Resources.sleep);
                 }
             }
         }
@@ -737,15 +760,20 @@ namespace mpets.mobi.bot
             if (settings.Get("Settings", "Chest").Length > 0) ChestCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
             if (settings.Get("Settings", "Glade").Length > 0) GladeCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
             if (settings.Get("Settings", "Tasks").Length > 0) TasksCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Tasks"));
+            if (settings.Get("Settings", "OpenCase").Length > 0) OpenCaseCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "OpenCase"));
 
-            if (settings.Get("Settings", "AutoRun").Length > 0)
+            if(settings.Get("Settings", "AutoRun").Length > 0)
             {
                 AutoRunCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "AutoRun"));
-                HideCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
 
-                if (Convert.ToBoolean(settings.Get("Settings", "AutoRun")))
+                if(settings.Get("Settings", "Hide").Length > 0)
                 {
-                    if (Convert.ToBoolean(settings.Get("Settings", "Hide")))
+                    HideCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
+                }
+
+                if(AutoRunCheckBox.Checked)
+                {
+                    if(HideCheckBox.Checked)
                     {
                         HideForm(isHide);
                     }
@@ -754,7 +782,7 @@ namespace mpets.mobi.bot
                 }
             }
 
-            if (isDev) Text = $"Удивительные питомца By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомца By DeKoSiK ( {version} )";
+            if (isDev) Text = $"Удивительные питомцы By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомцы By DeKoSiK ( {version} )";
         }
 
         private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -800,6 +828,11 @@ namespace mpets.mobi.bot
         private void TasksCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             settings.Write("Settings", "Tasks", TasksCheckBox.Checked.ToString().ToLower());
+        }
+
+        private void OpenCaseCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.Write("Settings", "OpenCase", OpenCaseCheckBox.Checked.ToString().ToLower());
         }
 
         private void AutoRunCheckBox_CheckedChanged(object sender, EventArgs e)

@@ -42,6 +42,7 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.start = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.OpenCaseCheckBox = new System.Windows.Forms.CheckBox();
             this.HideCheckBox = new System.Windows.Forms.CheckBox();
             this.AutoRunCheckBox = new System.Windows.Forms.CheckBox();
             this.TasksCheckBox = new System.Windows.Forms.CheckBox();
@@ -233,6 +234,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.OpenCaseCheckBox);
             this.groupBox2.Controls.Add(this.HideCheckBox);
             this.groupBox2.Controls.Add(this.AutoRunCheckBox);
             this.groupBox2.Controls.Add(this.TasksCheckBox);
@@ -243,14 +245,32 @@
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 5, 2, 5);
-            this.groupBox2.Size = new System.Drawing.Size(206, 146);
+            this.groupBox2.Size = new System.Drawing.Size(206, 148);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
+            // 
+            // OpenCaseCheckBox
+            // 
+            this.OpenCaseCheckBox.Checked = true;
+            this.OpenCaseCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.OpenCaseCheckBox.Location = new System.Drawing.Point(7, 85);
+            this.OpenCaseCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
+            this.OpenCaseCheckBox.Name = "OpenCaseCheckBox";
+            this.OpenCaseCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.OpenCaseCheckBox.Size = new System.Drawing.Size(192, 22);
+            this.OpenCaseCheckBox.TabIndex = 9;
+            this.OpenCaseCheckBox.TabStop = false;
+            this.OpenCaseCheckBox.Text = "Открывать сундук";
+            this.OpenCaseCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.toolTip1.SetToolTip(this.OpenCaseCheckBox, "Бот будет открывать сундук, если на вашем аккаунте не активирован VIP аккаунт и в" +
+        " шкафу лежит ключ.");
+            this.OpenCaseCheckBox.UseVisualStyleBackColor = true;
+            this.OpenCaseCheckBox.CheckedChanged += new System.EventHandler(this.OpenCaseCheckBox_CheckedChanged);
             // 
             // HideCheckBox
             // 
             this.HideCheckBox.Enabled = false;
-            this.HideCheckBox.Location = new System.Drawing.Point(7, 118);
+            this.HideCheckBox.Location = new System.Drawing.Point(7, 121);
             this.HideCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.HideCheckBox.Name = "HideCheckBox";
             this.HideCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -265,7 +285,7 @@
             // 
             // AutoRunCheckBox
             // 
-            this.AutoRunCheckBox.Location = new System.Drawing.Point(7, 97);
+            this.AutoRunCheckBox.Location = new System.Drawing.Point(7, 103);
             this.AutoRunCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.AutoRunCheckBox.Name = "AutoRunCheckBox";
             this.AutoRunCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -283,7 +303,7 @@
             // 
             this.TasksCheckBox.Checked = true;
             this.TasksCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.TasksCheckBox.Location = new System.Drawing.Point(7, 76);
+            this.TasksCheckBox.Location = new System.Drawing.Point(7, 67);
             this.TasksCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.TasksCheckBox.Name = "TasksCheckBox";
             this.TasksCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -300,7 +320,7 @@
             // 
             this.GladeCheckBox.Checked = true;
             this.GladeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GladeCheckBox.Location = new System.Drawing.Point(7, 55);
+            this.GladeCheckBox.Location = new System.Drawing.Point(7, 49);
             this.GladeCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.GladeCheckBox.Name = "GladeCheckBox";
             this.GladeCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -317,7 +337,7 @@
             // 
             this.ChestCheckBox.Checked = true;
             this.ChestCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ChestCheckBox.Location = new System.Drawing.Point(7, 34);
+            this.ChestCheckBox.Location = new System.Drawing.Point(7, 31);
             this.ChestCheckBox.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.ChestCheckBox.Name = "ChestCheckBox";
             this.ChestCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -381,7 +401,7 @@
             // 
             this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.button1.ImageIndex = 0;
-            this.button1.Location = new System.Drawing.Point(216, 320);
+            this.button1.Location = new System.Drawing.Point(216, 323);
             this.button1.Margin = new System.Windows.Forms.Padding(2, 5, 2, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(382, 34);
@@ -456,7 +476,7 @@
             this.ExpSession,
             this.BotsLogs});
             this.toolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStrip2.Location = new System.Drawing.Point(0, 359);
+            this.toolStrip2.Location = new System.Drawing.Point(0, 365);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStrip2.Size = new System.Drawing.Size(603, 25);
@@ -507,7 +527,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(603, 384);
+            this.ClientSize = new System.Drawing.Size(603, 390);
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.button1);
@@ -522,7 +542,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Удивительные питомца By DeKoSiK";
+            this.Text = "Удивительные питомцы";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -576,5 +596,6 @@
         private System.Windows.Forms.ToolStripLabel ExpSession;
         private System.Windows.Forms.ToolStripLabel BotsLogs;
         private System.Windows.Forms.ToolStripLabel BeautySession;
+        private System.Windows.Forms.CheckBox OpenCaseCheckBox;
     }
 }
