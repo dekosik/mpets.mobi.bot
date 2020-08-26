@@ -459,6 +459,7 @@ namespace mpets.mobi.bot
             tabPage.Controls.Add(toolstrip_bottom_log);
             tabPage.Controls.Add(label_isVip);
 
+            // Обработчики событий
             button_start_bot.Click += Button_Start_Bot_Click;
             textbox_login.TextChanged += Textbox_login_TextChanged;
             textbox_password.TextChanged += Textbox_password_TextChanged;
@@ -469,6 +470,16 @@ namespace mpets.mobi.bot
             checkbox_glade.CheckedChanged += Checkbox_glade_CheckedChanged;
             checkbox_tasks.CheckedChanged += Checkbox_tasks_CheckedChanged;
             checkbox_opencase.CheckedChanged += Checkbox_opencase_CheckedChanged;
+
+            // Подсказки
+            toolTip1.SetToolTip(button_start_bot, "Пока бот выполняет работу, остановить его невозможно.");
+            toolTip1.SetToolTip(numericupdown_interval_from, "Тут можно выбрать интервал повторов.\r\nНапример: Бот выберет рандомное число от 10 до 20 минут до следующего старта.");
+            toolTip1.SetToolTip(numericupdown_interval_do, "Тут можно выбрать интервал повторов.\r\nНапример: Бот выберет рандомное число от 10 до 20 минут до следующего старта.");
+            toolTip1.SetToolTip(checkbox_travel, "Бот будет отправлять питомца на длительную прогулку.");
+            toolTip1.SetToolTip(checkbox_chest, "Бот будет одевать вещи которые лучше одетых и продавать ненужные.");
+            toolTip1.SetToolTip(checkbox_glade, "Бот будет копать поляну.");
+            toolTip1.SetToolTip(checkbox_tasks, "Бот будет забирать все выполненные задания (включая медали).");
+            toolTip1.SetToolTip(checkbox_opencase, "Бот будет открывать сундук, при наличие ключа и отсутствующего VIP аккаунта.");
         }
 
         private static void AutoStart(bool flag)
@@ -502,25 +513,32 @@ namespace mpets.mobi.bot
             registryKey.Close();
         }
 
-        public string StringNumberFormat(string number)
+        public string StringNumberFormat(string number, bool format_type = true)
         {
             string number_text;
 
-            if (Convert.ToDouble(number) < 1000)
+            if (format_type)
             {
-                number_text = number.ToString();
-            }
-            else if (Convert.ToDouble(number) < 1000000)
-            {
-                number_text = (Convert.ToDouble(number) / 1000).ToString("#.##k");
-            }
-            else if (Convert.ToDouble(number) < 1000000000)
-            {
-                number_text = (Convert.ToDouble(number) / 1000000).ToString("#.##m");
+                if (Convert.ToDouble(number) < 1000)
+                {
+                    number_text = number.ToString();
+                }
+                else if (Convert.ToDouble(number) < 1000000)
+                {
+                    number_text = (Convert.ToDouble(number) / 1000).ToString("#.##k");
+                }
+                else if (Convert.ToDouble(number) < 1000000000)
+                {
+                    number_text = (Convert.ToDouble(number) / 1000000).ToString("#.##m");
+                }
+                else
+                {
+                    number_text = (Convert.ToDouble(number) / 1000000000).ToString("#.##b");
+                }
             }
             else
             {
-                number_text = (Convert.ToDouble(number) / 1000000000).ToString("#.##b");
+                number_text = Convert.ToInt32(number).ToString("#,##0", new CultureInfo("en-US"));
             }
 
             return number_text;
@@ -646,6 +664,7 @@ namespace mpets.mobi.bot
             // Сохраняем общее число и выводим его
             toolstript_session.Items[4].Tag = exp;
             toolstript_session.Items[4].Text = $"{StringNumberFormat(exp.ToString())} собрано";
+            toolstript_session.Items[4].ToolTipText = $"{StringNumberFormat(exp.ToString(), false)} собрано";
         }
 
         public async Task Statistics(int botID, HttpClient httpClient)
@@ -674,7 +693,7 @@ namespace mpets.mobi.bot
             if (beauty_string.Length > 0)
             {
                 // Обновляем текущее количество красоты
-                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[1].Text = $"Красота: {beauty_string}";
+                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[1].Text = $"Красота: {StringNumberFormat(beauty_string, false)}";
 
                 // Высчитываем красоту
                 if (!Convert.ToBoolean(beauty[2]))
@@ -691,7 +710,7 @@ namespace mpets.mobi.bot
             if (coin_string.Length > 0)
             {
                 // Обновляем текущее количество монет
-                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[2].Text = $"Монет: {coin_string}";
+                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[2].Text = $"Монет: {StringNumberFormat(coin_string, false)}";
 
                 // Высчитываем монеты
                 if (!Convert.ToBoolean(coin[2]))
@@ -708,7 +727,10 @@ namespace mpets.mobi.bot
             if (heart_string.Length > 0)
             {
                 // Обновляем текущее количество сердечек
-                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[0].Text = $"Сердечек: {StringNumberFormat(heart_string)}";
+                ToolStrip heart_current = findControl.FindToolStrip("toolstrip_top_log", botID, this);
+
+                heart_current.Items[0].Text = $"Сердечек: {StringNumberFormat(heart_string)}";
+                heart_current.Items[0].ToolTipText = $"Сердечек: {StringNumberFormat(heart_string, false)}";
 
                 // Высчитываем сердечки
                 if (!Convert.ToBoolean(heart[2]))
@@ -731,9 +753,12 @@ namespace mpets.mobi.bot
             toolstript_session.Items[3].Tag = coin;
 
             // Обновляем текст
-            toolstript_session.Items[1].Text = $"{beauty[1]} собрано";
+            toolstript_session.Items[1].Text = $"{StringNumberFormat(beauty[1], false)} собрано";
+
             toolstript_session.Items[2].Text = $"{StringNumberFormat(heart[1])} собрано";
-            toolstript_session.Items[3].Text = $"{coin[1]} собрано";
+            toolstript_session.Items[2].ToolTipText = $"{StringNumberFormat(heart[1], false)} собрано";
+
+            toolstript_session.Items[3].Text = $"{StringNumberFormat(coin[1], false)} собрано";
 
             // Обновляем аватар
             Invoke(new Action(() =>
@@ -1602,6 +1627,9 @@ namespace mpets.mobi.bot
                 // Прячем из панели задач
                 ShowInTaskbar = false;
 
+                // Прячем форму
+                Hide();
+
                 // Показываем иконку в трее
                 notifyIcon1.Visible = true;
             }
@@ -1614,6 +1642,9 @@ namespace mpets.mobi.bot
             // Если была нажата правая кнопка мыши
             if (mouseEvent.Button == MouseButtons.Right)
             {
+                // Показываем форму
+                Show();
+
                 // Разворачиваем приложение
                 WindowState = FormWindowState.Normal;
 
