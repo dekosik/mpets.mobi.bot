@@ -1,140 +1,532 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using mpets.mobi.bot.Libs;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using mpets.mobi.bot.Libs;
 
 namespace mpets.mobi.bot
 {
     public partial class Form1 : Form
     {
-        private static readonly INIManager settings = new INIManager(AppDomain.CurrentDomain.BaseDirectory + "settings.ini");
-        private static HttpClient httpClient;
-        private static readonly Random random = new Random();
+        private int NumberTabs = 0;
 
-        // Переменная для своеобразного таймера
-        private DateTime taskStop;
-
-        // Системные переменные
-        private bool isStart;
-        private string isLogin;
-        private bool isTimer;
-        private bool isHide;
-
-        // Версия бота
-        private readonly string version = "v1.5.3";
-
-        // Переменная для разработчика (немного больше логов)
         private readonly bool isDev = false;
 
-        // Переменные для хранения статистики красоты
-        private int[] beauty = { 0, 0 };
-        private bool beauty_bool = false;
+        private static readonly string BOT_START_TEXT = "ЗАПУСТИТЬ БОТА";
+        private static readonly string BOT_STOP_TEXT = "ОСТАНОВИТЬ БОТА";
+        private static readonly string BOT_TABS_TEXT = "Новый питомец";
 
-        // Переменные для хранения статистики монет
-        private int[] coin = { 0, 0 };
-        private bool coin_bool = false;
+        private static readonly string settingsPath = AppDomain.CurrentDomain.BaseDirectory + "settings.ini";
+        private static readonly string settingsPathTemp = AppDomain.CurrentDomain.BaseDirectory + "settings.temp";
 
-        // Переменные для хранения статистики сердечек
-        private int[] heart = { 0, 0 };
-        private bool heart_bool = false;
+        private static readonly FindControl findControl = new FindControl();
+        private static readonly Random random = new Random();
+        private static readonly IniFiles settings = new IniFiles(settingsPath);
 
-        // Переменная для хранения очков опыта
-        private int exp = 0;
+        private static readonly Dictionary<string, string> settingKey = new Dictionary<string, string>
+        {
+            ["LOGIN"] = "",
+            ["PASSWORD"] = "",
+            ["AVATAR"] = "avatar1",
+            ["INTERVAL_FROM"] = "10",
+            ["INTERVAL_DO"] = "20",
+            ["TRAVEL"] = "true",
+            ["CHEST"] = "true",
+            ["GLADE"] = "true",
+            ["TASKS"] = "true",
+            ["OPEN_CASE"] = "true"
+        };
 
-        // Переменная для хранения активного vip-аккаунта
-        private bool isVip = false;
+        private static readonly Dictionary<string, string> settingSection = new Dictionary<string, string>
+        {
+            ["AUTO_START"] = "false"
+        };
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         public Form1()
         {
             InitializeComponent();
-        }
 
-        // Метод который создает новый HttpClient
-        private void CreateHttpClient()
-        {
-            httpClient = new HttpClient { BaseAddress = new Uri("https://mpets.mobi") };
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
-        }
-
-        // Метод отправки текста в LogBox
-        public void Log(string text, bool show_times = true, Color color = new Color())
-        {
-            if (show_times)
+            // Загружаем из ресурсов аватары в ImageList
+            foreach (DictionaryEntry entry in Properties.Resources.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true))
             {
-                Invoke(new Action(() => LogBox.SelectionColor = color));
-                Invoke(new Action(() => LogBox.AppendText($" [ {DateTime.Now:dd.MM.yyyy HH:mm:ss} ] {text} {Environment.NewLine}")));
-                Invoke(new Action(() => LogBox.ScrollToCaret()));
+                string key = (string)entry.Key;
+
+                if (key.Contains("avatar"))
+                {
+                    imageList1.Images.Add(key, (Image)entry.Value);
+                }
             }
-            else
+
+            tabControl1.HandleCreated += TabControl1_HandleCreated;
+        }
+
+        private void CreateTemplateBot(TabPage tabPage)
+        {
+            Label label_login = new Label
             {
-                Invoke(new Action(() => LogBox.SelectionColor = color));
-                Invoke(new Action(() => LogBox.AppendText($" {text} {Environment.NewLine}")));
-                Invoke(new Action(() => LogBox.ScrollToCaret()));
-            }
+                Location = new Point(60, 11),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_login{NumberTabs}",
+                Size = new Size(79, 13),
+                Text = "Имя питомца",
+                AutoSize = true
+            };
+
+            Label label_password = new Label
+            {
+                Location = new Point(78, 52),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_password{NumberTabs}",
+                Size = new Size(47, 13),
+                Text = "Пароль",
+                AutoSize = true
+            };
+
+            Label label_interval_from = new Label
+            {
+                Location = new Point(8, 26),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_interval_from{NumberTabs}",
+                Size = new Size(22, 13),
+                Text = "От",
+                AutoSize = true
+            };
+
+            Label label_interval_do = new Label
+            {
+                Location = new Point(8, 52),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_interval_do{NumberTabs}",
+                Size = new Size(22, 13),
+                Text = "До",
+                AutoSize = true
+            };
+
+            Label label_isVip = new Label
+            {
+                Location = new Point(8, 52),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_isVip{NumberTabs}",
+                Size = new Size(22, 13),
+                Text = "",
+                AutoSize = true,
+                Tag = false
+            };
+
+            TextBox textbox_login = new TextBox
+            {
+                Location = new Point(6, 28),
+                Margin = new Padding(2, 5, 2, 5),
+                MaxLength = 20,
+                Name = $"textbox_login{NumberTabs}",
+                Size = new Size(194, 22),
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            TextBox textbox_password = new TextBox
+            {
+                Location = new Point(6, 68),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"textbox_password{NumberTabs}",
+                Size = new Size(194, 22),
+                PasswordChar = '*',
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            NumericUpDown numericupdown_interval_from = new NumericUpDown
+            {
+                Location = new Point(31, 21),
+                Margin = new Padding(2, 5, 2, 5),
+                Maximum = new decimal(new int[] { 1000, 0, 0, 0 }),
+                Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                Name = $"numericupdown_interval_from{NumberTabs}",
+                Size = new Size(154, 22),
+                Value = new decimal(new int[] { 10, 0, 0, 0 }),
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            NumericUpDown numericupdown_interval_do = new NumericUpDown
+            {
+                Location = new Point(31, 47),
+                Margin = new Padding(2, 5, 2, 5),
+                Maximum = new decimal(new int[] { 1000, 0, 0, 0 }),
+                Minimum = new decimal(new int[] { 1, 0, 0, 0 }),
+                Name = $"numericupdown_interval_do{NumberTabs}",
+                Size = new Size(154, 22),
+                Value = new decimal(new int[] { 20, 0, 0, 0 }),
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            GroupBox groupBox1 = new GroupBox
+            {
+                Location = new Point(6, -2),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"groupBox1{NumberTabs}",
+                Padding = new Padding(2, 5, 2, 5),
+                Size = new Size(206, 177),
+                TabStop = false
+            };
+
+            GroupBox groupBox2 = new GroupBox
+            {
+                Location = new Point(8, 92),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"groupBox2{NumberTabs}",
+                Padding = new Padding(2, 5, 2, 5),
+                Size = new Size(190, 78),
+                Text = "Интервал повторов ( мин )",
+                TabStop = false
+            };
+
+            GroupBox groupBox3 = new GroupBox
+            {
+                Location = new Point(6, 209),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"groupBox3{NumberTabs}",
+                Padding = new Padding(2, 5, 2, 5),
+                Size = new Size(206, 112),
+                TabStop = false
+            };
+
+            Button button_start_bot = new Button
+            {
+                Font = new Font("Segoe UI", 9.25F),
+                Location = new Point(6, 179),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"button_start_bot{NumberTabs}",
+                Size = new Size(206, 31),
+                Text = "ЗАПУСТИТЬ БОТА",
+                UseVisualStyleBackColor = true,
+                AutoSize = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_travel = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 13),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_travel{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "Отправлять на прогулку",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_chest = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 31),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_chest{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "Надевать и продавать вещи",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_glade = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 49),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_glade{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "Копать поляну",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_tasks = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 67),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_tasks{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "Забирать задания",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_opencase = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 85),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_opencase{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "Открывать сундук",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            RichTextBox richtextbox_bot_log = new RichTextBox
+            {
+                BackColor = SystemColors.Window,
+                Location = new Point(216, 34),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"richtextbox_bot_log{NumberTabs}",
+                ReadOnly = true,
+                Size = new Size(382, 287),
+                TabStop = false
+            };
+
+            ToolStrip toolstrip_top_log = new ToolStrip
+            {
+                AutoSize = false,
+                BackColor = SystemColors.Window,
+                CanOverflow = false,
+                Dock = DockStyle.None,
+                Font = new Font("Segoe UI", 8.25F),
+                GripStyle = ToolStripGripStyle.Hidden,
+                Location = new Point(216, 5),
+                Name = $"toolstrip_top_log{NumberTabs}",
+                Padding = new Padding(0, 0, 2, 0),
+                Size = new Size(382, 25),
+                Stretch = true,
+                TabStop = false,
+                RenderMode = ToolStripRenderMode.System
+            };
+
+            ToolStrip toolstrip_bottom_log = new ToolStrip
+            {
+                BackColor = SystemColors.ControlLightLight,
+                CanOverflow = false,
+                Dock = DockStyle.Bottom,
+                Font = new Font("Segoe UI", 8.25F),
+                GripStyle = ToolStripGripStyle.Hidden,
+                LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow,
+                Location = new Point(0, 329),
+                Name = $"toolstrip_bottom_log{NumberTabs}",
+                Padding = new Padding(0, 0, 2, 0),
+                Size = new Size(603, 25),
+                TabStop = false,
+                RenderMode = ToolStripRenderMode.System
+            };
+
+            ToolStripLabel toolstriplabel_coin_current = new ToolStripLabel
+            {
+                Image = Properties.Resources.coin,
+                Margin = new Padding(0, 1, 6, 2),
+                Name = $"toolstriplabel_coin_current{NumberTabs}",
+                Size = new Size(70, 22),
+                Text = "Монет: 0"
+            };
+
+            ToolStripLabel toolstriplabel_beauty_current = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.beauty,
+                Margin = new Padding(0, 1, 6, 2),
+                Name = $"toolstriplabel_beauty_current{NumberTabs}",
+                Size = new Size(77, 22),
+                Text = "Красота: 0"
+            };
+
+            ToolStripLabel toolstriplabel_heart_current = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.heart,
+                Margin = new Padding(0, 1, 6, 2),
+                Name = $"toolstriplabel_heart_current{NumberTabs}",
+                Size = new Size(86, 22),
+                Text = "Сердечек: 0"
+            };
+
+            ToolStripLabel toolstriplabel_bots_log = new ToolStripLabel
+            {
+                Margin = new Padding(4, 1, 0, 2),
+                Name = $"toolstriplabel_bots_log{NumberTabs}",
+                Size = new Size(103, 22)
+            };
+
+            ToolStripLabel toolstriplabel_beauty_session = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.beauty,
+                ImageTransparentColor = Color.Magenta,
+                Name = $"toolstriplabel_beauty_session{NumberTabs}",
+                Size = new Size(78, 22),
+                Text = "0 собрано",
+                Tag = new string[3] { "0", "0", "false" }
+            };
+
+            ToolStripLabel toolstriplabel_heart_session = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.heart,
+                Name = $"toolstriplabel_heart_session{NumberTabs}",
+                Size = new Size(78, 22),
+                Text = "0 собрано",
+                Tag = new string[3] { "0", "0", "false" }
+            };
+
+            ToolStripLabel toolstriplabel_coin_session = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.coin,
+                Name = $"toolstriplabel_coin_session{NumberTabs}",
+                Size = new Size(78, 22),
+                Text = "0 собрано",
+                Tag = new string[3] { "0", "0", "false" }
+            };
+
+            ToolStripLabel toolstriplabel_expirience_session = new ToolStripLabel
+            {
+                Alignment = ToolStripItemAlignment.Right,
+                Image = Properties.Resources.expirience,
+                Name = $"toolstriplabel_expirience_session{NumberTabs}",
+                Size = new Size(78, 22),
+                Text = "0 собрано",
+                Tag = 0
+            };
+
+            groupBox1.Controls.Add(label_login);
+            groupBox1.Controls.Add(label_password);
+            groupBox1.Controls.Add(textbox_login);
+            groupBox1.Controls.Add(textbox_password);
+            groupBox1.Controls.Add(groupBox2);
+
+            groupBox2.Controls.Add(label_interval_from);
+            groupBox2.Controls.Add(label_interval_do);
+            groupBox2.Controls.Add(numericupdown_interval_from);
+            groupBox2.Controls.Add(numericupdown_interval_do);
+
+            groupBox3.Controls.Add(checkbox_travel);
+            groupBox3.Controls.Add(checkbox_chest);
+            groupBox3.Controls.Add(checkbox_glade);
+            groupBox3.Controls.Add(checkbox_tasks);
+            groupBox3.Controls.Add(checkbox_opencase);
+
+            toolstrip_top_log.Items.AddRange(new ToolStripItem[]
+            {
+                toolstriplabel_heart_current,
+                toolstriplabel_beauty_current,
+                toolstriplabel_coin_current
+            });
+
+            toolstrip_bottom_log.Items.AddRange(new ToolStripItem[]
+            {
+                toolstriplabel_bots_log,
+                toolstriplabel_beauty_session,
+                toolstriplabel_heart_session,
+                toolstriplabel_coin_session,
+                toolstriplabel_expirience_session
+            });
+
+            tabPage.Controls.Add(groupBox1);
+            tabPage.Controls.Add(groupBox3);
+            tabPage.Controls.Add(button_start_bot);
+            tabPage.Controls.Add(richtextbox_bot_log);
+            tabPage.Controls.Add(toolstrip_top_log);
+            tabPage.Controls.Add(toolstrip_bottom_log);
+            tabPage.Controls.Add(label_isVip);
+
+            button_start_bot.Click += Button_Start_Bot_Click;
+            textbox_login.TextChanged += Textbox_login_TextChanged;
+            textbox_password.TextChanged += Textbox_password_TextChanged;
+            numericupdown_interval_from.ValueChanged += Numericupdown_interval_from_ValueChanged;
+            numericupdown_interval_do.ValueChanged += Numericupdown_interval_do_ValueChanged;
+            checkbox_travel.CheckedChanged += Checkbox_travel_CheckedChanged;
+            checkbox_chest.CheckedChanged += Checkbox_chest_CheckedChanged;
+            checkbox_glade.CheckedChanged += Checkbox_glade_CheckedChanged;
+            checkbox_tasks.CheckedChanged += Checkbox_tasks_CheckedChanged;
+            checkbox_opencase.CheckedChanged += Checkbox_opencase_CheckedChanged;
         }
 
-        // Метод отправки текста в BotsLogs
-        public void StatusLog(string text, Image image = null)
+        private static void AutoStart(bool flag)
         {
-            Invoke(new Action(() => BotsLogs.Text = text));
-            Invoke(new Action(() => BotsLogs.Image = image));
-        }
+            // Полный путь к файлу
+            string fileFullPath = Application.ExecutablePath;
+            // Получаем информацию об файле
+            FileInfo fileInfo = new FileInfo(fileFullPath);
+            // Получаем имя файла
+            string fileName = fileInfo.Name.Replace(".exe", "");
+            // Открываем ветку реестра
+            RegistryKey registryKey = Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
 
-        // Метод который убирает или добавляет в автозагрузки Windows
-        public static void AutoRun(bool flag)
-        {
-            string ExePath = Application.ExecutablePath;
-            FileInfo fi = new FileInfo(ExePath);
-            int k = fi.Name.IndexOf('.');
-            string name = fi.Name.Substring(0, k);
-
-            RegistryKey reg;
-            reg = Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run\\");
             try
             {
                 if (flag)
-                    reg.SetValue(name, ExePath);
+                {
+                    registryKey.SetValue(fileName, fileFullPath);
+                }
                 else
-                    reg.DeleteValue(name);
-
-                reg.Close();
+                {
+                    registryKey.DeleteValue(fileName);
+                }
             }
-            catch
+            catch (Exception)
             {
                 MessageBox.Show("Произошла ошибка, автозапуск невозможен.");
             }
+
+            // Закрываем ветку реестра
+            registryKey.Close();
         }
 
-        // Метод который показывает или прячет форму в трей
-        public void HideForm(bool flag)
+        public string StringNumberFormat(string number)
         {
-            if (flag)
-            {
-                Show();
-                ShowInTaskbar = true;
-                WindowState = FormWindowState.Normal;
+            string number_text;
 
-                isHide = false;
+            if (Convert.ToDouble(number) < 1000)
+            {
+                number_text = number.ToString();
+            }
+            else if (Convert.ToDouble(number) < 1000000)
+            {
+                number_text = (Convert.ToDouble(number) / 1000).ToString("#.##k");
+            }
+            else if (Convert.ToDouble(number) < 1000000000)
+            {
+                number_text = (Convert.ToDouble(number) / 1000000).ToString("#.##m");
             }
             else
             {
-                ShowInTaskbar = false;
-                WindowState = FormWindowState.Minimized;
-                Hide();
-
-                isHide = true;
+                number_text = (Convert.ToDouble(number) / 1000000000).ToString("#.##b");
             }
+
+            return number_text;
         }
 
-        // Метод который отправляет GET запрос
-        public async Task<string> HTTP_Get(string url)
+        public async Task<string> GET(string url, HttpClient httpClient)
         {
             string result;
 
@@ -150,73 +542,34 @@ namespace mpets.mobi.bot
             return result;
         }
 
-        // Метод который считает опыт за каждое выполненное действие 
-        public void SaveExpirience(string type, string result)
+        public void Log(string text, int botID, bool show_times = true, Color color = new Color())
         {
-            string expirience;
-
-            switch (type)
+            Invoke(new Action(() =>
             {
-                case "Travel":
-                    expirience = new Regex(@"expirience.png\"" />(.*?)<br />").Match(result).Groups[1].Value;
+                RichTextBox log = findControl.FindRichTextBox("richtextbox_bot_log", botID, this);
 
-                    if (expirience.Contains("heart")) expirience = new Regex(@"(.*?),").Match(expirience).Groups[1].Value;
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"{type} = {expirience}", false);
-                    break;
-
-                case "Glade":
-                    expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
-
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"{type} = {expirience}", false);
-                    break;
-
-                case "Tasks":
-                    expirience = new Regex(@"expirience.png\"" />(.*?)</span>").Match(result).Groups[1].Value;
-
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"{type} = {expirience}", false);
-                    break;
-
-                case "Food":
-                    expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
-
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"{type} = {expirience}", false);
-                    break;
-
-                case "Play":
-                    expirience = new Regex(@"expirience.png\"" class=\""ml2\"">(.*?)</div>").Match(result).Groups[1].Value.Replace("+", "");
-
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev) Log($"{type} = {expirience}", false);
-                    break;
-
-                case "Showing":
-                    expirience = new Regex(@"expirience.png\"" />(.*?)</td>").Match(result).Groups[1].Value;
-
-                    if (expirience.Length > 0) exp += Convert.ToInt32(expirience);
-                    if (isDev & expirience.Length > 0) Log($"{type} = {expirience}", false);
-                    break;
-            }
+                log.SelectionColor = color;
+                log.AppendText(" " + (show_times ? $"[ {DateTime.Now:dd.MM.yyyy HH:mm:ss} ]" : "") + $" {text} {Environment.NewLine}");
+                log.ScrollToCaret();
+            }));
         }
 
-        // Метод который конвертирует число в более читабельное и приятное на глаз
-        public string StringFormat(string number)
+        public void StatusLog(string text, int botID, Image image = null)
         {
-            return Convert.ToInt32(number).ToString("#,##0", new CultureInfo("en-US"));
+            Invoke(new Action(() =>
+            {
+                findControl.FindToolStrip("toolstrip_bottom_log", botID, this).Items[0].Text = text;
+                findControl.FindToolStrip("toolstrip_bottom_log", botID, this).Items[0].Image = image;
+            }));
         }
 
-        // Метод который авторизуется в игре
-        public async Task<string> Authorization(string name, string password)
+        private async Task<string> Authorization(string login, string password, HttpClient httpClient)
         {
             try
             {
                 string result = await httpClient.PostAsync("/login", new FormUrlEncodedContent(new[] {
-
-                    new KeyValuePair<string, string>("name", name), new KeyValuePair<string, string>("password", password)
-
+                    new KeyValuePair<string, string>("name", login),
+                    new KeyValuePair<string, string>("password", password)
                 })).Result.Content.ReadAsStringAsync();
 
                 return result.Contains("Чат").ToString().ToLower();
@@ -227,628 +580,1119 @@ namespace mpets.mobi.bot
             }
         }
 
-        // Метод который выгуливает питомца
-        public async Task Travel()
+        public void SaveExpirience(string type, string result, int botID)
         {
-            string result = await HTTP_Get("/travel");
+            // Параметры для парсинга
+            string param = "";
 
-            if (result.Contains("Гулять дальше"))
+            // Получаем ссылку на нижний статус лог
+            ToolStrip toolstript_session = findControl.FindToolStrip("toolstrip_bottom_log", botID, this);
+
+            // Переменная для хранения общего опыта
+            int exp = (int)toolstript_session.Items[4].Tag;
+
+            // Ставим параметры для парсинга по типу
+            switch (type)
             {
-                await Task.Delay(random.Next(400, 700));
+                case "Travel":
+                    param = @"expirience.png\"" />(.*?)<br />";
+                    break;
 
-                SaveExpirience("Travel", result);
-                result = await HTTP_Get("/travel?clear=1");
+                case "Glade":
+                    param = @"expirience.png\"" />(.*?)</span>";
+                    break;
 
-                await Task.Delay(random.Next(400, 700));
+                case "Tasks":
+                    param = @"expirience.png\"" />(.*?)</span>";
+                    break;
+
+                case "Food":
+                    param = @"expirience.png\"" class=\""ml2\"">(.*?)</div>";
+                    break;
+
+                case "Play":
+                    param = @"expirience.png\"" class=\""ml2\"">(.*?)</div>";
+                    break;
+
+                case "Showing":
+                    param = @"expirience.png\"" />(.*?)</td>";
+                    break;
             }
 
-            if (!result.Contains("Ваш питомец гуляет"))
+            // Парсим опыт
+            string expirience = new Regex(param).Match(result).Groups[1].Value.Replace("+", "");
+
+            // Если тип Travel, выполняем ещё один парсинг
+            if (type == "Travel")
             {
-                var travel = new Regex(@"go_travel(.*?)\"" class=").Matches(result);
-
-                if (travel.Count > 0)
+                if (expirience.Contains("heart"))
                 {
-                    int temp_id = 0, curr_id = 0;
-
-                    foreach (Match match in travel)
-                    {
-                        int news_id = Convert.ToInt32(match.Groups[1].Value.Replace("?id=", ""));
-
-                        if (news_id > temp_id)
-                        {
-                            curr_id = news_id;
-                        }
-
-                        temp_id = news_id;
-                    }
-
-                    result = await HTTP_Get("/go_travel?id=" + curr_id);
-
-                    if (result.Contains("Ваш питомец гуляет"))
-                    {
-                        Log("-- Отправили питомца на прогулку.");
-                    }
+                    expirience = new Regex(@"(.*?),").Match(expirience).Groups[1].Value;
                 }
             }
-        }
 
-        // Метод который копает поляну
-        public async Task Glade()
-        {
-            string result = await HTTP_Get("/glade");
-
-            if (result.Contains("Копать"))
+            // Прибавляем опыт
+            if (expirience.Length > 0)
             {
-                Log("-- Копаю поляну...");
-
-                do
-                {
-                    result = await HTTP_Get("/glade_dig");
-
-                    SaveExpirience("Glade", result);
-
-                    await Task.Delay(random.Next(500, 1000));
-                }
-                while (result.Contains("Копать"));
-
-                Log("-- Закончил копать поляну.");
-            }
-        }
-
-        // Метод который одевает вещи и продаёт ненужные
-        public async Task Chest()
-        {
-            string result = await HTTP_Get("/chest");
-            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-            string name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
-
-            if (url.Length > 0 && !url.Contains("open_item"))
-            {
-                Log("-- В шкафу есть вещи...");
-
-                while (url.Length > 0 && !url.Contains("open_item"))
-                {
-                    await Task.Delay(random.Next(500, 1000));
-
-                    if (url.Contains("wear_item"))
-                        Log($"--- Надел {name}.", true, Color.Green);
-
-                    if (url.Contains("sell_item"))
-                        Log($"--- Продал {name}.", true, Color.Red);
-
-                    result = await HTTP_Get(url);
-
-                    url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
-                    name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
-                }
-
-                Log("-- Закончил работу в шкафу...");
+                exp += Convert.ToInt32(expirience);
             }
 
-            if(OpenCaseCheckBox.Checked)
+            // Выводим в лог (Для разработчика)
+            if (isDev)
             {
-                if (url.Contains("open_item"))
-                {
-                    if (!isVip)
-                    {
-                        if (result.Contains("Стальной ключ"))
-                        {
-                            await HTTP_Get(url);
-                            Log($"-- Открыл сундук ключем.");
-                        }
-                    }
-                }
+                Log($"{type} = {expirience}", botID, false);
             }
+
+            // Сохраняем общее число и выводим его
+            toolstript_session.Items[4].Tag = exp;
+            toolstript_session.Items[4].Text = $"{StringNumberFormat(exp.ToString())} собрано";
         }
 
-        // Метод который забирает выполненные задания
-        public async Task Tasks()
+        public async Task Statistics(int botID, HttpClient httpClient)
         {
-            string result = await HTTP_Get("/task");
+            // Информируем в статус лог
+            StatusLog("Обновляю статистику...", botID, Properties.Resources.update);
 
-            MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
+            // Делаем запрос на профиль
+            string result = await GET("/profile", httpClient);
 
-            if (reg.Count > 0)
-            {
-                Log("-- Найдено выполненных заданий " + reg.Count + " шт.");
-
-                foreach (Match match in reg)
-                {
-                    string id = match.Groups[1].Value;
-
-                    if (id.Length > 0)
-                    {
-                        result = await HTTP_Get("/task_reward?id=" + id);
-
-                        SaveExpirience("Tasks", result);
-
-                        await Task.Delay(random.Next(500, 1000));
-                    }
-                }
-
-                Log("-- Награды за задания собраны.");
-            }
-        }
-
-        // Метод который даёт питомцу витаминку
-        public async Task WakeUp()
-        {
-            string result = await HTTP_Get("/");
-
-            if (result.Contains("Дать витаминку за"))
-            {
-                StatusLog("Даю витаминку...", Properties.Resources.heart);
-
-                await Task.Delay(random.Next(500, 1000));
-                await HTTP_Get("/wakeup");
-
-                Log("-- Питомец получил витаминку.");
-            }
-        }
-
-        // Метод который кормит питомца
-        public async Task Food()
-        {
-            string result = await HTTP_Get("/");
-
-            string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
-            if (rand.Length > 0)
-            {
-                StatusLog("Кормлю питомца...", Properties.Resources.meat);
-                Log("-- Кормлю питомца...");
-
-                await Task.Delay(random.Next(500, 1000));
-                do
-                {
-                    result = await HTTP_Get("/?action=food&rand=" + rand);
-                    rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
-
-                    SaveExpirience("Food", result);
-                    await Task.Delay(random.Next(500, 1000));
-                }
-                while (rand.Length > 0);
-
-                Log("-- Закончил кормить питомца.");
-            }
-        }
-
-        // Метод который играет с питомцем
-        public async Task Play()
-        {
-            string result = await HTTP_Get("/");
-
-            string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
-            if (rand.Length > 0)
-            {
-                StatusLog("Играю с питомцем...", Properties.Resources.mouse);
-                Log("-- Играю с питомцем...");
-
-                await Task.Delay(random.Next(500, 1000));
-                do
-                {
-                    result = await HTTP_Get("/?action=play&rand=" + rand);
-                    rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
-
-                    SaveExpirience("Play", result);
-
-                    await Task.Delay(random.Next(500, 1000));
-                }
-                while (rand.Length > 0);
-
-                Log("-- Закончил играть с питомцем.");
-            }
-        }
-
-        // Метод который ходит на выставки
-        public async Task Showing()
-        {
-            string result = await HTTP_Get("/");
-
-            if (result.Contains("show?start=1"))
-            {
-                StatusLog("На выставке...", Properties.Resources.cup);
-                Log("-- Иду на выставку...");
-
-                bool status = false;
-                await HTTP_Get("/show?start=1");
-
-                await Task.Delay(random.Next(500, 1000));
-                do
-                {
-                    result = await HTTP_Get("/show");
-
-                    if (result.Contains("Участвовать за"))
-                        status = true;
-
-                    if (result.Contains("Соревноваться"))
-                        status = true;
-
-                    if (result.Contains("Забрать награду"))
-                        status = false;
-
-                    if (result.Contains("Завершить"))
-                        status = false;
-
-                    if (result.Contains("Снежки"))
-                        status = false;
-
-                    SaveExpirience("Showing", result);
-
-                    await Task.Delay(random.Next(500, 1000));
-                }
-                while (status);
-
-                Log("-- Выставка закончена.");
-            }
-        }
-
-        // Метод который обновляет статистику красоты, монет и cердечек
-        public async Task Statistics()
-        {
-            StatusLog("Обновляю статистику...", Properties.Resources.about);
-
-            string result = await HTTP_Get("/profile");
-
+            // Парсим основную статистику
             string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
+            string avatar_string = new Regex(@"avatar([0-9][0-9]?).png").Match(result).Groups[1].Value;
             string isVip_string = new Regex(@"category(.*?)effect").Match(result).Groups[1].Value;
+
+            // Получаем ссылку на нижний статус лог
+            ToolStrip toolstript_session = findControl.FindToolStrip("toolstrip_bottom_log", botID, this);
+
+            // Получаем сохраненный массив значений
+            string[] beauty = (string[])toolstript_session.Items[1].Tag;
+            string[] heart = (string[])toolstript_session.Items[2].Tag;
+            string[] coin = (string[])toolstript_session.Items[3].Tag;
 
             if (beauty_string.Length > 0)
             {
-                BeautyCurrent.Text = $"Красота: {StringFormat(beauty_string)}";
+                // Обновляем текущее количество красоты
+                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[1].Text = $"Красота: {beauty_string}";
 
-                if (!beauty_bool)
+                // Высчитываем красоту
+                if (!Convert.ToBoolean(beauty[2]))
                 {
-                    beauty[0] = Convert.ToInt32(beauty_string);
-                    beauty_bool = true;
+                    beauty[0] = beauty_string;
+                    beauty[2] = true.ToString().ToLower();
                 }
                 else
                 {
-                    beauty[1] = Convert.ToInt32(beauty_string) - beauty[0];
+                    beauty[1] = (Convert.ToInt32(beauty_string) - Convert.ToInt32(beauty[0])).ToString();
                 }
             }
 
             if (coin_string.Length > 0)
             {
-                CoinCurrent.Text = $"Монеты: {StringFormat(coin_string)}";
+                // Обновляем текущее количество монет
+                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[2].Text = $"Монет: {coin_string}";
 
-                if (!coin_bool)
+                // Высчитываем монеты
+                if (!Convert.ToBoolean(coin[2]))
                 {
-                    coin[0] = Convert.ToInt32(coin_string);
-                    coin_bool = true;
+                    coin[0] = coin_string;
+                    coin[2] = true.ToString().ToLower();
                 }
                 else
                 {
-                    coin[1] = Convert.ToInt32(coin_string) - coin[0];
+                    coin[1] = (Convert.ToInt32(coin_string) - Convert.ToInt32(coin[0])).ToString();
                 }
             }
 
             if (heart_string.Length > 0)
             {
-                HeartCurrent.Text = $"Сердечки: {StringFormat(heart_string)}";
+                // Обновляем текущее количество сердечек
+                findControl.FindToolStrip("toolstrip_top_log", botID, this).Items[0].Text = $"Сердечек: {StringNumberFormat(heart_string)}";
 
-                if (!heart_bool)
+                // Высчитываем сердечки
+                if (!Convert.ToBoolean(heart[2]))
                 {
-                    heart[0] = Convert.ToInt32(heart_string);
-                    heart_bool = true;
+                    heart[0] = heart_string;
+                    heart[2] = true.ToString().ToLower();
                 }
                 else
                 {
-                    heart[1] = Convert.ToInt32(heart_string) - heart[0];
+                    heart[1] = (Convert.ToInt32(heart_string) - Convert.ToInt32(heart[0])).ToString();
                 }
             }
 
-            isVip = isVip_string.Length > 0;
+            // Проверка на VIP Аккаунт
+            findControl.FindLabel("label_isVip", botID, this).Tag = isVip_string.Length > 0;
+
+            // Обновляем в сохранение
+            toolstript_session.Items[1].Tag = beauty;
+            toolstript_session.Items[2].Tag = heart;
+            toolstript_session.Items[3].Tag = coin;
+
+            // Обновляем текст
+            toolstript_session.Items[1].Text = $"{beauty[1]} собрано";
+            toolstript_session.Items[2].Text = $"{StringNumberFormat(heart[1])} собрано";
+            toolstript_session.Items[3].Text = $"{coin[1]} собрано";
+
+            // Обновляем аватар
+            Invoke(new Action(() =>
+            {
+                findControl.FindTabPage("tabPage", botID, this).ImageIndex = imageList1.Images.IndexOfKey($"avatar{avatar_string}");
+                settings.Write($"PETS{botID}", "AVATAR", $"avatar{avatar_string}");
+            }));
         }
 
-        // Главный метод бота
-        public void StartBot()
+        public async Task WakeUp(int botID, HttpClient httpClient)
         {
-            CreateHttpClient();
+            // Делаем запрос на главную
+            string result = await GET("/", httpClient);
 
-            isStart = true;
-            isTimer = false;
-
-            Task.Run(async () =>
+            if (result.Contains("Дать витаминку за"))
             {
-                StatusLog("Авторизация...", Properties.Resources.document);
+                // Информируем в статус лог
+                StatusLog("Даю витаминку...", botID, Properties.Resources.heart);
 
-                isLogin = await Authorization(login.Text, password.Text);
+                // Даём вытаминку
+                await Task.Delay(random.Next(500, 1000));
+                await GET("/wakeup", httpClient);
 
-                if (isLogin == "true")
-                {
-                    Log("-- Запускаю задачи...");
-
-                    await Statistics();
-                    await Task.Delay(random.Next(500, 1000));
-
-                    bool status = true;
-                    do
-                    {
-                        string result = await HTTP_Get("/");
-                        bool sleep = false;
-
-                        if (result.Contains("Разбудить бесплатно"))
-                        {
-                            result = await HTTP_Get("/wakeup_sleep");
-                            Log("-- Разбудили питомца бесплатно.");
-                        }
-
-                        if (result.Contains("Играть ещё"))
-                            status = false;
-
-                        if (result.Contains("Разбудить"))
-                            status = false;
-
-                        if (new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
-                        {
-                            sleep = true;
-                        }
-
-                        await Task.Delay(random.Next(800, 1000));
-
-                        if (status)
-                        {
-                            if (!sleep)
-                            {
-                                await Food();
-                                await Task.Delay(random.Next(500, 1000));
-
-                                await Play();
-                                await Task.Delay(random.Next(500, 1000));
-
-                                await Showing();
-                                await Task.Delay(random.Next(500, 1000));
-
-                                await WakeUp();
-                                await Task.Delay(random.Next(1000, 2000));
-                            }
-                            else
-                            {
-                                StatusLog("Питомец отдыхает...", Properties.Resources.sleep);
-                            }
-                        }
-                    }
-                    while (status);
-
-                    if (TravelCheckBox.Checked)
-                    {
-                        StatusLog("Проверяю прогулки...", Properties.Resources.travel);
-
-                        await Travel();
-                        await Task.Delay(random.Next(500, 1000));
-                    }
-
-                    if (GladeCheckBox.Checked)
-                    {
-                        StatusLog("Проверяю поляну...", Properties.Resources.garden);
-
-                        await Glade();
-                        await Task.Delay(random.Next(500, 1000));
-                    }
-
-                    if (ChestCheckBox.Checked)
-                    {
-                        StatusLog("Проверяю шкаф...", Properties.Resources.chest);
-
-                        await Chest();
-                        await Task.Delay(random.Next(500, 1000));
-                    }
-
-                    if (TasksCheckBox.Checked)
-                    {
-                        StatusLog("Проверяю задания...", Properties.Resources.tasks);
-
-                        await Tasks();
-                        await Task.Delay(random.Next(500, 1000));
-                    }
-
-                    await Statistics();
-                    await Task.Delay(random.Next(500, 1000));
-
-                    isTimer = true;
-                    taskStop = DateTime.Now.AddMinutes(Convert.ToDouble(random.Next(Convert.ToInt32(numericUpDown1.Value), Convert.ToInt32(numericUpDown2.Value))));
-
-                    Invoke(new Action(() => LogBox.Focus()));
-
-                    Log("-- Все задачи выполнены.");
-                    Log("", false);
-                }
-                else if (isLogin == "false")
-                {
-                    Log("-- Вы ввели неправильное имя или пароль, повтор через 1 минуту.");
-                    Log("", false);
-
-                    isTimer = true;
-                    taskStop = DateTime.Now.AddMinutes(1);
-                }
-                else if (isLogin == "error")
-                {
-                    Log("-- Ошибка сети, повтор через 1 минуту....");
-                    Log("", false);
-
-                    isTimer = true;
-                    taskStop = DateTime.Now.AddMinutes(1);
-                }
-            });
+                // Логируем действие
+                Log("-- Питомец получил витаминку.", botID);
+            }
         }
 
-        private void Start_Click(object sender, EventArgs e)
+        public async Task Food(int botID, HttpClient httpClient)
         {
-            if (isStart)
+            // Делаем запрос на главную
+            string result = await GET("/", httpClient);
+
+            // Парсим бесполезное число
+            string rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+            if (rand.Length > 0)
             {
-                isStart = false;
+                // Информируем в статус лог
+                StatusLog("Кормлю питомца...", botID, Properties.Resources.meat);
+
+                // Логируем действие
+                Log("-- Кормлю питомца...", botID);
+
+                // Задержка
+                await Task.Delay(random.Next(500, 1000));
+
+                // Запускаем цикл
+                do
+                {
+                    // Выполняем действие
+                    result = await GET("/?action=food&rand=" + rand, httpClient);
+
+                    // Парсим бесполезное число
+                    rand = new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    // Записываем опыт
+                    SaveExpirience("Food", result, botID);
+
+                    // Задержка
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (rand.Length > 0);
+            }
+        }
+
+        public async Task Play(int botID, HttpClient httpClient)
+        {
+            // Делаем запрос на главную
+            string result = await GET("/", httpClient);
+
+            // Парсим бесполезное число
+            string rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+            if (rand.Length > 0)
+            {
+                // Информируем в статус лог
+                StatusLog("Играю с питомцем...", botID, Properties.Resources.game);
+
+                // Логируем действие
+                Log("-- Играю с питомцем...", botID);
+
+                // Задержка
+                await Task.Delay(random.Next(500, 1000));
+
+                // Запускаем цикл
+                do
+                {
+                    // Выполняем действие
+                    result = await GET("/?action=play&rand=" + rand, httpClient);
+
+                    // Парсим бесполезное число
+                    rand = new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value;
+
+                    // Записываем опыт
+                    SaveExpirience("Play", result, botID);
+
+                    // Задержка
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (rand.Length > 0);
+            }
+        }
+
+        public async Task Showing(int botID, HttpClient httpClient)
+        {
+            // Делаем запрос на главную
+            string result = await GET("/", httpClient);
+
+            if (result.Contains("show?start=1"))
+            {
+                // Информируем в статус лог
+                StatusLog("На выставке...", botID, Properties.Resources.cup);
+
+                // Логируем действие
+                Log("-- Иду на выставку...", botID);
+
+                // Запускаем поход на выставку
+                await GET("/show?start=1", httpClient);
+
+                // Задержка
+                await Task.Delay(random.Next(500, 1000));
+
+                // Запускаем цикл
+                do
+                {
+                    // Ходим на выставку
+                    result = await GET("/show", httpClient);
+
+                    // Записываем опыт
+                    SaveExpirience("Showing", result, botID);
+
+                    // Задержка
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (result.Contains("Участвовать за") || result.Contains("Соревноваться"));
+
+                // Логируем действие
+                Log("-- Выставка закончена.", botID);
+            }
+        }
+
+        public async Task Travel(int botID, HttpClient httpClient)
+        {
+            // Делаем запрос на страницу прогулки
+            string result = await GET("/travel", httpClient);
+
+            // Если там есть "Гулять дальше"
+            if (result.Contains("Гулять дальше"))
+            {
+                // Задержка
+                await Task.Delay(random.Next(400, 700));
+
+                // Записываем опыт
+                SaveExpirience("Travel", result, botID);
+
+                // Завершаем прогулку
+                result = await GET("/travel?clear=1", httpClient);
+
+                // Задержка
+                await Task.Delay(random.Next(400, 700));
+            }
+
+            // Если питомец ещё не гуляет
+            if (!result.Contains("Ваш питомец гуляет"))
+            {
+                // Парсим все ID со ссылок
+                var travel = new Regex(@"go_travel(.*?)\"" class=").Matches(result);
+
+                // Если id больше нуля
+                if (travel.Count > 0)
+                {
+                    // Определяем переменные
+                    int temp_id = 0, curr_id = 0;
+
+                    // Проходимся по каждому ID
+                    foreach (Match match in travel)
+                    {
+                        // Получаем ID
+                        int news_id = Convert.ToInt32(match.Groups[1].Value.Replace("?id=", ""));
+
+                        // Если текущий ID больше временного
+                        if (news_id > temp_id)
+                        {
+                            // Записываем в текущий
+                            curr_id = news_id;
+                        }
+
+                        // Записываем во временную переменную текущий ID
+                        temp_id = news_id;
+                    }
+
+                    // Отправляем на прогулку (Самая длительная)
+                    result = await GET("/go_travel?id=" + curr_id, httpClient);
+
+                    // Проверяем успешно ли отправили
+                    if (result.Contains("Ваш питомец гуляет"))
+                    {
+                        // Логируем действие
+                        Log("-- Отправили питомца на прогулку.", botID);
+                    }
+                }
+            }
+        }
+
+        public async Task Glade(int botID, HttpClient httpClient)
+        {
+            // Отправляем запрос на страницу поляны
+            string result = await GET("/glade", httpClient);
+
+            // Если можно копать
+            if (result.Contains("Копать"))
+            {
+                // Логируем действие
+                Log("-- Копаю поляну...", botID);
+
+                // Запускаем цикл
+                do
+                {
+                    // Капаем поляну
+                    result = await GET("/glade_dig", httpClient);
+
+                    // Сохраняем опыт
+                    SaveExpirience("Glade", result, botID);
+
+                    // Задержка
+                    await Task.Delay(random.Next(500, 1000));
+                }
+                while (result.Contains("Копать"));
+
+                // Логируем действие
+                Log("-- Закончил копать поляну.", botID);
+            }
+        }
+
+        public async Task Chest(int botID, HttpClient httpClient)
+        {
+            // Отправляем запрос на страницу шкафа
+            string result = await GET("/chest", httpClient);
+
+            // Парсим ссылку предмета
+            string url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+
+            // Парсим имя предмета
+            string name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
+
+            // Если ссылка предмета не ровна нулю и ссылка не ровна открытию сундука
+            if (url.Length > 0 && !url.Contains("open_item"))
+            {
+                // Логируем действие
+                Log("-- В шкафу есть вещи...", botID);
+
+                // Запускам цикл
+                while (url.Length > 0 && !url.Contains("open_item"))
+                {
+                    // Задержка
+                    await Task.Delay(random.Next(500, 1000));
+
+                    // Надеваем предмет
+                    if (url.Contains("wear_item"))
+                    {
+                        Log($"--- Надел {name}.", botID, true, Color.Green);
+                    }
+
+                    // Продаем предмет
+                    if (url.Contains("sell_item"))
+                    {
+                        Log($"--- Продал {name}.", botID, true, Color.Red);
+                    }
+
+                    // Отправляем запрос
+                    result = await GET(url, httpClient);
+
+                    // Парсим ссылку предмета
+                    url = new Regex(@"<a href=\""(.*?)\"" class=\""bbtn mt5 vb\""").Match(result).Groups[1].Value;
+
+                    // Парсим имя предмета
+                    name = new Regex(@"<div class=\""mt3\"">(.*?)</div>").Match(result).Groups[1].Value;
+                }
+
+                // Логируем действие
+                Log("-- Закончил работу в шкафу...", botID);
+            }
+
+            // Получаем ссылку на чекбокс "Открывать сундук"
+            CheckBox checkBox = findControl.FindCheckBox("checkbox_opencase", botID, this);
+
+            // Если опция включена и ссылка - это сундук
+            if (checkBox.Checked & url.Contains("open_item"))
+            {
+                // Если на аккаунте нет VIP
+                if (!(bool)findControl.FindLabel("label_isVip", botID, this).Tag)
+                {
+                    // Если есть стальной ключ
+                    if (result.Contains("Стальной ключ"))
+                    {
+                        // Открываем сундук
+                        await GET(url, httpClient);
+
+                        // Логируем действие
+                        Log($"-- Открыл сундук ключем.", botID);
+                    }
+                }
+            }
+        }
+
+        public async Task Tasks(int botID, HttpClient httpClient)
+        {
+            // Отправляем запрос на страницу заданий
+            string result = await GET("/task", httpClient);
+
+            // Парсим список id
+            MatchCollection reg = new Regex(@"rd\?id=(.*?)\"" class=").Matches(result);
+
+            // Если найдено больше 0
+            if (reg.Count > 0)
+            {
+                // Логируем действие
+                Log("-- Найдено выполненных заданий " + reg.Count + " шт.", botID);
+
+                // Запускаем цикл
+                foreach (Match match in reg)
+                {
+                    // Получаем id
+                    string id = match.Groups[1].Value;
+
+                    // Если id больше 0
+                    if (id.Length > 0)
+                    {
+                        // Забираем задания
+                        result = await GET("/task_reward?id=" + id, httpClient);
+
+                        // Сохраняем опыт
+                        SaveExpirience("Tasks", result, botID);
+
+                        // Задержка
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+                }
+
+                // Логируем действие
+                Log("-- Награды за задания собраны.", botID);
+            }
+        }
+
+        private async Task Sleep(int botID, Button btn, int Interval = 1)
+        {
+            // Инициализируем таймер ожидания
+            DateTime taskStop = DateTime.Now.AddMinutes(Interval);
+
+            // Возвращаем доступность кнопки
+            Invoke(new Action(() => btn.Enabled = true));
+
+            // Запускам цикл ожидания
+            while (true)
+            {
+                // Получаем текущие время
+                DateTime now = DateTime.Now;
+
+                // Если время прошло, выходим из цикла
+                if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second || btn.Text.Contains(BOT_START_TEXT))
+                {
+                    break;
+                }
+
+                // Обновляем лог
+                StatusLog($"Повтор через {taskStop.Subtract(now):mm} мин : {taskStop.Subtract(now):ss} сек", botID, Properties.Resources.sleep);
+                await Task.Delay(100);
+            }
+        }
+
+        private void CheckEnabledBot(int botID, Button btn, NumericUpDown numericupdown_interval_from, NumericUpDown numericupdown_interval_do)
+        {
+            if (!btn.Text.Contains(BOT_START_TEXT))
+            {
+                StartingBot(botID);
             }
             else
             {
-                StartBot();
+                Invoke(new Action(() =>
+                {
+                    btn.Text = BOT_START_TEXT;
+                    numericupdown_interval_from.Enabled = true;
+                    numericupdown_interval_do.Enabled = true;
+                }));
+
+                StatusLog("", botID);
             }
         }
 
-        private void Timer1_Tick(object sender, EventArgs e)
+        private async void StartingBot(int botID)
         {
-            if (isStart)
-            {
-                if (isTimer)
-                {
-                    DateTime now = DateTime.Now;
+            // Создаём новый HttpClient
+            HttpClient httpClient = new HttpClient { BaseAddress = new Uri("https://mpets.mobi") };
 
-                    if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second)
+            // Получаем ссылку на кнопку
+            Button btn_start_bot = findControl.FindButton("button_start_bot", botID, this);
+
+            // Получаем ссылку на кнопку
+            NumericUpDown numericupdown_interval_from = findControl.FindNumericUpDown("numericupdown_interval_from", botID, this);
+            NumericUpDown numericupdown_interval_do = findControl.FindNumericUpDown("numericupdown_interval_do", botID, this);
+
+            // Устанавливаем UserAgent для HttpClient
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0");
+
+            // Меняем текст кнопки, блокируем кнопку и интервалы
+            Invoke(new Action(() =>
+            {
+                btn_start_bot.Text = BOT_STOP_TEXT;
+                btn_start_bot.Enabled = false;
+                numericupdown_interval_from.Enabled = false;
+                numericupdown_interval_do.Enabled = false;
+            }));
+
+            // Получаем логин и пароль
+            string login = findControl.FindTextBox("textbox_login", botID, this).Text;
+            string password = findControl.FindTextBox("textbox_password", botID, this).Text;
+
+            // Проверяем на пустоту логин и пароль
+            if (login.Length > 0 & password.Length > 0)
+            {
+                // Запускам главный поток бота
+                await Task.Run(async () =>
+                {
+                    // Логируем действие
+                    StatusLog("Авторизация...", botID, Properties.Resources.auth);
+
+                    // Авторизация
+                    string isLogin = await Authorization(login, password, httpClient);
+
+                    // Если авторизация прошла успешно
+                    if (isLogin == "true")
                     {
-                        StartBot();
+                        // Логируем действие
+                        Log("-- Запускаю задачи...", botID);
+
+                        // Обновляем статистику
+                        await Statistics(botID, httpClient);
+                        await Task.Delay(random.Next(500, 1000));
+
+                        // Статус цикла
+                        bool status = true;
+
+                        // Запускаем цикл (Кормим, Играем, Ходим на выставку)
+                        do
+                        {
+                            // Переменная сна
+                            bool sleep = false;
+
+                            // Делаем запрос на главную
+                            string result = await GET("/", httpClient);
+
+                            // Если можно разбудить бесплатно
+                            if (result.Contains("Разбудить бесплатно"))
+                            {
+                                // Будим бесплатно
+                                result = await GET("/wakeup_sleep", httpClient);
+
+                                // Логируем действие
+                                Log("-- Разбудили питомца бесплатно.", botID);
+                            }
+
+                            // Если не нужно кормить, играть и ходить на выставки
+                            if (result.Contains("Играть ещё") || result.Contains("Разбудить"))
+                            {
+                                status = false;
+                            }
+
+                            // Если нет возможности дать витаминку
+                            if (new Regex(@"action=food&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & new Regex(@"action=play&rand=(.*?)\"" class=").Match(result).Groups[1].Value.Length == 0 & !result.Contains("show?start=1"))
+                            {
+                                sleep = true;
+                            }
+
+                            // Задержка
+                            await Task.Delay(random.Next(800, 1000));
+
+                            // Кормим, Играем, Ходим на выставки
+                            if (status)
+                            {
+                                if (!sleep)
+                                {
+                                    await Food(botID, httpClient);
+                                    await Task.Delay(random.Next(500, 1000));
+
+                                    await Play(botID, httpClient);
+                                    await Task.Delay(random.Next(500, 1000));
+
+                                    await Showing(botID, httpClient);
+                                    await Task.Delay(random.Next(500, 1000));
+
+                                    await WakeUp(botID, httpClient);
+                                    await Task.Delay(random.Next(1000, 2000));
+                                }
+                                else
+                                {
+                                    StatusLog("Питомец отдыхает...", botID, Properties.Resources.sleep);
+                                }
+                            }
+                        }
+                        while (status);
+
+                        // Если включена опция "Отправлять на прогулку"
+                        if (findControl.FindCheckBox("checkbox_travel", botID, this).Checked)
+                        {
+                            StatusLog("Проверяю прогулки...", botID, Properties.Resources.travel);
+
+                            await Travel(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+
+                        // Если включена опция "Копать поляну"
+                        if (findControl.FindCheckBox("checkbox_glade", botID, this).Checked)
+                        {
+                            StatusLog("Проверяю поляну...", botID, Properties.Resources.garden);
+
+                            await Glade(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+
+                        // Если включена опция "Надевать и продавать вещи"
+                        if (findControl.FindCheckBox("checkbox_chest", botID, this).Checked)
+                        {
+                            StatusLog("Проверяю шкаф...", botID, Properties.Resources.chest);
+
+                            await Chest(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+
+                        // Если включена опция "Забирать задания" 
+                        if (findControl.FindCheckBox("checkbox_tasks", botID, this).Checked)
+                        {
+                            StatusLog("Проверяю задания...", botID, Properties.Resources.tasks);
+
+                            await Tasks(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+
+                        // Обновляем статистику
+                        await Statistics(botID, httpClient);
+                        await Task.Delay(random.Next(500, 1000));
+
+                        Log("-- Все задачи выполнены.", botID);
+                        Log("", botID, false);
+
+                        // Ожидание
+                        await Sleep(botID, btn_start_bot, random.Next(Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_from", botID, this).Value), Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_do", botID, this).Value)));
+
+                        // Проверяем не остановлен ли бот
+                        CheckEnabledBot(botID, btn_start_bot, numericupdown_interval_from, numericupdown_interval_do);
                     }
+                    else if (isLogin == "false")
+                    {
+                        Log("-- Вы ввели неправильное имя или пароль, повтор через 1 минуту.", botID);
+                        Log("", botID, false);
 
-                    StatusLog($"Повтор через {taskStop.Subtract(now):mm} мин : {taskStop.Subtract(now):ss} сек", Properties.Resources.sleep);
-                }
-            }
-        }
+                        // Ожидание
+                        await Sleep(botID, btn_start_bot, 1);
 
-        private void Timer2_Tick(object sender, EventArgs e)
-        {
-            if (isStart)
-            {
-                start.Text = "ОСТАНОВИТЬ БОТА";
+                        // Проверяем не остановлен ли бот
+                        CheckEnabledBot(botID, btn_start_bot, numericupdown_interval_from, numericupdown_interval_do);
+                    }
+                    else
+                    {
+                        Log("-- Ошибка сети, повтор через 1 минуту...", botID);
+                        Log("", botID, false);
 
-                if (isTimer)
-                {
-                    start.Enabled = true;
-                }
-                else
-                {
-                    start.Enabled = false;
-                }
+                        // Ожидание
+                        await Sleep(botID, btn_start_bot, 1);
 
-                numericUpDown1.Enabled = false;
-                numericUpDown2.Enabled = false;
+                        // Проверяем не остановлен ли бот
+                        CheckEnabledBot(botID, btn_start_bot, numericupdown_interval_from, numericupdown_interval_do);
+                    }
+                });
             }
             else
             {
-                start.Text = "ЗАПУСТИТЬ БОТА";
+                Log("-- Логин или пароль не может быть пустым.", botID);
+                Log("", botID, false);
 
-                numericUpDown1.Enabled = true;
-                numericUpDown2.Enabled = true;
-
-                start.Enabled = true;
-
-                StatusLog("Запустите бота");
+                Invoke(new Action(() =>
+                {
+                    btn_start_bot.Enabled = true;
+                    btn_start_bot.Text = BOT_START_TEXT;
+                    numericupdown_interval_from.Enabled = true;
+                    numericupdown_interval_do.Enabled = true;
+                }));
             }
+        }
 
-            numericUpDown1.Maximum = numericUpDown2.Value;
+        private void Button_Start_Bot_Click(object sender, EventArgs e)
+        {
+            // Получаем ссылку на кнопку
+            Button button = (Button)sender;
 
-            HideCheckBox.Enabled = AutoRunCheckBox.Checked;
-            if (!AutoRunCheckBox.Checked)
+            // Если текст кнопки ОСТАНОВИТЬ БОТА
+            if (button.Text.Contains(BOT_STOP_TEXT))
             {
-                HideCheckBox.Checked = false;
+                button.Text = BOT_START_TEXT;
+            }
+            // Если текст кнопки ЗАПУСТИТЬ БОТА
+            else if (button.Text.Contains(BOT_START_TEXT))
+            {
+                StartingBot(Convert.ToInt32(button.Tag));
+            }
+        }
+
+        private void TabControl1_DoubleClick(object sender, EventArgs e)
+        {
+            MouseEventArgs mouseEvent = (MouseEventArgs)e;
+
+            if (mouseEvent.Button == MouseButtons.Left)
+            {
+                DialogResult result = MessageBox.Show("Вы действительно хотите удалить профиль?", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    int selectIndex = tabControl1.SelectedIndex - 1;
+
+                    // Удаляем бота из сохранения
+                    settings.DeleteSection($"PETS{(int)tabControl1.TabPages[tabControl1.SelectedIndex].Tag}");
+
+                    tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+                    tabControl1.SelectedIndex = selectIndex == -1 ? 0 : selectIndex;
+                }
+            }
+        }
+
+        private void TabControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            int lastIndex = tabControl1.TabCount - 1;
+
+            if (tabControl1.GetTabRect(lastIndex).Contains(e.Location))
+            {
+                // Увеличиваем количество вкладкок
+                NumberTabs++;
+
+                // Генерируем новую вкладку
+                TabPage tabPage = new TabPage
+                {
+                    Text = BOT_TABS_TEXT,
+                    Name = $"tabPage{NumberTabs}",
+                    BackColor = Color.White,
+                    ToolTipText = "Для удаления профиля, нажмите несколько раз по вкладке.",
+                    Tag = NumberTabs,
+                    ImageIndex = imageList1.Images.IndexOfKey("avatar1")
+                };
+
+                tabPage.DoubleClick += TabControl1_DoubleClick;
+
+                // Добавляем базовый шаблон на вкладку
+                CreateTemplateBot(tabPage);
+
+                // Сохраняем стандарный профиль
+                SaveDefaultProfile(NumberTabs);
+
+                // Добавляем вкладку
+                tabControl1.TabPages.Insert(lastIndex, tabPage);
+                tabControl1.SelectedTab = tabPage;
+            }
+        }
+
+        private void LoadProfile(int petsID = 1)
+        {
+            // Читаем файл настроек
+            string readFiles = File.Exists(settingsPath) ? File.ReadAllText(settingsPath) : "";
+
+            // Инициализируем временный файл настроек
+            IniFiles settingTemp = new IniFiles(settingsPathTemp);
+
+            // Проходимся циклом по секциям ini файла
+            foreach (Match match in new Regex(@"\[.*\]").Matches(readFiles))
+            {
+                // Парсим имя секции
+                string SectionName = match.Value.Replace("[", "").Replace("]", "");
+
+                // Если в секции есть глобальные настройки
+                if (SectionName.Contains("GLOBAL"))
+                {
+                    // Записываем во временный файл настроек глобальные настройки
+                    foreach (var item in settingSection)
+                    {
+                        string str = settings.ReadString(SectionName, item.Key);
+                        settingTemp.Write(SectionName, item.Key, str);
+                    }
+                }
+
+                // Если в секции есть профиль питомца
+                if (SectionName.Contains("PETS"))
+                {
+                    string login, password, avatar;
+                    int interval_from, interval_do;
+                    bool travel, chest, glade, tasks, open_case;
+
+                    // Читаем основные настройки профиля
+                    login = settings.ReadString(SectionName, "LOGIN");
+                    password = settings.ReadString(SectionName, "PASSWORD");
+                    avatar = settings.ReadString(SectionName, "AVATAR");
+                    interval_from = settings.ReadInt(SectionName, "INTERVAL_FROM");
+                    interval_do = settings.ReadInt(SectionName, "INTERVAL_DO");
+                    travel = settings.ReadBool(SectionName, "TRAVEL");
+                    chest = settings.ReadBool(SectionName, "CHEST");
+                    glade = settings.ReadBool(SectionName, "GLADE");
+                    tasks = settings.ReadBool(SectionName, "TASKS");
+                    open_case = settings.ReadBool(SectionName, "OPEN_CASE");
+
+                    // Записываем основыные настройки профиля во временный файл
+                    settingTemp.Write($"PETS{petsID}", "LOGIN", login);
+                    settingTemp.Write($"PETS{petsID}", "PASSWORD", password);
+                    settingTemp.Write($"PETS{petsID}", "AVATAR", avatar);
+                    settingTemp.Write($"PETS{petsID}", "INTERVAL_FROM", interval_from.ToString());
+                    settingTemp.Write($"PETS{petsID}", "INTERVAL_DO", interval_do.ToString());
+                    settingTemp.Write($"PETS{petsID}", "TRAVEL", travel.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "CHEST", chest.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "GLADE", glade.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "TASKS", tasks.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "OPEN_CASE", open_case.ToString().ToLower());
+
+                    // Добавляем новый профиль (вкладку)
+                    AddProfile(login, password, avatar, interval_from, interval_do, travel, chest, glade, tasks, open_case);
+
+                    petsID++;
+                }
             }
 
-            ExpSession.Text = $"{StringFormat(exp.ToString())} собрано";
-            CoinSession.Text = $"{StringFormat(coin[1].ToString())} собрано";
-            HeartSession.Text = $"{StringFormat(heart[1].ToString())} собрано";
-            BeautySession.Text = $"{StringFormat(beauty[1].ToString())} собрано";
+            // Удаляем основной файл настроек
+            File.Delete(settingsPath);
+
+            // Переименновываем временный файл настроек в основной
+            if (File.Exists(settingsPathTemp))
+            {
+                File.Move(settingsPathTemp, settingsPath);
+            }
+
+            // Автоматический старт
+            if (settings.KeyExists("GLOBAL", "AUTO_START"))
+            {
+                // Получаем значение
+                bool auto_start = settings.ReadBool("GLOBAL", "AUTO_START");
+
+                // Если включено
+                if (auto_start)
+                {
+                    // Меняем настройку
+                    toolStripMenuItem5.Checked = auto_start;
+
+                    // Запускаем всех ботов
+                    toolStripMenuItem3.PerformClick();
+
+                    // Скрываем приложее в трей
+                    WindowState = FormWindowState.Minimized;
+                }
+            }
+        }
+
+        private void SaveDefaultProfile(int botID)
+        {
+            // Записываем основные настройки профиля
+            foreach (var item in settingKey)
+            {
+                settings.Write($"PETS{botID}", item.Key, item.Value);
+            }
+        }
+
+        private void AddProfile(string login, string password, string avatar, int interval_from, int interval_do, bool travel, bool chest, bool glade, bool tasks, bool open_case)
+        {
+            int lastIndex = tabControl1.TabCount - 1;
+
+            // Увеличиваем количество вкладкок
+            NumberTabs++;
+
+            // Генерируем новую вкладку
+            TabPage tabPage = new TabPage
+            {
+                Text = login.Length > 0 ? login : BOT_TABS_TEXT,
+                Name = $"tabPage{NumberTabs}",
+                BackColor = Color.White,
+                ToolTipText = "Для удаления профиля, нажмите несколько раз по вкладке.",
+                Tag = NumberTabs,
+                ImageIndex = imageList1.Images.IndexOfKey(avatar)
+            };
+
+            // Ставим на двойной клик обработчик
+            tabPage.DoubleClick += TabControl1_DoubleClick;
+
+            // Добавляем базовый шаблон на вкладку
+            CreateTemplateBot(tabPage);
+
+            // Добавляем вкладку
+            tabControl1.TabPages.Insert(lastIndex, tabPage);
+            tabControl1.SelectedTab = tabPage;
+
+            // Загружаем настройки
+            findControl.FindTextBox("textbox_login", NumberTabs, this).Text = login;
+            findControl.FindTextBox("textbox_password", NumberTabs, this).Text = password;
+            findControl.FindNumericUpDown("numericupdown_interval_from", NumberTabs, this).Value = interval_from;
+            findControl.FindNumericUpDown("numericupdown_interval_do", NumberTabs, this).Value = interval_do;
+            findControl.FindCheckBox("checkbox_travel", NumberTabs, this).Checked = travel;
+            findControl.FindCheckBox("checkbox_chest", NumberTabs, this).Checked = chest;
+            findControl.FindCheckBox("checkbox_glade", NumberTabs, this).Checked = glade;
+            findControl.FindCheckBox("checkbox_tasks", NumberTabs, this).Checked = tasks;
+            findControl.FindCheckBox("checkbox_opencase", NumberTabs, this).Checked = open_case;
+        }
+
+        private void TabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (e.TabPageIndex == tabControl1.TabCount - 1)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void TabControl1_HandleCreated(object sender, EventArgs e)
+        {
+            SendMessage(tabControl1.Handle, 0x1300 + 49, IntPtr.Zero, (IntPtr)10);
+        }
+
+        private void ToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            // Запускаем всех ботов
+            for (int i = 1; i <= NumberTabs; i++)
+            {
+                if (findControl.FindButton("button_start_bot", i, this).Text.Contains(BOT_START_TEXT))
+                {
+                    StartingBot(i);
+                }
+            }
+        }
+
+        private void ToolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            // Останавливаем всех ботов
+            for (int i = 1; i <= NumberTabs; i++)
+            {
+                Button button = findControl.FindButton("button_start_bot", i, this);
+
+                if (button.Text.Contains(BOT_STOP_TEXT))
+                {
+                    button.Text = BOT_START_TEXT;
+                }
+            }
+        }
+
+        private void ToolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            // Меняем Checked
+            toolStripMenuItem5.Checked = !toolStripMenuItem5.Checked;
+
+            // Сохраняем
+            settings.Write("GLOBAL", "AUTO_START", toolStripMenuItem5.Checked.ToString().ToLower());
+
+            // Добавляем в автозагрузку
+            AutoStart(toolStripMenuItem5.Checked);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            login.Text = settings.Get("Authorization", "Login");
-            password.Text = settings.Get("Authorization", "Password");
+            LoadProfile();
+        }
 
-            if (settings.Get("Timer", "Min").Length > 0) numericUpDown1.Value = Convert.ToInt32(settings.Get("Timer", "Min"));
-            if (settings.Get("Timer", "Max").Length > 0) numericUpDown2.Value = Convert.ToInt32(settings.Get("Timer", "Max"));
-
-            if (settings.Get("Settings", "Travel").Length > 0) TravelCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Travel"));
-            if (settings.Get("Settings", "Chest").Length > 0) ChestCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Chest"));
-            if (settings.Get("Settings", "Glade").Length > 0) GladeCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Glade"));
-            if (settings.Get("Settings", "Tasks").Length > 0) TasksCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Tasks"));
-            if (settings.Get("Settings", "OpenCase").Length > 0) OpenCaseCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "OpenCase"));
-
-            if(settings.Get("Settings", "AutoRun").Length > 0)
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            // Если окно было свернуто
+            if (WindowState == FormWindowState.Minimized)
             {
-                AutoRunCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "AutoRun"));
+                // Прячем из панели задач
+                ShowInTaskbar = false;
 
-                if(settings.Get("Settings", "Hide").Length > 0)
-                {
-                    HideCheckBox.Checked = Convert.ToBoolean(settings.Get("Settings", "Hide"));
-                }
-
-                if(AutoRunCheckBox.Checked)
-                {
-                    if(HideCheckBox.Checked)
-                    {
-                        HideForm(isHide);
-                    }
-
-                    StartBot();
-                }
+                // Показываем иконку в трее
+                notifyIcon1.Visible = true;
             }
-
-            if (isDev) Text = $"Удивительные питомцы By DeKoSiK ( {version} ) - Dev"; else Text = $"Удивительные питомцы By DeKoSiK ( {version} )";
         }
 
-        private void NotifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        private void NotifyIcon1_Click(object sender, EventArgs e)
         {
-            HideForm(isHide);
+            MouseEventArgs mouseEvent = (MouseEventArgs)e;
+
+            // Если была нажата правая кнопка мыши
+            if (mouseEvent.Button == MouseButtons.Right)
+            {
+                // Разворачиваем приложение
+                WindowState = FormWindowState.Normal;
+
+                // Показываем значек в панели задач
+                ShowInTaskbar = true;
+
+                // Скрываем иконку из трее
+                notifyIcon1.Visible = false;
+            }
         }
 
-        private void Login_TextChanged(object sender, EventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            settings.Write("Authorization", "Login", login.Text);
+            Environment.Exit(0);
         }
 
-        private void Password_TextChanged(object sender, EventArgs e)
+        private void Textbox_login_TextChanged(object sender, EventArgs e)
         {
-            settings.Write("Authorization", "Password", password.Text);
+            TextBox textBox = (TextBox)sender;
+            settings.Write($"PETS{textBox.Tag}", "LOGIN", textBox.Text);
+            tabControl1.TabPages[tabControl1.SelectedIndex].Text = textBox.Text.Length > 0 ? textBox.Text : BOT_TABS_TEXT;
         }
 
-        private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void Textbox_password_TextChanged(object sender, EventArgs e)
         {
-            settings.Write("Timer", "Min", numericUpDown1.Value.ToString());
+            TextBox textBox = (TextBox)sender;
+            settings.Write($"PETS{textBox.Tag}", "PASSWORD", textBox.Text);
         }
 
-        private void NumericUpDown2_ValueChanged(object sender, EventArgs e)
+        private void Numericupdown_interval_from_ValueChanged(object sender, EventArgs e)
         {
-            settings.Write("Timer", "Max", numericUpDown2.Value.ToString());
+            NumericUpDown numericUpDown = (NumericUpDown)sender;
+            settings.Write($"PETS{numericUpDown.Tag}", "INTERVAL_FROM", numericUpDown.Value.ToString());
         }
 
-        private void TravelCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Numericupdown_interval_do_ValueChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Travel", TravelCheckBox.Checked.ToString().ToLower());
+            NumericUpDown numericUpDown = (NumericUpDown)sender;
+            settings.Write($"PETS{numericUpDown.Tag}", "INTERVAL_DO", numericUpDown.Value.ToString());
         }
 
-        private void ChestCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Checkbox_travel_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Chest", ChestCheckBox.Checked.ToString().ToLower());
+            CheckBox checkBox = (CheckBox)sender;
+            settings.Write($"PETS{checkBox.Tag}", "TRAVEL", checkBox.Checked.ToString().ToLower());
         }
 
-        private void GladeCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Checkbox_chest_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Glade", GladeCheckBox.Checked.ToString().ToLower());
+            CheckBox checkBox = (CheckBox)sender;
+            settings.Write($"PETS{checkBox.Tag}", "CHEST", checkBox.Checked.ToString().ToLower());
         }
 
-        private void TasksCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Checkbox_glade_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "Tasks", TasksCheckBox.Checked.ToString().ToLower());
+            CheckBox checkBox = (CheckBox)sender;
+            settings.Write($"PETS{checkBox.Tag}", "GLADE", checkBox.Checked.ToString().ToLower());
         }
 
-        private void OpenCaseCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Checkbox_tasks_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "OpenCase", OpenCaseCheckBox.Checked.ToString().ToLower());
+            CheckBox checkBox = (CheckBox)sender;
+            settings.Write($"PETS{checkBox.Tag}", "TASKS", checkBox.Checked.ToString().ToLower());
         }
 
-        private void AutoRunCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Checkbox_opencase_CheckedChanged(object sender, EventArgs e)
         {
-            settings.Write("Settings", "AutoRun", AutoRunCheckBox.Checked.ToString().ToLower());
-            AutoRun(AutoRunCheckBox.Checked);
+            CheckBox checkBox = (CheckBox)sender;
+            settings.Write($"PETS{checkBox.Tag}", "OPEN_CASE", checkBox.Checked.ToString().ToLower());
         }
 
-        private void HideCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write("Settings", "Hide", HideCheckBox.Checked.ToString().ToLower());
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem8_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
+        }
+
+        private void ToolStripMenuItem9_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/dekosik/mpets.mobi.bot");
         }
     }
 }

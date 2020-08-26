@@ -63,9 +63,189 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap about {
+        internal static System.Drawing.Bitmap auth {
             get {
-                object obj = ResourceManager.GetObject("about", resourceCulture);
+                object obj = ResourceManager.GetObject("auth", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar0 {
+            get {
+                object obj = ResourceManager.GetObject("avatar0", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar1 {
+            get {
+                object obj = ResourceManager.GetObject("avatar1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar10 {
+            get {
+                object obj = ResourceManager.GetObject("avatar10", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar11 {
+            get {
+                object obj = ResourceManager.GetObject("avatar11", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar12 {
+            get {
+                object obj = ResourceManager.GetObject("avatar12", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar13 {
+            get {
+                object obj = ResourceManager.GetObject("avatar13", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar16 {
+            get {
+                object obj = ResourceManager.GetObject("avatar16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar17 {
+            get {
+                object obj = ResourceManager.GetObject("avatar17", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar18 {
+            get {
+                object obj = ResourceManager.GetObject("avatar18", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar19 {
+            get {
+                object obj = ResourceManager.GetObject("avatar19", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar20 {
+            get {
+                object obj = ResourceManager.GetObject("avatar20", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar3 {
+            get {
+                object obj = ResourceManager.GetObject("avatar3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar4 {
+            get {
+                object obj = ResourceManager.GetObject("avatar4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar5 {
+            get {
+                object obj = ResourceManager.GetObject("avatar5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar6 {
+            get {
+                object obj = ResourceManager.GetObject("avatar6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar7 {
+            get {
+                object obj = ResourceManager.GetObject("avatar7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar8 {
+            get {
+                object obj = ResourceManager.GetObject("avatar8", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap avatar9 {
+            get {
+                object obj = ResourceManager.GetObject("avatar9", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +293,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap document {
+        internal static System.Drawing.Bitmap expirience {
             get {
-                object obj = ResourceManager.GetObject("document", resourceCulture);
+                object obj = ResourceManager.GetObject("expirience", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +303,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap expirience {
+        internal static System.Drawing.Bitmap game {
             get {
-                object obj = ResourceManager.GetObject("expirience", resourceCulture);
+                object obj = ResourceManager.GetObject("game", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +323,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap heart {
+        internal static System.Drawing.Bitmap github {
             get {
-                object obj = ResourceManager.GetObject("heart", resourceCulture);
+                object obj = ResourceManager.GetObject("github", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +333,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ico16_up {
+        internal static System.Drawing.Bitmap heart {
             get {
-                object obj = ResourceManager.GetObject("ico16_up", resourceCulture);
+                object obj = ResourceManager.GetObject("heart", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +353,9 @@ namespace mpets.mobi.bot.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap mouse {
+        internal static System.Drawing.Bitmap play {
             get {
-                object obj = ResourceManager.GetObject("mouse", resourceCulture);
+                object obj = ResourceManager.GetObject("play", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -186,6 +366,16 @@ namespace mpets.mobi.bot.Properties {
         internal static System.Drawing.Bitmap sleep {
             get {
                 object obj = ResourceManager.GetObject("sleep", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap stop {
+            get {
+                object obj = ResourceManager.GetObject("stop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -206,6 +396,26 @@ namespace mpets.mobi.bot.Properties {
         internal static System.Drawing.Bitmap travel {
             get {
                 object obj = ResourceManager.GetObject("travel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap update {
+            get {
+                object obj = ResourceManager.GetObject("update", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap vk {
+            get {
+                object obj = ResourceManager.GetObject("vk", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
