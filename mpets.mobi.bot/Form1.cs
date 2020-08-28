@@ -68,6 +68,10 @@ namespace mpets.mobi.bot
                 }
             }
 
+            // Фикс от разворачивания приложения через диспетчер задач
+            MaximumSize = new Size(Width, Height);
+
+            // Ставим обработчик событий
             tabControl1.HandleCreated += TabControl1_HandleCreated;
         }
 
@@ -926,7 +930,7 @@ namespace mpets.mobi.bot
             if (!result.Contains("Ваш питомец гуляет"))
             {
                 // Парсим все ID со ссылок
-                var travel = new Regex(@"go_travel(.*?)\"" class=").Matches(result);
+                MatchCollection travel = new Regex(@"go_travel(.*?)\"" class=").Matches(result);
 
                 // Если id больше нуля
                 if (travel.Count > 0)
@@ -1119,13 +1123,15 @@ namespace mpets.mobi.bot
                 DateTime now = DateTime.Now;
 
                 // Если время прошло, выходим из цикла
-                if (now.Hour >= taskStop.Hour && now.Minute >= taskStop.Minute && now.Second >= taskStop.Second || btn.Text.Contains(BOT_START_TEXT))
+                if (now.Hour == taskStop.Hour && now.Minute == taskStop.Minute && now.Second == taskStop.Second || btn.Text.Contains(BOT_START_TEXT))
                 {
                     break;
                 }
 
                 // Обновляем лог
                 StatusLog($"Повтор через {taskStop.Subtract(now):mm} мин : {taskStop.Subtract(now):ss} сек", botID, Properties.Resources.sleep);
+
+                // Задержка
                 await Task.Delay(100);
             }
         }
@@ -1256,6 +1262,7 @@ namespace mpets.mobi.bot
                                 else
                                 {
                                     StatusLog("Питомец отдыхает...", botID, Properties.Resources.sleep);
+                                    await Task.Delay(random.Next(1000, 5000));
                                 }
                             }
                         }
@@ -1368,9 +1375,7 @@ namespace mpets.mobi.bot
 
         private void TabControl1_DoubleClick(object sender, EventArgs e)
         {
-            MouseEventArgs mouseEvent = (MouseEventArgs)e;
-
-            if (mouseEvent.Button == MouseButtons.Left)
+            if (((MouseEventArgs)e).Button == MouseButtons.Left)
             {
                 DialogResult result = MessageBox.Show("Вы действительно хотите удалить профиль?", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
@@ -1439,7 +1444,7 @@ namespace mpets.mobi.bot
                 if (SectionName.Contains("GLOBAL"))
                 {
                     // Записываем во временный файл настроек глобальные настройки
-                    foreach (var item in settingSection)
+                    foreach (KeyValuePair<string, string> item in settingSection)
                     {
                         string str = settings.ReadString(SectionName, item.Key);
                         settingTemp.Write(SectionName, item.Key, str);
@@ -1517,7 +1522,7 @@ namespace mpets.mobi.bot
         private void SaveDefaultProfile(int botID)
         {
             // Записываем основные настройки профиля
-            foreach (var item in settingKey)
+            foreach (KeyValuePair<string, string> item in settingKey)
             {
                 settings.Write($"PETS{botID}", item.Key, item.Value);
             }
@@ -1573,7 +1578,7 @@ namespace mpets.mobi.bot
 
         private void TabControl1_HandleCreated(object sender, EventArgs e)
         {
-            SendMessage(tabControl1.Handle, 0x1300 + 49, IntPtr.Zero, (IntPtr)10);
+            _ = SendMessage(tabControl1.Handle, 0x1300 + 49, IntPtr.Zero, (IntPtr)10);
         }
 
         private void ToolStripMenuItem3_Click(object sender, EventArgs e)
@@ -1614,11 +1619,6 @@ namespace mpets.mobi.bot
             AutoStart(toolStripMenuItem5.Checked);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            LoadProfile();
-        }
-
         private void Form1_Resize(object sender, EventArgs e)
         {
             // Если окно было свернуто
@@ -1637,10 +1637,8 @@ namespace mpets.mobi.bot
 
         private void NotifyIcon1_Click(object sender, EventArgs e)
         {
-            MouseEventArgs mouseEvent = (MouseEventArgs)e;
-
             // Если была нажата правая кнопка мыши
-            if (mouseEvent.Button == MouseButtons.Right)
+            if (((MouseEventArgs)e).Button == MouseButtons.Right)
             {
                 // Показываем форму
                 Show();
@@ -1661,69 +1659,67 @@ namespace mpets.mobi.bot
             Environment.Exit(0);
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadProfile();
+        }
+
         private void Textbox_login_TextChanged(object sender, EventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            settings.Write($"PETS{textBox.Tag}", "LOGIN", textBox.Text);
-            tabControl1.TabPages[tabControl1.SelectedIndex].Text = textBox.Text.Length > 0 ? textBox.Text : BOT_TABS_TEXT;
+            settings.Write($"PETS{((TextBox)sender).Tag}", "LOGIN", ((TextBox)sender).Text);
+            tabControl1.TabPages[tabControl1.SelectedIndex].Text = ((TextBox)sender).Text.Length > 0 ? ((TextBox)sender).Text : BOT_TABS_TEXT;
         }
 
         private void Textbox_password_TextChanged(object sender, EventArgs e)
         {
-            TextBox textBox = (TextBox)sender;
-            settings.Write($"PETS{textBox.Tag}", "PASSWORD", textBox.Text);
+            settings.Write($"PETS{((TextBox)sender).Tag}", "PASSWORD", ((TextBox)sender).Text);
         }
 
         private void Numericupdown_interval_from_ValueChanged(object sender, EventArgs e)
         {
-            NumericUpDown numericUpDown = (NumericUpDown)sender;
-            settings.Write($"PETS{numericUpDown.Tag}", "INTERVAL_FROM", numericUpDown.Value.ToString());
+            ((NumericUpDown)sender).Maximum = findControl.FindNumericUpDown("numericupdown_interval_do", (int)((NumericUpDown)sender).Tag, this).Value;
+            settings.Write($"PETS{((NumericUpDown)sender).Tag}", "INTERVAL_FROM", ((NumericUpDown)sender).Value.ToString());
         }
 
         private void Numericupdown_interval_do_ValueChanged(object sender, EventArgs e)
         {
-            NumericUpDown numericUpDown = (NumericUpDown)sender;
-            settings.Write($"PETS{numericUpDown.Tag}", "INTERVAL_DO", numericUpDown.Value.ToString());
+            findControl.FindNumericUpDown("numericupdown_interval_from", (int)((NumericUpDown)sender).Tag, this).Maximum = ((NumericUpDown)sender).Value;
+            settings.Write($"PETS{((NumericUpDown)sender).Tag}", "INTERVAL_DO", ((NumericUpDown)sender).Value.ToString());
         }
 
         private void Checkbox_travel_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            settings.Write($"PETS{checkBox.Tag}", "TRAVEL", checkBox.Checked.ToString().ToLower());
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "TRAVEL", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void Checkbox_chest_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            settings.Write($"PETS{checkBox.Tag}", "CHEST", checkBox.Checked.ToString().ToLower());
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "CHEST", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void Checkbox_glade_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            settings.Write($"PETS{checkBox.Tag}", "GLADE", checkBox.Checked.ToString().ToLower());
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "GLADE", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void Checkbox_tasks_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            settings.Write($"PETS{checkBox.Tag}", "TASKS", checkBox.Checked.ToString().ToLower());
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "TASKS", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void Checkbox_opencase_CheckedChanged(object sender, EventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
-            settings.Write($"PETS{checkBox.Tag}", "OPEN_CASE", checkBox.Checked.ToString().ToLower());
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "OPEN_CASE", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void ToolStripMenuItem8_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
+            _ = System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
         }
 
         private void ToolStripMenuItem9_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/dekosik/mpets.mobi.bot");
+            _ = System.Diagnostics.Process.Start("https://github.com/dekosik/mpets.mobi.bot");
         }
     }
 }
