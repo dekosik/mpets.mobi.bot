@@ -38,12 +38,14 @@ namespace mpets.mobi.bot.Libs
 
         public int ReadInt(string Section, string Key)
         {
-            return Convert.ToInt32(Read(Section, Key));
+            if(KeyExists(Section, Key)) return Convert.ToInt32(Read(Section, Key));
+            return 1;
         }
 
         public bool ReadBool(string Section, string Key)
         {
-            return Convert.ToBoolean(Read(Section, Key));
+            if(KeyExists(Section, Key)) return Convert.ToBoolean(Read(Section, Key));
+            return false;
         }
 
         public void Write(string Section, string Key, string Value)

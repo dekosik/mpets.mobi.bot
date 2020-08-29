@@ -42,7 +42,8 @@ namespace mpets.mobi.bot
             ["CHEST"] = "true",
             ["GLADE"] = "true",
             ["TASKS"] = "true",
-            ["OPEN_CASE"] = "true"
+            ["OPEN_CASE"] = "true",
+            ["CHARM"] = "true"
         };
 
         private static readonly Dictionary<string, string> settingSection = new Dictionary<string, string>
@@ -52,6 +53,19 @@ namespace mpets.mobi.bot
 
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        public static class TextBoxWatermarkExtensionMethod
+        {
+            private const uint ECM_FIRST = 0x1500;
+            private const uint EM_SETCUEBANNER = ECM_FIRST + 1;
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+            private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+            public static void SetWatermark(TextBox textBox, string watermarkText)
+            {
+                SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, watermarkText);
+            }
+        }
 
         public Form1()
         {
@@ -77,26 +91,6 @@ namespace mpets.mobi.bot
 
         private void CreateTemplateBot(TabPage tabPage)
         {
-            Label label_login = new Label
-            {
-                Location = new Point(60, 11),
-                Margin = new Padding(2, 0, 2, 0),
-                Name = $"label_login{NumberTabs}",
-                Size = new Size(79, 13),
-                Text = "Имя питомца",
-                AutoSize = true
-            };
-
-            Label label_password = new Label
-            {
-                Location = new Point(78, 52),
-                Margin = new Padding(2, 0, 2, 0),
-                Name = $"label_password{NumberTabs}",
-                Size = new Size(47, 13),
-                Text = "Пароль",
-                AutoSize = true
-            };
-
             Label label_interval_from = new Label
             {
                 Location = new Point(8, 26),
@@ -130,7 +124,7 @@ namespace mpets.mobi.bot
 
             TextBox textbox_login = new TextBox
             {
-                Location = new Point(6, 28),
+                Location = new Point(6, 15),
                 Margin = new Padding(2, 5, 2, 5),
                 MaxLength = 20,
                 Name = $"textbox_login{NumberTabs}",
@@ -141,7 +135,7 @@ namespace mpets.mobi.bot
 
             TextBox textbox_password = new TextBox
             {
-                Location = new Point(6, 68),
+                Location = new Point(6, 45),
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"textbox_password{NumberTabs}",
                 Size = new Size(194, 22),
@@ -182,13 +176,13 @@ namespace mpets.mobi.bot
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"groupBox1{NumberTabs}",
                 Padding = new Padding(2, 5, 2, 5),
-                Size = new Size(206, 177),
+                Size = new Size(206, 159),
                 TabStop = false
             };
 
             GroupBox groupBox2 = new GroupBox
             {
-                Location = new Point(8, 92),
+                Location = new Point(8, 72),
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"groupBox2{NumberTabs}",
                 Padding = new Padding(2, 5, 2, 5),
@@ -199,18 +193,18 @@ namespace mpets.mobi.bot
 
             GroupBox groupBox3 = new GroupBox
             {
-                Location = new Point(6, 209),
+                Location = new Point(6, 191),
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"groupBox3{NumberTabs}",
                 Padding = new Padding(2, 5, 2, 5),
-                Size = new Size(206, 112),
+                Size = new Size(206, 130),
                 TabStop = false
             };
 
             Button button_start_bot = new Button
             {
                 Font = new Font("Segoe UI", 9.25F),
-                Location = new Point(6, 179),
+                Location = new Point(6, 161),
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"button_start_bot{NumberTabs}",
                 Size = new Size(206, 31),
@@ -295,6 +289,22 @@ namespace mpets.mobi.bot
                 RightToLeft = RightToLeft.Yes,
                 Size = new Size(192, 22),
                 Text = "Открывать сундук",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
+            CheckBox checkbox_charm = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 103),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_charm{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "[ Задания ] Снеговик",
                 TextAlign = ContentAlignment.MiddleRight,
                 UseVisualStyleBackColor = true,
                 TabStop = false,
@@ -422,8 +432,6 @@ namespace mpets.mobi.bot
                 Tag = 0
             };
 
-            groupBox1.Controls.Add(label_login);
-            groupBox1.Controls.Add(label_password);
             groupBox1.Controls.Add(textbox_login);
             groupBox1.Controls.Add(textbox_password);
             groupBox1.Controls.Add(groupBox2);
@@ -438,6 +446,7 @@ namespace mpets.mobi.bot
             groupBox3.Controls.Add(checkbox_glade);
             groupBox3.Controls.Add(checkbox_tasks);
             groupBox3.Controls.Add(checkbox_opencase);
+            groupBox3.Controls.Add(checkbox_charm);
 
             toolstrip_top_log.Items.AddRange(new ToolStripItem[]
             {
@@ -474,6 +483,10 @@ namespace mpets.mobi.bot
             checkbox_glade.CheckedChanged += Checkbox_glade_CheckedChanged;
             checkbox_tasks.CheckedChanged += Checkbox_tasks_CheckedChanged;
             checkbox_opencase.CheckedChanged += Checkbox_opencase_CheckedChanged;
+            checkbox_charm.CheckedChanged += Checkbox_charm_CheckedChanged;
+
+            TextBoxWatermarkExtensionMethod.SetWatermark(textbox_login, "Имя питомца");
+            TextBoxWatermarkExtensionMethod.SetWatermark(textbox_password, "Пароль");
 
             // Подсказки
             toolTip1.SetToolTip(button_start_bot, "Пока бот выполняет работу, остановить его невозможно.");
@@ -484,6 +497,7 @@ namespace mpets.mobi.bot
             toolTip1.SetToolTip(checkbox_glade, "Бот будет копать поляну.");
             toolTip1.SetToolTip(checkbox_tasks, "Бот будет забирать все выполненные задания (включая медали).");
             toolTip1.SetToolTip(checkbox_opencase, "Бот будет открывать сундук, при наличие ключа и отсутствующего VIP аккаунта.");
+            toolTip1.SetToolTip(checkbox_charm, "Бот будет играть в мини-игру \"Снежки\" до тех пор пока есть активное задание.");
         }
 
         private static void AutoStart(bool flag)
@@ -777,60 +791,62 @@ namespace mpets.mobi.bot
             // Переходим на страницу игры в снежки
             string result = await GET("/charm", httpClient);
 
-            // Проверяем можем ли мы встать в очередь
-            if(result.Contains("Встать в очередь"))
+            // Начниаем играть только если есть активное задание "Проведи 2 игры в снежки"
+            // Или если игра уже была начата или уже идёт
+            if (result.Contains("Проведи 2 игры в снежки") || result.Contains("Обновить") || result.Contains("Сменить"))
             {
                 Log("-- Играем в снежки...", botID);
 
-                // Встаём в очередь
-                result = await GET("/charm?in_queue=1", httpClient);
-
-                if(result.Contains("Обновить"))
+                // Проверяем можем ли мы встать в очередь
+                if (result.Contains("Встать в очередь"))
                 {
-                    StatusLog("[ Игра в снежки ] В очереди...", botID);
+                    StatusLog("[ Снежки ] В очереди...", botID, Properties.Resources.charm);
+
+                    // Встаём в очередь
+                    result = await GET("/charm?in_queue=1", httpClient);
 
                     // Ждем пока начнется игра
-                    while(result.Contains("Обновить"))
+                    while (result.Contains("Обновить"))
                     {
                         result = await GET("/charm", httpClient);
                         await Task.Delay(random.Next(800, 1500));
                     }
+                }
 
-                    // Если игра началась
-                    if(result.Contains("Сменить"))
+                // Если игра уже началась
+                if (result.Contains("Сменить"))
+                {
+                    StatusLog("[ Снежки ] Начали играть...", botID, Properties.Resources.charm);
+
+                    // Запускаем цикл для игры (Бросаем снежки через смену питомца)
+                    while (result.Contains("Сменить"))
                     {
-                        StatusLog("[ Игра в снежки ] Начали играть...", botID);
-
-                        // Запускаем цикл для игры (Бросаем снежки через смену питомца)
-                        while (result.Contains("Сменить"))
-                        {
-                            result = await GET("/charm?change=1", httpClient);
-                            await Task.Delay(random.Next(500, 1000));
-                        }
+                        result = await GET("/charm?change=1", httpClient);
+                        await Task.Delay(random.Next(500, 1000));
                     }
+                }
 
-                    // На случай если мы выбыли
-                    if(result.Contains("Обновить"))
+                // На случай если мы выбыли
+                if (result.Contains("Обновить"))
+                {
+                    StatusLog("[ Снежки ] Выбыли, ждём завершения...", botID, Properties.Resources.charm);
+
+                    // Запускаем цикл ожидания конца игры
+                    while (result.Contains("Обновить"))
                     {
-                        StatusLog("[ Игра в снежки ] Выбыли, ждём конец игры...", botID);
+                        result = await GET("/charm", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+                }
 
-                        // Запускаем цикл ожидания конца игры
-                        while (result.Contains("Обновить"))
-                        {
-                            result = await GET("/charm", httpClient);
-                            await Task.Delay(random.Next(800, 1500));
-                        }
-                    }
-
-                    // Если мы выиграли
-                    if(result.Contains("Вы победили"))
-                    {
-                        Log("-- Мы выиграли в снежки.", botID, true, Color.Green);
-                    }
-                    else
-                    {
-                        Log("-- Мы проиграли в снежки.", botID, true, Color.Red);
-                    }
+                // Проверяем выиграли или проиграли
+                if (result.Contains("Вы победили"))
+                {
+                    Log("-- Мы выиграли в снежки.", botID, true, Color.Green);
+                }
+                else
+                {
+                    Log("-- Мы проиграли в снежки.", botID, true, Color.Red);
                 }
             }
         }
@@ -1358,6 +1374,15 @@ namespace mpets.mobi.bot
                             await Task.Delay(random.Next(500, 1000));
                         }
 
+                        // Если включена опция "[ Задание ] Снеговик"
+                        if (findControl.FindCheckBox("checkbox_charm", botID, this).Checked)
+                        {
+                            // Игра в снежки
+                            await Charm(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+
+
                         // Если включена опция "Забирать задания" 
                         if (findControl.FindCheckBox("checkbox_tasks", botID, this).Checked)
                         {
@@ -1370,10 +1395,6 @@ namespace mpets.mobi.bot
                         // Обновляем статистику
                         await Statistics(botID, httpClient);
                         await Task.Delay(random.Next(500, 1000));
-
-                        // Игра в снежки
-                        /*await Charm(botID, httpClient);
-                        await Task.Delay(random.Next(500, 1000));*/
 
                         Log("-- Все задачи выполнены.", botID);
                         Log("", botID, false);
@@ -1523,7 +1544,7 @@ namespace mpets.mobi.bot
                 {
                     string login, password, avatar;
                     int interval_from, interval_do;
-                    bool travel, chest, glade, tasks, open_case;
+                    bool travel, chest, glade, tasks, open_case, charm;
 
                     // Читаем основные настройки профиля
                     login = settings.ReadString(SectionName, "LOGIN");
@@ -1536,6 +1557,7 @@ namespace mpets.mobi.bot
                     glade = settings.ReadBool(SectionName, "GLADE");
                     tasks = settings.ReadBool(SectionName, "TASKS");
                     open_case = settings.ReadBool(SectionName, "OPEN_CASE");
+                    charm = settings.ReadBool(SectionName, "CHARM");
 
                     // Записываем основыные настройки профиля во временный файл
                     settingTemp.Write($"PETS{petsID}", "LOGIN", login);
@@ -1548,9 +1570,10 @@ namespace mpets.mobi.bot
                     settingTemp.Write($"PETS{petsID}", "GLADE", glade.ToString().ToLower());
                     settingTemp.Write($"PETS{petsID}", "TASKS", tasks.ToString().ToLower());
                     settingTemp.Write($"PETS{petsID}", "OPEN_CASE", open_case.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "CHARM", charm.ToString().ToLower());
 
                     // Добавляем новый профиль (вкладку)
-                    AddProfile(login, password, avatar, interval_from, interval_do, travel, chest, glade, tasks, open_case);
+                    AddProfile(login, password, avatar, interval_from, interval_do, travel, chest, glade, tasks, open_case, charm);
 
                     petsID++;
                 }
@@ -1595,7 +1618,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        private void AddProfile(string login, string password, string avatar, int interval_from, int interval_do, bool travel, bool chest, bool glade, bool tasks, bool open_case)
+        private void AddProfile(string login, string password, string avatar, int interval_from, int interval_do, bool travel, bool chest, bool glade, bool tasks, bool open_case, bool charm)
         {
             int lastIndex = tabControl1.TabCount - 1;
 
@@ -1633,6 +1656,7 @@ namespace mpets.mobi.bot
             findControl.FindCheckBox("checkbox_glade", NumberTabs, this).Checked = glade;
             findControl.FindCheckBox("checkbox_tasks", NumberTabs, this).Checked = tasks;
             findControl.FindCheckBox("checkbox_opencase", NumberTabs, this).Checked = open_case;
+            findControl.FindCheckBox("checkbox_charm", NumberTabs, this).Checked = charm;
         }
 
         private void TabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -1777,6 +1801,11 @@ namespace mpets.mobi.bot
         private void Checkbox_opencase_CheckedChanged(object sender, EventArgs e)
         {
             settings.Write($"PETS{((CheckBox)sender).Tag}", "OPEN_CASE", ((CheckBox)sender).Checked.ToString().ToLower());
+        }
+
+        private void Checkbox_charm_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "CHARM", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void ToolStripMenuItem8_Click(object sender, EventArgs e)
