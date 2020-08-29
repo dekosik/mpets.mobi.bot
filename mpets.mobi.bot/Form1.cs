@@ -318,7 +318,7 @@ namespace mpets.mobi.bot
                 Name = $"checkbox_charm{NumberTabs}",
                 RightToLeft = RightToLeft.Yes,
                 Size = new Size(192, 22),
-                Text = "[ Задания ] Снеговик",
+                Text = "[ Задание ] Снеговик",
                 TextAlign = ContentAlignment.MiddleRight,
                 UseVisualStyleBackColor = true,
                 TabStop = false,
@@ -334,7 +334,7 @@ namespace mpets.mobi.bot
                 Name = $"checkbox_races{NumberTabs}",
                 RightToLeft = RightToLeft.Yes,
                 Size = new Size(192, 22),
-                Text = "[ Задания ] Жокей",
+                Text = "[ Задание ] Жокей",
                 TextAlign = ContentAlignment.MiddleRight,
                 UseVisualStyleBackColor = true,
                 TabStop = false,
@@ -530,7 +530,7 @@ namespace mpets.mobi.bot
             toolTip1.SetToolTip(checkbox_glade, "Бот будет копать поляну.");
             toolTip1.SetToolTip(checkbox_tasks, "Бот будет забирать все выполненные задания (включая медали).");
             toolTip1.SetToolTip(checkbox_opencase, "Бот будет открывать сундук, при наличие ключа и отсутствующего VIP аккаунта.");
-            toolTip1.SetToolTip(checkbox_charm, "Бот будет играть в мини-игру \"Снежки\", пока не завершит ежедневное задание.");
+            toolTip1.SetToolTip(checkbox_charm, "Бот будет играть в мини-игру \"Снежки\", пока не выполнит ежедневное задание.");
             toolTip1.SetToolTip(checkbox_races, "Бот будет пытаться занять призовое место в мини-игре \"Скачки\", чтобы завершить ежедневное задание.");
         }
 
@@ -837,7 +837,7 @@ namespace mpets.mobi.bot
             // Или если игра уже была начата или уже идёт
             if (result.Contains("Проведи 2 игры в снежки") || result.Contains("Обновить") || result.Contains("Сменить"))
             {
-                Log("-- Играем в снежки...", botID);
+                Log("-- [ Снежки ] Играем...", botID);
 
                 // Проверяем можем ли мы встать в очередь
                 if (result.Contains("Встать в очередь"))
@@ -897,11 +897,11 @@ namespace mpets.mobi.bot
                 // Проверяем выиграли или проиграли
                 if (result.Contains("Вы победили"))
                 {
-                    Log("-- Мы выиграли в снежки.", botID, Color.Green);
+                    Log("-- [ Снежки ] Мы выиграли.", botID, Color.Green);
                 }
                 else
                 {
-                    Log("-- Мы проиграли в снежки.", botID, Color.Red);
+                    Log("-- [ Снежки ] Мы проиграли.", botID, Color.Red);
                 }
             }
         }
@@ -915,7 +915,7 @@ namespace mpets.mobi.bot
             // Или если игра уже была начата или уже идёт
             if (result.Contains("Стань призером скачек 2 раза") || result.Contains("Обновить") || result.Contains("Бежать"))
             {
-                Log("-- Начали играть в скачки...", botID);
+                Log("-- [ Скачки ] Начали играть...", botID);
 
                 // Проверяем можем ли мы встать в очередь
                 if (result.Contains("Встать в очередь"))
@@ -991,7 +991,7 @@ namespace mpets.mobi.bot
                     seats_count++;
                 }
 
-                Log($"-- Закончили играть в скачки, заняли {seats} место.", botID);
+                Log($"-- [ Скачки ] Завершили, заняли {seats} место.", botID);
             }
         }
 
