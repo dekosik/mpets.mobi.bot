@@ -772,6 +772,69 @@ namespace mpets.mobi.bot
             }));
         }
 
+        public async Task Charm(int botID, HttpClient httpClient)
+        {
+            // Переходим на страницу игры в снежки
+            string result = await GET("/charm", httpClient);
+
+            // Проверяем можем ли мы встать в очередь
+            if(result.Contains("Встать в очередь"))
+            {
+                Log("-- Играем в снежки...", botID);
+
+                // Встаём в очередь
+                result = await GET("/charm?in_queue=1", httpClient);
+
+                if(result.Contains("Обновить"))
+                {
+                    StatusLog("[ Игра в снежки ] В очереди...", botID);
+
+                    // Ждем пока начнется игра
+                    while(result.Contains("Обновить"))
+                    {
+                        result = await GET("/charm", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+
+                    // Если игра началась
+                    if(result.Contains("Сменить"))
+                    {
+                        StatusLog("[ Игра в снежки ] Начали играть...", botID);
+
+                        // Запускаем цикл для игры (Бросаем снежки через смену питомца)
+                        while (result.Contains("Сменить"))
+                        {
+                            result = await GET("/charm?change=1", httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
+                    }
+
+                    // На случай если мы выбыли
+                    if(result.Contains("Обновить"))
+                    {
+                        StatusLog("[ Игра в снежки ] Выбыли, ждём конец игры...", botID);
+
+                        // Запускаем цикл ожидания конца игры
+                        while (result.Contains("Обновить"))
+                        {
+                            result = await GET("/charm", httpClient);
+                            await Task.Delay(random.Next(800, 1500));
+                        }
+                    }
+
+                    // Если мы выиграли
+                    if(result.Contains("Вы победили"))
+                    {
+                        Log("-- Мы выиграли в снежки.", botID, true, Color.Green);
+                    }
+                    else
+                    {
+                        Log("-- Мы проиграли в снежки.", botID, true, Color.Red);
+                    }
+                }
+            }
+        }
+
         public async Task WakeUp(int botID, HttpClient httpClient)
         {
             // Делаем запрос на главную
@@ -1307,6 +1370,10 @@ namespace mpets.mobi.bot
                         // Обновляем статистику
                         await Statistics(botID, httpClient);
                         await Task.Delay(random.Next(500, 1000));
+
+                        // Игра в снежки
+                        /*await Charm(botID, httpClient);
+                        await Task.Delay(random.Next(500, 1000));*/
 
                         Log("-- Все задачи выполнены.", botID);
                         Log("", botID, false);
