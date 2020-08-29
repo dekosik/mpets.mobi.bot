@@ -3,6 +3,7 @@ using mpets.mobi.bot.Libs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -36,6 +37,7 @@ namespace mpets.mobi.bot
             ["LOGIN"] = "",
             ["PASSWORD"] = "",
             ["AVATAR"] = "avatar1",
+            ["LEVEL"] = "1",
             ["INTERVAL_FROM"] = "10",
             ["INTERVAL_DO"] = "20",
             ["TRAVEL"] = "true",
@@ -43,7 +45,8 @@ namespace mpets.mobi.bot
             ["GLADE"] = "true",
             ["TASKS"] = "true",
             ["OPEN_CASE"] = "true",
-            ["CHARM"] = "true"
+            ["CHARM"] = "true",
+            ["RACES"] = "true"
         };
 
         private static readonly Dictionary<string, string> settingSection = new Dictionary<string, string>
@@ -122,6 +125,17 @@ namespace mpets.mobi.bot
                 Tag = false
             };
 
+            Label label_nickname = new Label
+            {
+                Location = new Point(8, 52),
+                Margin = new Padding(2, 0, 2, 0),
+                Name = $"label_nickname{NumberTabs}",
+                Size = new Size(22, 13),
+                Text = "",
+                AutoSize = true,
+                Tag = ""
+            };
+
             TextBox textbox_login = new TextBox
             {
                 Location = new Point(6, 15),
@@ -197,7 +211,7 @@ namespace mpets.mobi.bot
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"groupBox3{NumberTabs}",
                 Padding = new Padding(2, 5, 2, 5),
-                Size = new Size(206, 130),
+                Size = new Size(206, 148),
                 TabStop = false
             };
 
@@ -311,6 +325,22 @@ namespace mpets.mobi.bot
                 Tag = NumberTabs
             };
 
+            CheckBox checkbox_races = new CheckBox
+            {
+                Checked = true,
+                CheckState = CheckState.Checked,
+                Location = new Point(7, 121),
+                Margin = new Padding(2, 5, 2, 5),
+                Name = $"checkbox_races{NumberTabs}",
+                RightToLeft = RightToLeft.Yes,
+                Size = new Size(192, 22),
+                Text = "[ Задания ] Жокей",
+                TextAlign = ContentAlignment.MiddleRight,
+                UseVisualStyleBackColor = true,
+                TabStop = false,
+                Tag = NumberTabs
+            };
+
             RichTextBox richtextbox_bot_log = new RichTextBox
             {
                 BackColor = SystemColors.Window,
@@ -318,7 +348,7 @@ namespace mpets.mobi.bot
                 Margin = new Padding(2, 5, 2, 5),
                 Name = $"richtextbox_bot_log{NumberTabs}",
                 ReadOnly = true,
-                Size = new Size(382, 287),
+                Size = new Size(382, 305),
                 TabStop = false
             };
 
@@ -447,6 +477,7 @@ namespace mpets.mobi.bot
             groupBox3.Controls.Add(checkbox_tasks);
             groupBox3.Controls.Add(checkbox_opencase);
             groupBox3.Controls.Add(checkbox_charm);
+            groupBox3.Controls.Add(checkbox_races);
 
             toolstrip_top_log.Items.AddRange(new ToolStripItem[]
             {
@@ -471,6 +502,7 @@ namespace mpets.mobi.bot
             tabPage.Controls.Add(toolstrip_top_log);
             tabPage.Controls.Add(toolstrip_bottom_log);
             tabPage.Controls.Add(label_isVip);
+            tabPage.Controls.Add(label_nickname);
 
             // Обработчики событий
             button_start_bot.Click += Button_Start_Bot_Click;
@@ -484,6 +516,7 @@ namespace mpets.mobi.bot
             checkbox_tasks.CheckedChanged += Checkbox_tasks_CheckedChanged;
             checkbox_opencase.CheckedChanged += Checkbox_opencase_CheckedChanged;
             checkbox_charm.CheckedChanged += Checkbox_charm_CheckedChanged;
+            checkbox_races.CheckedChanged += Checkbox_races_CheckedChanged;
 
             TextBoxWatermarkExtensionMethod.SetWatermark(textbox_login, "Имя питомца");
             TextBoxWatermarkExtensionMethod.SetWatermark(textbox_password, "Пароль");
@@ -497,7 +530,8 @@ namespace mpets.mobi.bot
             toolTip1.SetToolTip(checkbox_glade, "Бот будет копать поляну.");
             toolTip1.SetToolTip(checkbox_tasks, "Бот будет забирать все выполненные задания (включая медали).");
             toolTip1.SetToolTip(checkbox_opencase, "Бот будет открывать сундук, при наличие ключа и отсутствующего VIP аккаунта.");
-            toolTip1.SetToolTip(checkbox_charm, "Бот будет играть в мини-игру \"Снежки\" до тех пор пока есть активное задание.");
+            toolTip1.SetToolTip(checkbox_charm, "Бот будет играть в мини-игру \"Снежки\", пока не завершит ежедневное задание.");
+            toolTip1.SetToolTip(checkbox_races, "Бот будет пытаться занять призовое место в мини-игре \"Скачки\", чтобы завершить ежедневное задание.");
         }
 
         private static void AutoStart(bool flag)
@@ -578,7 +612,7 @@ namespace mpets.mobi.bot
             return result;
         }
 
-        public void Log(string text, int botID, bool show_times = true, Color color = new Color())
+        public void Log(string text, int botID, Color color = new Color(), bool show_times = true)
         {
             Invoke(new Action(() =>
             {
@@ -676,7 +710,7 @@ namespace mpets.mobi.bot
             // Выводим в лог (Для разработчика)
             if (isDev)
             {
-                Log($"{type} = {expirience}", botID, false);
+                Log($"{type} = {expirience}", botID, show_times: false);
             }
 
             // Сохраняем общее число и выводим его
@@ -697,8 +731,10 @@ namespace mpets.mobi.bot
             string beauty_string = new Regex(@"Красота: (.*?)</div>").Match(result).Groups[1].Value;
             string coin_string = new Regex(@"Монеты: (.*?)</div>").Match(result).Groups[1].Value;
             string heart_string = new Regex(@"Сердечки: (.*?)</div>").Match(result).Groups[1].Value;
+            string level_string = new Regex("height=\"16\" width=\"16\" alt=\"\"/>([0-9].*?)</td>").Match(result).Groups[1].Value;
             string avatar_string = new Regex(@"avatar([0-9][0-9]?).png").Match(result).Groups[1].Value;
             string isVip_string = new Regex(@"category(.*?)effect").Match(result).Groups[1].Value;
+            string nickname_string = new Regex("<a class=\"darkgreen_link\" href=\"/avatars\">(.*?)</a>").Match(result).Groups[1].Value;
 
             // Получаем ссылку на нижний статус лог
             ToolStrip toolstript_session = findControl.FindToolStrip("toolstrip_bottom_log", botID, this);
@@ -772,17 +808,23 @@ namespace mpets.mobi.bot
 
             // Обновляем текст
             toolstript_session.Items[1].Text = $"{StringNumberFormat(beauty[1], false)} собрано";
-
             toolstript_session.Items[2].Text = $"{StringNumberFormat(heart[1])} собрано";
             toolstript_session.Items[2].ToolTipText = $"{StringNumberFormat(heart[1], false)} собрано";
-
             toolstript_session.Items[3].Text = $"{StringNumberFormat(coin[1], false)} собрано";
+
 
             // Обновляем аватар
             Invoke(new Action(() =>
             {
-                findControl.FindTabPage("tabPage", botID, this).ImageIndex = imageList1.Images.IndexOfKey($"avatar{avatar_string}");
+                TabPage tabPage = findControl.FindTabPage("tabPage", botID, this);
+
+                tabPage.Text = $"{findControl.FindTextBox("textbox_login", botID, this).Text} [ {level_string} ] ";
+                tabPage.ImageIndex = imageList1.Images.IndexOfKey($"avatar{avatar_string}");
+
+                findControl.FindLabel("label_nickname", botID, this).Tag = nickname_string;
+
                 settings.Write($"PETS{botID}", "AVATAR", $"avatar{avatar_string}");
+                settings.Write($"PETS{botID}", "LEVEL", $"{level_string}");
             }));
         }
 
@@ -804,6 +846,19 @@ namespace mpets.mobi.bot
 
                     // Встаём в очередь
                     result = await GET("/charm?in_queue=1", httpClient);
+
+                    // Ждем пока начнется игра
+                    while (result.Contains("Обновить"))
+                    {
+                        result = await GET("/charm", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+                }
+
+                // Если нужно подождать начало
+                if (result.Contains("Обновить"))
+                {
+                    StatusLog("[ Снежки ] Ждём начало...", botID, Properties.Resources.charm);
 
                     // Ждем пока начнется игра
                     while (result.Contains("Обновить"))
@@ -842,12 +897,101 @@ namespace mpets.mobi.bot
                 // Проверяем выиграли или проиграли
                 if (result.Contains("Вы победили"))
                 {
-                    Log("-- Мы выиграли в снежки.", botID, true, Color.Green);
+                    Log("-- Мы выиграли в снежки.", botID, Color.Green);
                 }
                 else
                 {
-                    Log("-- Мы проиграли в снежки.", botID, true, Color.Red);
+                    Log("-- Мы проиграли в снежки.", botID, Color.Red);
                 }
+            }
+        }
+
+        public async Task Races(int botID, HttpClient httpClient)
+        {
+            // Переходим на страницу игры в скачки
+            string result = await GET("/races", httpClient);
+
+            // Если есть активное задание "Стань призером скачек 2 раза" 
+            // Или если игра уже была начата или уже идёт
+            if (result.Contains("Стань призером скачек 2 раза") || result.Contains("Обновить") || result.Contains("Бежать"))
+            {
+                Log("-- Начали играть в скачки...", botID);
+
+                // Проверяем можем ли мы встать в очередь
+                if (result.Contains("Встать в очередь"))
+                {
+                    StatusLog("[ Скачки ] В очереди...", botID, Properties.Resources.races);
+
+                    // Встаём в очередь
+                    result = await GET("/races?in_queue=1", httpClient);
+
+                    // Ждем пока начнется игра
+                    while (result.Contains("Обновить"))
+                    {
+                        result = await GET("/races", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+                }
+
+                // Если нужно подождать начало
+                if (result.Contains("Обновить"))
+                {
+                    // Ждем пока начнется игра
+                    while (result.Contains("Обновить"))
+                    {
+                        result = await GET("/races", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+                }
+
+                // Если игра уже началась
+                if (result.Contains("Бежать"))
+                {
+                    StatusLog("[ Скачки ] Начали играть...", botID, Properties.Resources.races);
+
+                    // Запускаем цикл для игры ( Нажимаем кнопку бежать )
+                    while (result.Contains("Бежать"))
+                    {
+                        result = await GET("/races?go=1", httpClient);
+
+                        // Если кнопка толкнуть стала зеленой, жмем
+                        if (result.Contains("73px; width: 70px;"))
+                        {
+                            result = await GET("/races?attack=0", httpClient);
+                        }
+
+                        await Task.Delay(random.Next(500, 1000));
+                    }
+                }
+
+                // На случай если выиграли раньше всех
+                if (result.Contains("Обновить"))
+                {
+                    StatusLog("[ Скачки ] Ждём завершения...", botID, Properties.Resources.races);
+
+                    // Запускаем цикл ожидания конца игры
+                    while (result.Contains("Обновить"))
+                    {
+                        result = await GET("/races", httpClient);
+                        await Task.Delay(random.Next(800, 1500));
+                    }
+                }
+
+                // Нужные переменные для определения мест
+                int seats_count = 1, seats = 1;
+
+                // Определяем наше место
+                foreach (Match item in new Regex(@"<a href=""/view_profile\?pet_id=[0-9]*.?"">(.*?)</a>").Matches(result))
+                {
+                    if (item.Groups[1].Value.Contains((string)findControl.FindLabel("label_nickname", botID, this).Tag))
+                    {
+                        seats = seats_count;
+                    }
+
+                    seats_count++;
+                }
+
+                Log($"-- Закончили играть в скачки, заняли {seats} место.", botID);
             }
         }
 
@@ -1103,13 +1247,13 @@ namespace mpets.mobi.bot
                     // Надеваем предмет
                     if (url.Contains("wear_item"))
                     {
-                        Log($"--- Надел {name}.", botID, true, Color.Green);
+                        Log($"--- Надел {name}.", botID, Color.Green);
                     }
 
                     // Продаем предмет
                     if (url.Contains("sell_item"))
                     {
-                        Log($"--- Продал {name}.", botID, true, Color.Red);
+                        Log($"--- Продал {name}.", botID, Color.Red);
                     }
 
                     // Отправляем запрос
@@ -1382,6 +1526,13 @@ namespace mpets.mobi.bot
                             await Task.Delay(random.Next(500, 1000));
                         }
 
+                        // Если включена опция "[ Задание ] Жокей"
+                        if (findControl.FindCheckBox("checkbox_races", botID, this).Checked)
+                        {
+                            // Скачки
+                            await Races(botID, httpClient);
+                            await Task.Delay(random.Next(500, 1000));
+                        }
 
                         // Если включена опция "Забирать задания" 
                         if (findControl.FindCheckBox("checkbox_tasks", botID, this).Checked)
@@ -1397,10 +1548,10 @@ namespace mpets.mobi.bot
                         await Task.Delay(random.Next(500, 1000));
 
                         Log("-- Все задачи выполнены.", botID);
-                        Log("", botID, false);
+                        Log("", botID, show_times: false);
 
                         // Ожидание
-                        await Sleep(botID, btn_start_bot, random.Next(Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_from", botID, this).Value), Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_do", botID, this).Value)));
+                        await Sleep(botID, btn_start_bot, random.Next(Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_from", botID, this).Value), Convert.ToInt32(findControl.FindNumericUpDown("numericupdown_interval_do", botID, this).Value) + 1));
 
                         // Проверяем не остановлен ли бот
                         CheckEnabledBot(botID, btn_start_bot, numericupdown_interval_from, numericupdown_interval_do);
@@ -1408,7 +1559,7 @@ namespace mpets.mobi.bot
                     else if (isLogin == "false")
                     {
                         Log("-- Вы ввели неправильное имя или пароль, повтор через 1 минуту.", botID);
-                        Log("", botID, false);
+                        Log("", botID, show_times: false);
 
                         // Ожидание
                         await Sleep(botID, btn_start_bot, 1);
@@ -1419,7 +1570,7 @@ namespace mpets.mobi.bot
                     else
                     {
                         Log("-- Ошибка сети, повтор через 1 минуту...", botID);
-                        Log("", botID, false);
+                        Log("", botID, show_times: false);
 
                         // Ожидание
                         await Sleep(botID, btn_start_bot, 1);
@@ -1432,7 +1583,7 @@ namespace mpets.mobi.bot
             else
             {
                 Log("-- Логин или пароль не может быть пустым.", botID);
-                Log("", botID, false);
+                Log("", botID, show_times: false);
 
                 Invoke(new Action(() =>
                 {
@@ -1543,13 +1694,14 @@ namespace mpets.mobi.bot
                 if (SectionName.Contains("PETS"))
                 {
                     string login, password, avatar;
-                    int interval_from, interval_do;
-                    bool travel, chest, glade, tasks, open_case, charm;
+                    int interval_from, interval_do, level;
+                    bool travel, chest, glade, tasks, open_case, charm, races;
 
                     // Читаем основные настройки профиля
                     login = settings.ReadString(SectionName, "LOGIN");
                     password = settings.ReadString(SectionName, "PASSWORD");
                     avatar = settings.ReadString(SectionName, "AVATAR");
+                    level = settings.ReadInt(SectionName, "LEVEL");
                     interval_from = settings.ReadInt(SectionName, "INTERVAL_FROM");
                     interval_do = settings.ReadInt(SectionName, "INTERVAL_DO");
                     travel = settings.ReadBool(SectionName, "TRAVEL");
@@ -1558,11 +1710,13 @@ namespace mpets.mobi.bot
                     tasks = settings.ReadBool(SectionName, "TASKS");
                     open_case = settings.ReadBool(SectionName, "OPEN_CASE");
                     charm = settings.ReadBool(SectionName, "CHARM");
+                    races = settings.ReadBool(SectionName, "RACES");
 
                     // Записываем основыные настройки профиля во временный файл
                     settingTemp.Write($"PETS{petsID}", "LOGIN", login);
                     settingTemp.Write($"PETS{petsID}", "PASSWORD", password);
                     settingTemp.Write($"PETS{petsID}", "AVATAR", avatar);
+                    settingTemp.Write($"PETS{petsID}", "LEVEL", level.ToString());
                     settingTemp.Write($"PETS{petsID}", "INTERVAL_FROM", interval_from.ToString());
                     settingTemp.Write($"PETS{petsID}", "INTERVAL_DO", interval_do.ToString());
                     settingTemp.Write($"PETS{petsID}", "TRAVEL", travel.ToString().ToLower());
@@ -1571,9 +1725,10 @@ namespace mpets.mobi.bot
                     settingTemp.Write($"PETS{petsID}", "TASKS", tasks.ToString().ToLower());
                     settingTemp.Write($"PETS{petsID}", "OPEN_CASE", open_case.ToString().ToLower());
                     settingTemp.Write($"PETS{petsID}", "CHARM", charm.ToString().ToLower());
+                    settingTemp.Write($"PETS{petsID}", "RACES", races.ToString().ToLower());
 
                     // Добавляем новый профиль (вкладку)
-                    AddProfile(login, password, avatar, interval_from, interval_do, travel, chest, glade, tasks, open_case, charm);
+                    AddProfile(login, password, avatar, level, interval_from, interval_do, travel, chest, glade, tasks, open_case, charm, races);
 
                     petsID++;
                 }
@@ -1618,7 +1773,7 @@ namespace mpets.mobi.bot
             }
         }
 
-        private void AddProfile(string login, string password, string avatar, int interval_from, int interval_do, bool travel, bool chest, bool glade, bool tasks, bool open_case, bool charm)
+        private void AddProfile(string login, string password, string avatar, int level, int interval_from, int interval_do, bool travel, bool chest, bool glade, bool tasks, bool open_case, bool charm, bool races)
         {
             int lastIndex = tabControl1.TabCount - 1;
 
@@ -1628,7 +1783,7 @@ namespace mpets.mobi.bot
             // Генерируем новую вкладку
             TabPage tabPage = new TabPage
             {
-                Text = login.Length > 0 ? login : BOT_TABS_TEXT,
+                Text = login.Length > 0 ? $"{login} [{level}]" : BOT_TABS_TEXT,
                 Name = $"tabPage{NumberTabs}",
                 BackColor = Color.White,
                 ToolTipText = "Для удаления профиля, нажмите несколько раз по вкладке.",
@@ -1657,6 +1812,7 @@ namespace mpets.mobi.bot
             findControl.FindCheckBox("checkbox_tasks", NumberTabs, this).Checked = tasks;
             findControl.FindCheckBox("checkbox_opencase", NumberTabs, this).Checked = open_case;
             findControl.FindCheckBox("checkbox_charm", NumberTabs, this).Checked = charm;
+            findControl.FindCheckBox("checkbox_races", NumberTabs, this).Checked = races;
         }
 
         private void TabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -1758,7 +1914,7 @@ namespace mpets.mobi.bot
         private void Textbox_login_TextChanged(object sender, EventArgs e)
         {
             settings.Write($"PETS{((TextBox)sender).Tag}", "LOGIN", ((TextBox)sender).Text);
-            tabControl1.TabPages[tabControl1.SelectedIndex].Text = ((TextBox)sender).Text.Length > 0 ? ((TextBox)sender).Text : BOT_TABS_TEXT;
+            tabControl1.TabPages[tabControl1.SelectedIndex].Text = ((TextBox)sender).Text.Length > 0 ? $"{((TextBox)sender).Text} [ {settings.ReadInt($"PETS{((TextBox)sender).Tag}", "LEVEL")} ]" : BOT_TABS_TEXT;
         }
 
         private void Textbox_password_TextChanged(object sender, EventArgs e)
@@ -1808,14 +1964,19 @@ namespace mpets.mobi.bot
             settings.Write($"PETS{((CheckBox)sender).Tag}", "CHARM", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
+        private void Checkbox_races_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.Write($"PETS{((CheckBox)sender).Tag}", "RACES", ((CheckBox)sender).Checked.ToString().ToLower());
+        }
+
         private void ToolStripMenuItem8_Click(object sender, EventArgs e)
         {
-            _ = System.Diagnostics.Process.Start("https://vk.cc/9oWxgt");
+            _ = Process.Start("https://vk.cc/9oWxgt");
         }
 
         private void ToolStripMenuItem9_Click(object sender, EventArgs e)
         {
-            _ = System.Diagnostics.Process.Start("https://github.com/dekosik/mpets.mobi.bot");
+            _ = Process.Start("https://github.com/dekosik/mpets.mobi.bot");
         }
     }
 }

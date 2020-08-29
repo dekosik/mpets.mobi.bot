@@ -63,7 +63,7 @@
             this.tabControl1.Padding = new System.Drawing.Point(12, 4);
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(611, 385);
+            this.tabControl1.Size = new System.Drawing.Size(611, 401);
             this.tabControl1.TabIndex = 0;
             this.tabControl1.TabStop = false;
             this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.TabControl1_Selecting);
@@ -77,7 +77,7 @@
             this.addPages.Name = "addPages";
             this.addPages.Padding = new System.Windows.Forms.Padding(5);
             this.addPages.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.addPages.Size = new System.Drawing.Size(603, 350);
+            this.addPages.Size = new System.Drawing.Size(603, 366);
             this.addPages.TabIndex = 0;
             this.addPages.Text = "+";
             this.addPages.UseVisualStyleBackColor = true;
@@ -195,7 +195,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 24);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(611, 385);
+            this.panel1.Size = new System.Drawing.Size(611, 401);
             this.panel1.TabIndex = 4;
             // 
             // notifyIcon1
@@ -213,7 +213,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(611, 409);
+            this.ClientSize = new System.Drawing.Size(611, 425);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
