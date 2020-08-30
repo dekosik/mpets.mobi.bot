@@ -54,20 +54,15 @@ namespace mpets.mobi.bot
             ["AUTO_START"] = "false"
         };
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
-        public static class TextBoxWatermarkExtensionMethod
-        {
-            private const uint ECM_FIRST = 0x1500;
-            private const uint EM_SETCUEBANNER = ECM_FIRST + 1;
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-            private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, uint wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
-            public static void SetWatermark(TextBox textBox, string watermarkText)
-            {
-                SendMessage(textBox.Handle, EM_SETCUEBANNER, 0, watermarkText);
-            }
+        private static void SetPlaceholder(TextBox textBox, string placeholderText)
+        {
+            SendMessage(textBox.Handle, 0x1500 + 1, 0, placeholderText);
         }
 
         public Form1()
@@ -88,8 +83,11 @@ namespace mpets.mobi.bot
             // Фикс от разворачивания приложения через диспетчер задач
             MaximumSize = new Size(Width, Height);
 
-            // Ставим обработчик событий
-            tabControl1.HandleCreated += TabControl1_HandleCreated;
+            // Хак на уменьшения размера последней вкладки
+            tabControl1.HandleCreated += (s, e) =>
+            {
+                _ = SendMessage(tabControl1.Handle, 0x1300 + 49, IntPtr.Zero, (IntPtr)10);
+            };
         }
 
         private void CreateTemplateBot(TabPage tabPage)
@@ -462,22 +460,31 @@ namespace mpets.mobi.bot
                 Tag = 0
             };
 
-            groupBox1.Controls.Add(textbox_login);
-            groupBox1.Controls.Add(textbox_password);
-            groupBox1.Controls.Add(groupBox2);
+            groupBox1.Controls.AddRange(new Control[]
+            {
+                textbox_login,
+                textbox_password,
+                groupBox2
+            });
 
-            groupBox2.Controls.Add(label_interval_from);
-            groupBox2.Controls.Add(label_interval_do);
-            groupBox2.Controls.Add(numericupdown_interval_from);
-            groupBox2.Controls.Add(numericupdown_interval_do);
+            groupBox2.Controls.AddRange(new Control[]
+            {
+                label_interval_from,
+                label_interval_do,
+                numericupdown_interval_from,
+                numericupdown_interval_do
+            });
 
-            groupBox3.Controls.Add(checkbox_travel);
-            groupBox3.Controls.Add(checkbox_chest);
-            groupBox3.Controls.Add(checkbox_glade);
-            groupBox3.Controls.Add(checkbox_tasks);
-            groupBox3.Controls.Add(checkbox_opencase);
-            groupBox3.Controls.Add(checkbox_charm);
-            groupBox3.Controls.Add(checkbox_races);
+            groupBox3.Controls.AddRange(new Control[]
+            {
+                checkbox_travel,
+                checkbox_chest,
+                checkbox_glade,
+                checkbox_tasks,
+                checkbox_opencase,
+                checkbox_charm,
+                checkbox_races
+            });
 
             toolstrip_top_log.Items.AddRange(new ToolStripItem[]
             {
@@ -495,31 +502,132 @@ namespace mpets.mobi.bot
                 toolstriplabel_expirience_session
             });
 
-            tabPage.Controls.Add(groupBox1);
-            tabPage.Controls.Add(groupBox3);
-            tabPage.Controls.Add(button_start_bot);
-            tabPage.Controls.Add(richtextbox_bot_log);
-            tabPage.Controls.Add(toolstrip_top_log);
-            tabPage.Controls.Add(toolstrip_bottom_log);
-            tabPage.Controls.Add(label_isVip);
-            tabPage.Controls.Add(label_nickname);
+            tabPage.Controls.AddRange(new Control[]
+            {
+                groupBox1,
+                groupBox3,
+                button_start_bot,
+                richtextbox_bot_log,
+                toolstrip_top_log,
+                toolstrip_bottom_log,
+                label_isVip,
+                label_nickname
+            });
 
-            // Обработчики событий
-            button_start_bot.Click += Button_Start_Bot_Click;
-            textbox_login.TextChanged += Textbox_login_TextChanged;
-            textbox_password.TextChanged += Textbox_password_TextChanged;
-            numericupdown_interval_from.ValueChanged += Numericupdown_interval_from_ValueChanged;
-            numericupdown_interval_do.ValueChanged += Numericupdown_interval_do_ValueChanged;
-            checkbox_travel.CheckedChanged += Checkbox_travel_CheckedChanged;
-            checkbox_chest.CheckedChanged += Checkbox_chest_CheckedChanged;
-            checkbox_glade.CheckedChanged += Checkbox_glade_CheckedChanged;
-            checkbox_tasks.CheckedChanged += Checkbox_tasks_CheckedChanged;
-            checkbox_opencase.CheckedChanged += Checkbox_opencase_CheckedChanged;
-            checkbox_charm.CheckedChanged += Checkbox_charm_CheckedChanged;
-            checkbox_races.CheckedChanged += Checkbox_races_CheckedChanged;
+            // Ставим обработчик событий на нажатие кнопки "ЗАПУСТИТЬ БОТА". 
+            button_start_bot.Click += (s, e) =>
+            {
+                Button button = (Button)s;
 
-            TextBoxWatermarkExtensionMethod.SetWatermark(textbox_login, "Имя питомца");
-            TextBoxWatermarkExtensionMethod.SetWatermark(textbox_password, "Пароль");
+                // Если текст кнопки равен "ОСТАНОВИТЬ БОТА"
+                // То меняет на "ЗАПУСТИТЬ БОТА" и выходим из метода
+                if (button.Text == BOT_STOP_TEXT)
+                {
+                    button.Text = BOT_START_TEXT;
+                    return;
+                }
+
+                // ЗАПУСКАЕМ БОТА
+                StartingBot(Convert.ToInt32(button.Tag));
+            };
+
+            // Ставим обработчик событий на изменения TextBox
+            textbox_login.TextChanged += (s, e) =>
+            {
+                TextBox textBox = (TextBox)s; int botID = (int)textBox.Tag, level = settings.ReadInt($"PETS{botID}", "LEVEL");
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "LOGIN", textBox.Text);
+                // Изменяем название вкладки
+                tabControl1.TabPages[tabControl1.SelectedIndex].Text = textBox.Text.Length > 0 ? $"{textBox.Text} [ {level} ]" : BOT_TABS_TEXT;
+            };
+
+            textbox_password.TextChanged += (s, e) =>
+            {
+                TextBox textBox = (TextBox)s; int botID = (int)textBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "PASSWORD", textBox.Text);
+            };
+
+            numericupdown_interval_from.ValueChanged += (s, e) =>
+            {
+                NumericUpDown numericUpDown = (NumericUpDown)s; int botID = (int)numericUpDown.Tag;
+
+                // Максимальное значения ОТ = ДО
+                numericUpDown.Maximum = findControl.FindNumericUpDown("numericupdown_interval_do", botID, this).Value;
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "INTERVAL_FROM", numericUpDown.Value.ToString());
+            };
+
+            numericupdown_interval_do.ValueChanged += (s, e) =>
+            {
+                NumericUpDown numericUpDown = (NumericUpDown)s; int botID = (int)numericUpDown.Tag;
+
+                // Максимальное значение ОТ = ДО
+                findControl.FindNumericUpDown("numericupdown_interval_from", botID, this).Maximum = numericUpDown.Value;
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "INTERVAL_DO", numericUpDown.Value.ToString());
+            };
+
+            checkbox_travel.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "TRAVEL", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_chest.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "CHEST", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_glade.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "GLADE", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_tasks.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "TASKS", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_opencase.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "OPEN_CASE", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_charm.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "CHARM", checkBox.Checked.ToString().ToLower());
+            };
+
+            checkbox_races.CheckedChanged += (s, e) =>
+            {
+                CheckBox checkBox = (CheckBox)s; int botID = (int)checkBox.Tag;
+
+                // Записываем значения в файл сохранений
+                settings.Write($"PETS{botID}", "RACES", checkBox.Checked.ToString().ToLower());
+            };
+
+            SetPlaceholder(textbox_login, "Имя питомца");
+            SetPlaceholder(textbox_password, "Пароль");
 
             // Подсказки
             toolTip1.SetToolTip(button_start_bot, "Пока бот выполняет работу, остановить его невозможно.");
@@ -1595,23 +1703,6 @@ namespace mpets.mobi.bot
             }
         }
 
-        private void Button_Start_Bot_Click(object sender, EventArgs e)
-        {
-            // Получаем ссылку на кнопку
-            Button button = (Button)sender;
-
-            // Если текст кнопки ОСТАНОВИТЬ БОТА
-            if (button.Text.Contains(BOT_STOP_TEXT))
-            {
-                button.Text = BOT_START_TEXT;
-            }
-            // Если текст кнопки ЗАПУСТИТЬ БОТА
-            else if (button.Text.Contains(BOT_START_TEXT))
-            {
-                StartingBot(Convert.ToInt32(button.Tag));
-            }
-        }
-
         private void TabControl1_DoubleClick(object sender, EventArgs e)
         {
             if (((MouseEventArgs)e).Button == MouseButtons.Left)
@@ -1823,17 +1914,14 @@ namespace mpets.mobi.bot
             }
         }
 
-        private void TabControl1_HandleCreated(object sender, EventArgs e)
-        {
-            _ = SendMessage(tabControl1.Handle, 0x1300 + 49, IntPtr.Zero, (IntPtr)10);
-        }
-
         private void ToolStripMenuItem3_Click(object sender, EventArgs e)
         {
             // Запускаем всех ботов
             for (int i = 1; i <= NumberTabs; i++)
             {
-                if (findControl.FindButton("button_start_bot", i, this).Text.Contains(BOT_START_TEXT))
+                Button button = findControl.FindButton("button_start_bot", i, this);
+
+                if (button.Text == BOT_START_TEXT & button.Enabled)
                 {
                     StartingBot(i);
                 }
@@ -1909,64 +1997,6 @@ namespace mpets.mobi.bot
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadProfile();
-        }
-
-        private void Textbox_login_TextChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((TextBox)sender).Tag}", "LOGIN", ((TextBox)sender).Text);
-            tabControl1.TabPages[tabControl1.SelectedIndex].Text = ((TextBox)sender).Text.Length > 0 ? $"{((TextBox)sender).Text} [ {settings.ReadInt($"PETS{((TextBox)sender).Tag}", "LEVEL")} ]" : BOT_TABS_TEXT;
-        }
-
-        private void Textbox_password_TextChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((TextBox)sender).Tag}", "PASSWORD", ((TextBox)sender).Text);
-        }
-
-        private void Numericupdown_interval_from_ValueChanged(object sender, EventArgs e)
-        {
-            ((NumericUpDown)sender).Maximum = findControl.FindNumericUpDown("numericupdown_interval_do", (int)((NumericUpDown)sender).Tag, this).Value;
-            settings.Write($"PETS{((NumericUpDown)sender).Tag}", "INTERVAL_FROM", ((NumericUpDown)sender).Value.ToString());
-        }
-
-        private void Numericupdown_interval_do_ValueChanged(object sender, EventArgs e)
-        {
-            findControl.FindNumericUpDown("numericupdown_interval_from", (int)((NumericUpDown)sender).Tag, this).Maximum = ((NumericUpDown)sender).Value;
-            settings.Write($"PETS{((NumericUpDown)sender).Tag}", "INTERVAL_DO", ((NumericUpDown)sender).Value.ToString());
-        }
-
-        private void Checkbox_travel_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "TRAVEL", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_chest_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "CHEST", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_glade_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "GLADE", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_tasks_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "TASKS", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_opencase_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "OPEN_CASE", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_charm_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "CHARM", ((CheckBox)sender).Checked.ToString().ToLower());
-        }
-
-        private void Checkbox_races_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.Write($"PETS{((CheckBox)sender).Tag}", "RACES", ((CheckBox)sender).Checked.ToString().ToLower());
         }
 
         private void ToolStripMenuItem8_Click(object sender, EventArgs e)
