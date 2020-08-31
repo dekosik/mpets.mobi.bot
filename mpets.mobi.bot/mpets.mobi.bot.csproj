@@ -163,6 +163,8 @@
     <Content Include="avatar_icon.ico" />
     <None Include="Resources\charm.png" />
     <None Include="Resources\races.png" />
+    <Content Include="ScreenHistory\v2.0.jpg" />
+    <Content Include="ScreenHistory\v2.1.png" />
     <Content Include="ScreenHistory\v1.0.jpg" />
     <Content Include="ScreenHistory\v1.2.jpg" />
     <Content Include="ScreenHistory\v1.3.jpg" />
