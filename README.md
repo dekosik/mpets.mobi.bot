@@ -19,7 +19,7 @@
 - Может запускаться вместе с Windows в фоновом режиме.
 
 # Скриншот бота
-![alt скриншот бота](https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/ScreenHistory/v2.0.jpg)
+![alt скриншот бота](https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/ScreenHistory/v2.1.jpg)
 
 # Контакты
 [<img src="http://i.piccy.info/i9/c742da12d9e139947f50b1343ed51833/1559499216/42803/1321119/mpets_mobi_bot.png" width="400px;">](https://vk.cc/9oWxgt)
