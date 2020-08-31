@@ -25,10 +25,9 @@
 ------------
 
 
-- <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/charm.png" width="20"> → Умеет проходить ежедневное задание  «Снеговик».
--- Проведи 2 игры в снежки.
-- <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/races.png" width="20"> → Умеет проходить ежедневное задание «Жокей».
--- Стань призером скачек 2 раза.
+- <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/charm.png" width="20"> → Умеет проходить ежедневное задание  «Снеговик» (Проведи 2 игры в снежки).
+- <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/races.png" width="20"> → Умеет проходить ежедневное задание «Жокей» (Стань призером скачек 2 раза).
+
 
 ------------
 
