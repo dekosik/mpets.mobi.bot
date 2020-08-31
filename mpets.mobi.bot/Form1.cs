@@ -1019,6 +1019,13 @@ namespace mpets.mobi.bot
             // Переходим на страницу игры в скачки
             string result = await GET("/races", httpClient);
 
+            // Фикс фейкового "старта игры"
+            if (result.Contains("Обновить"))
+            {
+                await Task.Delay(random.Next(800, 1000));
+                result = await GET("/races", httpClient);
+            }
+
             // Если есть активное задание "Стань призером скачек 2 раза" 
             // Или если игра уже была начата или уже идёт
             if (result.Contains("Стань призером скачек 2 раза") || result.Contains("Обновить") || result.Contains("Бежать"))
