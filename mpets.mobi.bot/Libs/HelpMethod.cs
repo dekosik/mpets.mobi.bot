@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -34,9 +35,12 @@ namespace mpets.mobi.bot.Libs
         /// <param name="Minimum">Минимальное число задержки.</param>
         /// <param name="Maximum">Максимальное число задержки.</param>
         /// <returns>Задача, представляющая случайную временную задержку.</returns>
-        public static async Task RandomDelay(int Minimum, int Maximum)
+        public static async Task<string> RandomDelay(int Minimum, int Maximum)
         {
-            await Task.Delay(getRandomNumber.Next(Minimum, Maximum + 1));
+            int delay = getRandomNumber.Next(Minimum, Maximum + 1);
+            await Task.Delay(delay);
+
+            return delay.ToString();
         }
 
         /// <summary>
@@ -107,7 +111,10 @@ namespace mpets.mobi.bot.Libs
             try
             {
                 // Задержка
-                await RandomDelay(500, 1500);
+                string delay = await RandomDelay(400, 1000);
+
+                // Для дебага
+                Debug.WriteLine($"https://mpets.mobi{Url}, {delay}ms");
 
                 // Отправляем запрос
                 return await HttpClient.GetAsync(Url).Result.Content.ReadAsStringAsync();

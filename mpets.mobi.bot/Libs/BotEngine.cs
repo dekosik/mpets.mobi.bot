@@ -700,13 +700,13 @@ namespace mpets.mobi.bot
         /// </summary>
         /// <param name="BotID">Индентификатор бота (вкладки).</param>
         /// <param name="Button">Ссылка на экземпляр класса <see cref="Button"/>.</param>
-        /// <param name="Interval">Интервал, в минутах.</param>
+        /// <param name="Interval">Интервал ожидания, в секундах.</param>
         /// <param name="Form">Ссылка на экземпляр класса <see cref="Form1"/>.</param>
         /// <returns></returns>
-        public static async Task Sleep(int BotID, Button Button, Form1 Form, int Interval = 1)
+        public static async Task Sleep(int BotID, Button Button, Form1 Form, int Interval = 60)
         {
             // Инициализируем таймер ожидания
-            DateTime taskStop = DateTime.Now.AddMinutes(Interval);
+            DateTime taskStop = DateTime.Now.AddSeconds(Interval);
 
             // Возвращаем доступность кнопки
             Form.Invoke(new Action(() => Button.Enabled = true));

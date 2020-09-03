@@ -807,10 +807,13 @@ namespace mpets.mobi.bot
                         HelpMethod.Log("", BotID, this, ShowTime: false);
 
                         // Получаем рандомный интервал ожидания
-                        int interval = HelpMethod.getRandomNumber.Next(Convert.ToInt32(HelpMethod.findControl.FindNumericUpDown("numericupdown_interval_from", BotID, this).Value), Convert.ToInt32(HelpMethod.findControl.FindNumericUpDown("numericupdown_interval_do", BotID, this).Value));
+                        int interval_sec = HelpMethod.getRandomNumber.Next(
+                            (Convert.ToInt32(HelpMethod.findControl.FindNumericUpDown("numericupdown_interval_from", 2, this).Value) * 60),
+                            (Convert.ToInt32(HelpMethod.findControl.FindNumericUpDown("numericupdown_interval_do", 2, this).Value) * 60)
+                        + 1);
 
                         // Ожидание
-                        await BotEngine.Sleep(BotID, btn_start_bot, this, interval);
+                        await BotEngine.Sleep(BotID, btn_start_bot, this, interval_sec);
 
                         // Проверяем не остановлен ли бот
                         CheckStopBot(BotID, btn_start_bot, numericupdown_interval_from, numericupdown_interval_do);
@@ -818,7 +821,7 @@ namespace mpets.mobi.bot
                     // Если произошла ошибка (не правильный имя питомца или пароль)
                     else if (isLogin == "false")
                     {
-                        HelpMethod.Log("Не правильное имя питомца или пароль, попробую повторить через минуту.", BotID, this, Color.Red, false);
+                        HelpMethod.Log("Не правильное имя или пароль, попробую повторить через минуту.", BotID, this, Color.Red, false);
                         HelpMethod.Log("", BotID, this, ShowTime: false);
 
                         // Запускаем задачу ожидания
@@ -844,7 +847,7 @@ namespace mpets.mobi.bot
             else
             {
                 // Выводим сообщение
-                HelpMethod.Log("Имя питомца или пароль, не может быть пустым.", BotID, this, Color.Red, false);
+                HelpMethod.Log("Имя или пароль, не может быть пустым.", BotID, this, Color.Red, false);
                 HelpMethod.Log("", BotID, this, ShowTime: false);
 
                 // Меняем текст кнопки (ЗАПУСТИТЬ БОТА), разблокируем кнопку и интервалы ОТ и ДО
