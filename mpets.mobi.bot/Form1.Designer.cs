@@ -91,6 +91,7 @@
             // menuStrip1
             // 
             this.menuStrip1.BackColor = System.Drawing.SystemColors.Window;
+            this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.toolStripMenuItem2,
@@ -108,27 +109,27 @@
             this.toolStripSeparator1,
             this.toolStripMenuItem4});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(129, 20);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(126, 20);
             this.toolStripMenuItem1.Text = "Управления ботами";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Image = global::mpets.mobi.bot.Properties.Resources.play;
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(165, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem3.Text = "Запустить всех";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.ToolStripMenuItem3_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(162, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(159, 6);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Image = global::mpets.mobi.bot.Properties.Resources.stop;
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(165, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem4.Text = "Остановить всех";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.ToolStripMenuItem4_Click);
             // 
@@ -137,13 +138,13 @@
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem5});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(79, 20);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(77, 20);
             this.toolStripMenuItem2.Text = "Настройки";
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(247, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(242, 22);
             this.toolStripMenuItem5.Text = "Автозапуск в фоновом режиме";
             this.toolStripMenuItem5.ToolTipText = "Бот будет автоматически запускаться с Windows в фоновом режиме, а так же автомати" +
     "чески запустит всех ботов.";
@@ -157,14 +158,14 @@
             this.toolStripSeparator2,
             this.toolStripMenuItem10});
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(94, 20);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(92, 20);
             this.toolStripMenuItem7.Text = "О программе";
             // 
             // toolStripMenuItem8
             // 
             this.toolStripMenuItem8.Image = global::mpets.mobi.bot.Properties.Resources.vk;
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(209, 22);
             this.toolStripMenuItem8.Text = "Группа ВКонтакте";
             this.toolStripMenuItem8.Click += new System.EventHandler(this.ToolStripMenuItem8_Click);
             // 
@@ -172,20 +173,20 @@
             // 
             this.toolStripMenuItem9.Image = global::mpets.mobi.bot.Properties.Resources.github;
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(209, 22);
             this.toolStripMenuItem9.Text = "Репозиторий на GitHub";
             this.toolStripMenuItem9.Click += new System.EventHandler(this.ToolStripMenuItem9_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(206, 6);
             // 
             // toolStripMenuItem10
             // 
             this.toolStripMenuItem10.Enabled = false;
             this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-            this.toolStripMenuItem10.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(209, 22);
             this.toolStripMenuItem10.Text = "Created by DeKoSiK ( v2.1 )";
             // 
             // panel1
@@ -240,7 +241,6 @@
         #endregion
 
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.TabPage addPages;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
@@ -257,5 +257,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem10;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.ToolTip toolTip1;
+        public System.Windows.Forms.ImageList imageList1;
     }
 }

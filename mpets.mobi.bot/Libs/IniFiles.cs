@@ -5,18 +5,18 @@ using System.Text;
 
 namespace mpets.mobi.bot.Libs
 {
-    class IniFiles
+    internal class IniFiles
     {
         private readonly string Path;
 
         [DllImport("kernel32", CharSet = CharSet.Auto)]
-        static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
+        private static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
 
         [DllImport("kernel32", CharSet = CharSet.Auto)]
-        static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
+        private static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize, string lpFileName);
+        private static extern uint GetPrivateProfileSection(string lpAppName, IntPtr lpReturnedString, uint nSize, string lpFileName);
 
         public IniFiles(string IniPath)
         {
@@ -25,7 +25,7 @@ namespace mpets.mobi.bot.Libs
 
         private string Read(string Section, string Key)
         {
-            var RetVal = new StringBuilder(255);
+            StringBuilder RetVal = new StringBuilder(255);
             GetPrivateProfileString(Section, Key, "", RetVal, 255, Path);
 
             return RetVal.ToString();
@@ -38,13 +38,21 @@ namespace mpets.mobi.bot.Libs
 
         public int ReadInt(string Section, string Key)
         {
-            if(KeyExists(Section, Key)) return Convert.ToInt32(Read(Section, Key));
+            if (KeyExists(Section, Key))
+            {
+                return Convert.ToInt32(Read(Section, Key));
+            }
+
             return 1;
         }
 
         public bool ReadBool(string Section, string Key)
         {
-            if(KeyExists(Section, Key)) return Convert.ToBoolean(Read(Section, Key));
+            if (KeyExists(Section, Key))
+            {
+                return Convert.ToBoolean(Read(Section, Key));
+            }
+
             return false;
         }
 

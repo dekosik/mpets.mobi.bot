@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace mpets.mobi.bot.Libs
 {
-    class FindControl
+    internal class FindControl
     {
         public TextBox FindTextBox(string name, int id, Form1 form)
         {
