@@ -148,7 +148,7 @@ namespace mpets.mobi.bot
             {
                 TabPage tabPage = HelpMethod.findControl.FindTabPage("tabPage", BotID, Form);
 
-                tabPage.Text = $"{HelpMethod.findControl.FindTextBox("textbox_login", BotID, Form).Text} [ {level_string} ] ";
+                tabPage.Text = $"{HelpMethod.findControl.FindTextBox("textbox_login", BotID, Form).Text} [ {level_string} ]";
                 tabPage.ImageIndex = Form.imageList1.Images.IndexOfKey($"avatar{avatar_string}");
 
                 HelpMethod.findControl.FindLabel("label_nickname", BotID, Form).Tag = nickname_string;

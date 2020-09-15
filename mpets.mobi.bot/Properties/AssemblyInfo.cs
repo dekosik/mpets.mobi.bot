@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанных со сборкой.
-[assembly: AssemblyTitle("Удивительные питомца By DeKoSiK")]
+[assembly: AssemblyTitle("Удивительные питомцы By DeKoSiK")]
 [assembly: AssemblyDescription("Бот для мобильной браузерной игры 'Удивительные питомцы'.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DeKoSiK")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.1.0.0")]
-[assembly: AssemblyFileVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.1.0")]
+[assembly: AssemblyFileVersion("2.1.1.0")]

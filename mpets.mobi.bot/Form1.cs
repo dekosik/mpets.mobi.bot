@@ -683,7 +683,7 @@ namespace mpets.mobi.bot
                     // Если авторизация прошла успешно
                     if (isLogin == "true")
                     {
-                        HelpMethod.Log("Запускаем задачи...", BotID, this, Color.DarkSlateGray, false);
+                        HelpMethod.Log("Задачи запущены.", BotID, this, Color.DarkSlateGray);
 
                         // Обновляем статистику
                         await BotEngine.Statistics(BotID, httpClient, this, settings);
@@ -803,7 +803,7 @@ namespace mpets.mobi.bot
                         // Обновляем статистику
                         await BotEngine.Statistics(BotID, httpClient, this, settings);
 
-                        HelpMethod.Log($"Все задачи завершены.", BotID, this, Color.DarkSlateGray, false);
+                        HelpMethod.Log($"Задачи завершены.", BotID, this, Color.DarkSlateGray);
                         HelpMethod.Log("", BotID, this, ShowTime: false);
 
                         // Получаем рандомный интервал ожидания

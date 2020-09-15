@@ -167,7 +167,7 @@ namespace mpets.mobi.bot.Libs
         /// Отправляет строку в <see cref="RichTextBox"/> с поддержкой цвета и скрытие времени.
         /// </summary>
         /// <param name="Text">Строка.</param>
-        /// <param name="BotID">Индентификатор бота (вкладки).</param>
+        /// <param name="BotID">Идентификатор бота (вкладки).</param>
         /// <param name="Form1">Ссылка на <see cref="Form1"/>.</param>
         /// <param name="Color">Цвет текста.</param>
         /// <param name="ShowTime">True - Показывать время, False - Не показывать время.</param>

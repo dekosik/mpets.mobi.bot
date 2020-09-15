@@ -165,7 +165,7 @@
             // 
             this.toolStripMenuItem8.Image = global::mpets.mobi.bot.Properties.Resources.vk;
             this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-            this.toolStripMenuItem8.Size = new System.Drawing.Size(209, 22);
+            this.toolStripMenuItem8.Size = new System.Drawing.Size(218, 22);
             this.toolStripMenuItem8.Text = "Группа ВКонтакте";
             this.toolStripMenuItem8.Click += new System.EventHandler(this.ToolStripMenuItem8_Click);
             // 
@@ -173,21 +173,21 @@
             // 
             this.toolStripMenuItem9.Image = global::mpets.mobi.bot.Properties.Resources.github;
             this.toolStripMenuItem9.Name = "toolStripMenuItem9";
-            this.toolStripMenuItem9.Size = new System.Drawing.Size(209, 22);
+            this.toolStripMenuItem9.Size = new System.Drawing.Size(218, 22);
             this.toolStripMenuItem9.Text = "Репозиторий на GitHub";
             this.toolStripMenuItem9.Click += new System.EventHandler(this.ToolStripMenuItem9_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(206, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(215, 6);
             // 
             // toolStripMenuItem10
             // 
             this.toolStripMenuItem10.Enabled = false;
             this.toolStripMenuItem10.Name = "toolStripMenuItem10";
-            this.toolStripMenuItem10.Size = new System.Drawing.Size(209, 22);
-            this.toolStripMenuItem10.Text = "Created by DeKoSiK ( v2.1 )";
+            this.toolStripMenuItem10.Size = new System.Drawing.Size(218, 22);
+            this.toolStripMenuItem10.Text = "Created by DeKoSiK ( v2.1.1 )";
             // 
             // panel1
             // 
@@ -225,7 +225,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Удивительные питомцы By DeKoSiK ( v2.1 )";
+            this.Text = "Удивительные питомцы By DeKoSiK ( v2.1.1 )";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.Form1_Resize);
