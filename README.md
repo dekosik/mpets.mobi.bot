@@ -1,7 +1,7 @@
 # mpets.mobi.bot
 Бот для мобильной браузерной игры "Удивительные питомцы".
 
-![GitHub Releases (by Release)](https://img.shields.io/github/downloads/dekosik/mpets.mobi.bot/v2.1/total?style=social)
+![GitHub Releases (by Release)](https://img.shields.io/github/downloads/dekosik/mpets.mobi.bot/v2.1.1/total?style=social)
 
 # Функционал бота
 - <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/meat.png" width="20" style="vertical-align: sub;"/> → Умеет кормить питомца.
