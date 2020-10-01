@@ -23,9 +23,13 @@
 <br>
 <img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/tasks.png" width="20"> → Умеет забирать выполненные задания (Включая медали).
 <br>
-<img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/charm.png" width="20"> → Умеет проходить ежедневное задание  «Снеговик» (Проведи 2 игры в снежки).
+<img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/charm.png" width="20"> → Умеет проходить ежедневное задание  «Снеговик»
 <br>
-<img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/races.png" width="20"> → Умеет проходить ежедневное задание «Жокей» (Стань призером скачек 2 раза).
+(Проведи 2 игры в снежки).
+<br>
+<img src="https://raw.githubusercontent.com/dekosik/mpets.mobi.bot/master/mpets.mobi.bot/Resources/races.png" width="20"> → Умеет проходить ежедневное задание «Жокей»
+<br>
+(Стань призером скачек 2 раза).
 
 #### ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ
 → Поддерживает запуск сразу множество аккаунтов.
