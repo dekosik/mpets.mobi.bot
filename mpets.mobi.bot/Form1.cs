@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -118,7 +119,6 @@ namespace mpets.mobi.bot
             {
                 Location = new Point(6, 15),
                 Margin = new Padding(2, 5, 2, 5),
-                MaxLength = 20,
                 Name = $"textbox_login{NumberTabs}",
                 Size = new Size(194, 22),
                 TabStop = false,
@@ -133,7 +133,8 @@ namespace mpets.mobi.bot
                 Size = new Size(194, 22),
                 PasswordChar = '*',
                 TabStop = false,
-                Tag = NumberTabs
+                Tag = NumberTabs,
+                Visible = false
             };
 
             NumericUpDown numericupdown_interval_from = new NumericUpDown
@@ -519,8 +520,9 @@ namespace mpets.mobi.bot
 
                 // Записываем значения в файл сохранений
                 settings.Write($"PETS{botID}", "LOGIN", textBox.Text);
+                
                 // Изменяем название вкладки
-                tabControl1.TabPages[tabControl1.SelectedIndex].Text = textBox.Text.Length > 0 ? $"{textBox.Text} [ {level} ]" : BOT_TABS_TEXT;
+                // tabControl1.TabPages[tabControl1.SelectedIndex].Text = textBox.Text.Length > 0 ? $"{textBox.Text} [ {level} ]" : BOT_TABS_TEXT;
             };
 
             textbox_password.TextChanged += (s, e) =>
@@ -644,8 +646,17 @@ namespace mpets.mobi.bot
 
         private async void StartingBot(int BotID)
         {
+            // Базовый адрес игры
+            Uri baseAddress = new Uri("https://mpets.mobi");
+            
+            // Создаем переменную где будем хранить куки
+            CookieContainer cookieContainer = new CookieContainer();
+
+            // Инициализируем
+            HttpClientHandler handler = new HttpClientHandler() { CookieContainer = cookieContainer };
+
             // Создаём новый HttpClient
-            HttpClient httpClient = new HttpClient { BaseAddress = new Uri("https://mpets.mobi") };
+            HttpClient httpClient = new HttpClient(handler) { BaseAddress = baseAddress };
 
             // Получаем ссылку на кнопку
             Button btn_start_bot = HelpMethod.findControl.FindButton("button_start_bot", BotID, this);
@@ -670,8 +681,18 @@ namespace mpets.mobi.bot
             string login = HelpMethod.findControl.FindTextBox("textbox_login", BotID, this).Text;
             string password = HelpMethod.findControl.FindTextBox("textbox_password", BotID, this).Text;
 
+            string[] subs = login.Split(';');
+
+            foreach (var sub in subs)
+            {
+                string clearCookies = sub.Replace(" ", string.Empty);
+                string[] cookies = clearCookies.Split('=');
+
+                cookieContainer.Add(baseAddress, new Cookie(cookies[0], cookies[1]));
+            }
+
             // Проверяем на пустоту "Имя питомца" и "Пароль"
-            if (login.Length > 0 & password.Length > 0)
+            if (login.Length > 0)
             {
                 await Task.Run(async () =>
                 {
@@ -1032,7 +1053,8 @@ namespace mpets.mobi.bot
             // Генерируем новую вкладку
             TabPage tabPage = new TabPage
             {
-                Text = login.Length > 0 ? $"{login} [{level}]" : BOT_TABS_TEXT,
+                //Text = login.Length > 0 ? $"{login} [{level}]" : BOT_TABS_TEXT,
+                Text = BOT_TABS_TEXT,
                 Name = $"tabPage{NumberTabs}",
                 BackColor = Color.White,
                 ToolTipText = "Для удаления профиля, нажмите несколько раз по вкладке.",

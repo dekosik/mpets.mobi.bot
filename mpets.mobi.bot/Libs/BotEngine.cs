@@ -30,7 +30,8 @@ namespace mpets.mobi.bot
                 });
 
                 // Отправляем запрос
-                string result = await HttpClient.PostAsync("/login", parameters).Result.Content.ReadAsStringAsync();
+                // string result = await HttpClient.PostAsync("/login", parameters).Result.Content.ReadAsStringAsync();
+                string result = await HttpClient.GetAsync("/").Result.Content.ReadAsStringAsync();
 
                 // Возвращаем успешность авторизации
                 return result.Contains("Чат").ToString().ToLower();
@@ -148,7 +149,7 @@ namespace mpets.mobi.bot
             {
                 TabPage tabPage = HelpMethod.findControl.FindTabPage("tabPage", BotID, Form);
 
-                tabPage.Text = $"{HelpMethod.findControl.FindTextBox("textbox_login", BotID, Form).Text} [ {level_string} ]";
+                tabPage.Text = $"{nickname_string} [ {level_string} ]";
                 tabPage.ImageIndex = Form.imageList1.Images.IndexOfKey($"avatar{avatar_string}");
 
                 HelpMethod.findControl.FindLabel("label_nickname", BotID, Form).Tag = nickname_string;
